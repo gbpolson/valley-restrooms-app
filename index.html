@@ -292,14 +292,14 @@
             <table class="w-full text-[13px]">
               <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
                 <tr>
-                  <th class="text-left px-2 py-1.5 font-semibold">Customer</th>
-                  <th class="text-left px-2 py-1.5 font-semibold">Service Address</th>
-                  <th class="text-left px-2 py-1.5 font-semibold">Units</th>
-                  <th class="text-left px-2 py-1.5 font-semibold">Days</th>
-                  <th class="text-left px-2 py-1.5 font-semibold">Rt</th>
-                  <th class="text-left px-2 py-1.5 font-semibold">Last</th>
-                  <th class="text-left px-2 py-1.5 font-semibold">Next</th>
-                  <th class="text-left px-2 py-1.5 font-semibold">Balance</th>
+                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('name')">Customer <span class="sort-arrow" data-sort="name"></span></th>
+                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('addr')">Service Address <span class="sort-arrow" data-sort="addr"></span></th>
+                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('toilets')">Units <span class="sort-arrow" data-sort="toilets"></span></th>
+                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('day')">Days <span class="sort-arrow" data-sort="day"></span></th>
+                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('route')">Rt <span class="sort-arrow" data-sort="route"></span></th>
+                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('last')">Last <span class="sort-arrow" data-sort="last"></span></th>
+                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('nextSvc')">Next <span class="sort-arrow" data-sort="nextSvc"></span></th>
+                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('owes')">Balance <span class="sort-arrow" data-sort="owes"></span></th>
                   <th class="text-left px-2 py-1.5 font-semibold">Notes</th>
                 </tr>
               </thead>
@@ -365,20 +365,39 @@
         <h1 class="text-xl font-semibold tracking-tight">Dispatch</h1>
         <p class="text-ink-500 text-[12.5px]" id="dispatch-subtitle">Friday, May 8 · drag rows to reorder</p>
       </div>
-      <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
-        <button class="day-btn px-3 py-1 text-[12.5px] font-medium bg-white shadow-sm rounded" data-day="today" onclick="setDispatchDay('today')">Today</button>
-        <button class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">Tomorrow</button>
-        <button id="day-date-btn" class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500 inline-flex items-center gap-1.5" onclick="openDatePicker()">
+      <div class="flex items-center gap-1 bg-ink-100 rounded-md p-1">
+        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="2026-05-11" onclick="setDispatchDate('2026-05-11')">
+          <div class="font-semibold">Mon</div><div class="text-[10px] opacity-70">5/11</div>
+        </button>
+        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="2026-05-12" onclick="setDispatchDate('2026-05-12')">
+          <div class="font-semibold">Tue</div><div class="text-[10px] opacity-70">5/12</div>
+        </button>
+        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="2026-05-13" onclick="setDispatchDate('2026-05-13')">
+          <div class="font-semibold">Wed</div><div class="text-[10px] opacity-70">5/13</div>
+        </button>
+        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="2026-05-14" onclick="setDispatchDate('2026-05-14')">
+          <div class="font-semibold">Thu</div><div class="text-[10px] opacity-70">5/14</div>
+        </button>
+        <button class="day-btn px-2.5 py-1 text-[12px] font-medium bg-white shadow-sm rounded text-center min-w-[44px]" data-day="today" onclick="setDispatchDay('today')">
+          <div class="font-semibold">Fri</div><div class="text-[10px] text-emerald-600 font-semibold">TODAY</div>
+        </button>
+        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">
+          <div class="font-semibold">Sat</div><div class="text-[10px] opacity-70">5/9</div>
+        </button>
+        <div class="w-px h-7 bg-ink-300 mx-1"></div>
+        <button id="day-date-btn" class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded inline-flex items-center gap-1.5" onclick="openDatePicker()">
           <i data-lucide="calendar" class="ico-sm"></i><span id="day-date-label">Pick a date</span>
         </button>
         <input id="dispatch-date-picker" type="date" class="sr-only absolute" onchange="setDispatchDate(this.value)" />
       </div>
     </div>
 
-    <div class="card mb-3 px-3 py-2 flex items-center gap-3">
+    <!-- Drivers Today bar — hidden by default (Greg can see same info via per-column kebab menu) -->
+    <div id="drivers-today-bar" class="card mb-3 px-3 py-2 flex items-center gap-3 hidden">
       <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Drivers today</div>
       <div id="driver-pills" class="flex items-center gap-1.5 flex-1"></div>
       <button onclick="openAddTempDriver()" class="text-[12px] text-ink-500 hover:text-ink-900 font-medium inline-flex items-center gap-1"><i data-lucide="plus" class="ico-sm"></i>Add temp driver</button>
+      <button onclick="document.getElementById('drivers-today-bar').classList.add('hidden')" class="text-[12px] text-ink-500 hover:text-ink-900">×</button>
     </div>
 
     <div id="dispatch-map-card" class="card mb-4 h-64 relative overflow-hidden bg-ink-50">
@@ -648,6 +667,17 @@ function renderRecents(){
 
 /* ============ CUSTOMERS / TOILETS / SCHEDULES ============ */
 let currentCustFilter = 'all';
+let custSort = { field: null, dir: 'asc' };
+function sortCustomers(field){
+  if (custSort.field === field){
+    custSort.dir = custSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    custSort.field = field;
+    // sensible default direction per field
+    custSort.dir = (field === 'owes' || field === 'last' || field === 'nextSvc' || field === 'toilets') ? 'desc' : 'asc';
+  }
+  renderCustomers(document.getElementById('cust-search')?.value || '');
+}
 function getFilteredCustomers(search=''){
   let rows = customers.slice();
   if (currentCustFilter === 'toilets-out')  rows = rows.filter(c => c.toilets > 0 && !c.retired);
@@ -658,6 +688,33 @@ function getFilteredCustomers(search=''){
     const f = search.toLowerCase();
     rows = rows.filter(c => (c.name+c.addr+c.phone).toLowerCase().includes(f));
   }
+  if (custSort.field){
+    const k = custSort.field;
+    const dir = custSort.dir === 'asc' ? 1 : -1;
+    rows.sort((a,b) => {
+      let av = a[k], bv = b[k];
+      // Handle missing/em-dash values — push to bottom
+      const aMissing = av == null || av === '' || av === '—';
+      const bMissing = bv == null || bv === '' || bv === '—';
+      if (aMissing && bMissing) return 0;
+      if (aMissing) return 1;
+      if (bMissing) return -1;
+      // Numeric for owes / toilets
+      if (k === 'owes' || k === 'toilets'){
+        return (Number(av) - Number(bv)) * dir;
+      }
+      // Dates compare as strings (YYYY-MM-DD sorts lexically)
+      return String(av).localeCompare(String(bv)) * dir;
+    });
+  }
+  // Render sort arrows
+  setTimeout(() => {
+    document.querySelectorAll('.sort-arrow').forEach(el => el.textContent = '');
+    if (custSort.field){
+      const el = document.querySelector(`.sort-arrow[data-sort="${custSort.field}"]`);
+      if (el) el.textContent = custSort.dir === 'asc' ? ' ▲' : ' ▼';
+    }
+  }, 0);
   return rows;
 }
 function setCustFilter(f){
@@ -1324,18 +1381,25 @@ function formatDispatchLabel(){
   return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
 }
 
-function setDispatchDay(day){
-  dispatchDay = day;
-  // Update toggle visual state
+function highlightActiveDayPill(){
   document.querySelectorAll('.day-btn').forEach(b => {
-    b.classList.remove('bg-white','shadow-sm','rounded');
+    b.classList.remove('bg-white','shadow-sm');
     b.classList.add('text-ink-500');
   });
-  const activeBtn = document.querySelector(`[data-day="${day}"]`);
-  if (activeBtn){ activeBtn.classList.add('bg-white','shadow-sm','rounded'); activeBtn.classList.remove('text-ink-500'); }
-  // Reset date label
+  const match = document.querySelector(`.day-btn[data-day="${dispatchDay}"]`);
+  if (match){
+    match.classList.add('bg-white','shadow-sm');
+    match.classList.remove('text-ink-500');
+  } else {
+    const dateBtn = document.getElementById('day-date-btn');
+    if (dateBtn){ dateBtn.classList.add('bg-white','shadow-sm'); dateBtn.classList.remove('text-ink-500'); }
+  }
+}
+function setDispatchDay(day){
+  dispatchDay = day;
   const lbl = document.getElementById('day-date-label');
   if (lbl) lbl.textContent = 'Pick a date';
+  highlightActiveDayPill();
   renderBoard();
   renderTodaysChanges();
   updateDispatchSubtitle();
@@ -1354,16 +1418,17 @@ function openDatePicker(){
 function setDispatchDate(dateStr){
   if (!dateStr) return;
   dispatchDay = dateStr;
-  // Update visuals
-  document.querySelectorAll('.day-btn').forEach(b => {
-    b.classList.remove('bg-white','shadow-sm','rounded');
-    b.classList.add('text-ink-500');
-  });
-  const dateBtn = document.getElementById('day-date-btn');
-  dateBtn.classList.add('bg-white','shadow-sm','rounded');
-  dateBtn.classList.remove('text-ink-500');
-  const d = new Date(dateStr + 'T12:00:00');
-  document.getElementById('day-date-label').textContent = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+  highlightActiveDayPill();
+  // Only update the "Pick a date" label if the date doesn't match a day pill
+  const matchedPill = document.querySelector(`.day-btn[data-day="${dateStr}"]`);
+  const lbl = document.getElementById('day-date-label');
+  if (lbl){
+    if (matchedPill) lbl.textContent = 'Pick a date';
+    else {
+      const d = new Date(dateStr + 'T12:00:00');
+      lbl.textContent = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+    }
+  }
   renderBoard();
   renderTodaysChanges();
   updateDispatchSubtitle();

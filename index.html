@@ -299,12 +299,16 @@
     <div class="flex items-center justify-between mb-4">
       <div>
         <h1 class="text-xl font-semibold tracking-tight">Dispatch</h1>
-        <p class="text-ink-500 text-[12.5px]">Friday, May 8 · drag stops to reorder or reassign</p>
+        <p class="text-ink-500 text-[12.5px]" id="dispatch-subtitle">Friday, May 8 · drag stops to reorder or reassign</p>
       </div>
       <div class="flex items-center gap-1.5">
         <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
-          <button class="day-btn px-3 py-1 text-[12.5px] font-medium bg-white shadow-sm rounded" data-day="today">Today</button>
-          <button class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500" data-day="tomorrow">Tomorrow</button>
+          <button class="day-btn px-3 py-1 text-[12.5px] font-medium bg-white shadow-sm rounded" data-day="today" onclick="setDispatchDay('today')">Today</button>
+          <button class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">Tomorrow</button>
+          <button id="day-date-btn" class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500 inline-flex items-center gap-1.5" onclick="openDatePicker()">
+            <i data-lucide="calendar" class="ico-sm"></i><span id="day-date-label">Pick a date</span>
+          </button>
+          <input id="dispatch-date-picker" type="date" class="sr-only absolute" onchange="setDispatchDate(this.value)" />
         </div>
         <button onclick="autoRoute()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="zap"></i>Auto-route all</button>
         <button onclick="openInlineStop('Greg')" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="plus"></i>Stop for today</button>
@@ -1056,6 +1060,105 @@ function eventFormHTML(p){
 function submitForm(e, kind){ e.preventDefault(); closeModal(); toast(kind==='recurring' ? 'Saved. Future stops added to driver routes.' : 'Event booked. Drop-off, cleanings, and pickup scheduled.'); }
 function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'), 2800); }
 
+/* ============ DISPATCH DAY STATE ============ */
+let dispatchDay = 'today'; // 'today', 'tomorrow', or YYYY-MM-DD string
+
+// Saturday = light. Sunday = closed (no work). Future weekdays = projection from recurring.
+const tomorrowData = {
+  Greg: [
+    {id:'gt1', cust:'Mendoza Wedding',     addr:'88 Riverside Ln, Athens, AL',   units:'5 standard, 1 handicap', type:'deliver', status:'scheduled', notes:'Drop near east gate'},
+    {id:'gt2', cust:'Turner Construction', addr:'Toyota / 1 Cottonvalley Dr, Huntsville', units:'5 standard, 1 handicap', type:'clean', status:'scheduled', notes:'Saturday job-site cleaning'},
+  ],
+  Bradley: [
+    {id:'bt1', cust:'Hawkins Groundwork',  addr:'Jones Rd. substation, Athens, AL', units:'1 standard', type:'pickup',  status:'scheduled', notes:'Customer requested Sat pickup'},
+  ]
+};
+
+function projectedDataFor(dateStr){
+  // Generate a planning view for any future date by projecting today's customers as 'scheduled'
+  const proj = {};
+  Object.keys(driverData).forEach(driver => {
+    proj[driver] = driverData[driver]
+      .filter(s => s.status !== 'pickup') // pickups are one-shots, don't repeat
+      .map(s => ({ ...s, id: 'p'+s.id, status: 'scheduled', completedAt: undefined }));
+  });
+  return proj;
+}
+
+function getCurrentDispatchData(){
+  if (dispatchDay === 'today')    return driverData;
+  if (dispatchDay === 'tomorrow') return tomorrowData;
+  return projectedDataFor(dispatchDay);
+}
+
+function isViewingToday(){ return dispatchDay === 'today'; }
+
+function formatDispatchLabel(){
+  if (dispatchDay === 'today')    return 'Friday, May 8 · today';
+  if (dispatchDay === 'tomorrow') return 'Saturday, May 9 · tomorrow';
+  // YYYY-MM-DD → "Mon, May 11"
+  const d = new Date(dispatchDay + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+}
+
+function setDispatchDay(day){
+  dispatchDay = day;
+  // Update toggle visual state
+  document.querySelectorAll('.day-btn').forEach(b => {
+    b.classList.remove('bg-white','shadow-sm','rounded');
+    b.classList.add('text-ink-500');
+  });
+  const activeBtn = document.querySelector(`[data-day="${day}"]`);
+  if (activeBtn){ activeBtn.classList.add('bg-white','shadow-sm','rounded'); activeBtn.classList.remove('text-ink-500'); }
+  // Reset date label
+  const lbl = document.getElementById('day-date-label');
+  if (lbl) lbl.textContent = 'Pick a date';
+  renderBoard();
+  renderTodaysChanges();
+  updateDispatchSubtitle();
+  refreshIcons();
+}
+
+function openDatePicker(){
+  const inp = document.getElementById('dispatch-date-picker');
+  if (!inp) return;
+  // Default to next Monday (May 11) for the demo
+  if (!inp.value) inp.value = '2026-05-11';
+  if (inp.showPicker) try { inp.showPicker(); return; } catch(e) {}
+  inp.click();
+}
+
+function setDispatchDate(dateStr){
+  if (!dateStr) return;
+  dispatchDay = dateStr;
+  // Update visuals
+  document.querySelectorAll('.day-btn').forEach(b => {
+    b.classList.remove('bg-white','shadow-sm','rounded');
+    b.classList.add('text-ink-500');
+  });
+  const dateBtn = document.getElementById('day-date-btn');
+  dateBtn.classList.add('bg-white','shadow-sm','rounded');
+  dateBtn.classList.remove('text-ink-500');
+  const d = new Date(dateStr + 'T12:00:00');
+  document.getElementById('day-date-label').textContent = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+  renderBoard();
+  renderTodaysChanges();
+  updateDispatchSubtitle();
+  refreshIcons();
+}
+
+function updateDispatchSubtitle(){
+  const sub = document.getElementById('dispatch-subtitle');
+  if (!sub) return;
+  if (isViewingToday()){
+    sub.textContent = 'Friday, May 8 · drag stops to reorder or reassign';
+  } else if (dispatchDay === 'tomorrow'){
+    sub.textContent = `${formatDispatchLabel()} · auto-built — drivers see this at 6am`;
+  } else {
+    sub.textContent = `${formatDispatchLabel()} · projected from recurring schedules`;
+  }
+}
+
 /* ============ GREG — DISPATCH BOARD ============ */
 const driverColors = { Greg:'bg-orange-600', Bradley:'bg-blue-500' };
 function tagFor(type){
@@ -1067,7 +1170,8 @@ function tagFor(type){
 }
 function statusOrder(s){ return s.status==='completed'?0 : s.status==='active'?1 : 2; }
 function progressOf(driver){
-  const arr = driverData[driver];
+  const data = getCurrentDispatchData();
+  const arr = data[driver] || [];
   const done = arr.filter(s=>s.status==='completed').length;
   const total = arr.length;
   // Position halfway through the active stop, or at end of completed if no active
@@ -1077,7 +1181,8 @@ function progressOf(driver){
 }
 function renderBoard(){
   const board = document.getElementById('dispatch-board');
-  board.innerHTML = Object.entries(driverData).map(([driver, stops])=>{
+  const currentData = getCurrentDispatchData();
+  board.innerHTML = Object.entries(currentData).map(([driver, stops])=>{
     const meta = driverMeta[driver];
     const p = progressOf(driver);
     const sorted = [...stops].sort((a,b)=>statusOrder(a)-statusOrder(b));
@@ -1132,15 +1237,17 @@ function renderBoard(){
 
 /* ============ MAP TRUCKS ============ */
 function positionTrucks(){
+  // For non-today views, park trucks at depot (route hasn't started)
+  const isToday = isViewingToday();
   Object.keys(driverMeta).forEach(driver => {
     const path = document.getElementById(`path-${driver.toLowerCase()}`);
     const group = document.getElementById(`truck-${driver.toLowerCase()}-group`);
     const meta = driverMeta[driver];
     if (!path || !group) return;
-    if (meta.status !== 'active'){
+    if (meta.status !== 'active' || !isToday){
       group.innerHTML = '';
-      // dim the path for out drivers
-      path.style.opacity = '0.2';
+      // dim the path for out drivers or non-today views
+      path.style.opacity = isToday ? '0.2' : '0.45';
       path.style.animationPlayState = 'paused';
       return;
     } else {
@@ -1187,10 +1294,14 @@ function positionTrucks(){
   });
 }
 let dragSrc = null;
-function dragStart(e, driver, id){ dragSrc = {driver, id}; e.target.classList.add('dragging'); }
+function dragStart(e, driver, id){
+  if (!isViewingToday()){ e.preventDefault(); toast('View only — switch to Today to make changes.'); return; }
+  dragSrc = {driver, id}; e.target.classList.add('dragging');
+}
 function dragEnd(e){ e.target.classList.remove('dragging'); document.querySelectorAll('.col-hover').forEach(el=>el.classList.remove('col-hover')); }
 function dropStop(e, targetDriver){
   e.preventDefault();
+  if (!isViewingToday()){ toast('View only — switch to Today to reassign.'); return; }
   if (!dragSrc) return;
   const srcList = driverData[dragSrc.driver];
   const idx = srcList.findIndex(s => s.id === dragSrc.id);
@@ -1202,11 +1313,13 @@ function dropStop(e, targetDriver){
   toast(`Moved ${moved.cust} to ${targetDriver}`);
 }
 function pinNext(driver, id){
+  if (!isViewingToday()){ toast('View only — switch to Today to pin a stop.'); return; }
   const arr = driverData[driver];
   const idx = arr.findIndex(s => s.id === id);
-  if (idx > 0) { const [s] = arr.splice(idx,1); arr.unshift(s); renderBoard(); toast('Pinned to next on driver\'s phone'); }
+  if (idx > 0) { const [s] = arr.splice(idx,1); arr.unshift(s); renderBoard(); toast('Pinned to next on driver phone'); }
 }
 function autoRoute(){
+  if (!isViewingToday()){ toast('Auto-route runs against today only — Tomorrow auto-builds itself overnight.'); return; }
   Object.keys(driverData).forEach(k => driverData[k].sort(() => Math.random() - 0.5));
   renderBoard();
   toast('All routes optimized by address proximity');
@@ -1375,6 +1488,7 @@ function sendQuickCapture(){
 /* ============ INLINE TODAY-STOP ============ */
 let stopState = null;
 function openInlineStop(driver){
+  if (!isViewingToday()){ toast('Add-stop works on Today. For future days, change the recurring schedule on the customer.'); return; }
   stopState = { driver, customer: null, serviceType: 'clean', unitCount: 1, unitType: 'Standard toilet', when: 'next' };
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white z-10">
@@ -1558,6 +1672,10 @@ const todaysChanges = [
 function nowStr(){ const d = new Date(); return d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); }
 function renderTodaysChanges(){
   const el = document.getElementById('changes-feed'); if (!el) return;
+  if (typeof isViewingToday === 'function' && !isViewingToday()){
+    el.innerHTML = `<div class="text-[12px] text-ink-500 italic p-3 leading-relaxed">Showing planned route for ${formatDispatchLabel()}.<br><br>Drivers won't see this until 6am that day. Greg can preview and adjust here.</div>`;
+    return;
+  }
   if (!todaysChanges.length){
     el.innerHTML = `<div class="text-[12px] text-ink-500 italic p-3">No changes yet today.</div>`;
     return;
@@ -2569,126 +2687,4 @@ function openRedistribute(driver, fromCallout){
           <input type="radio" name="redistribute" value="manual" class="mt-0.5" />
           <div>
             <div class="font-semibold text-[13px]">Manually assign each</div>
-            <div class="text-[11.5px] text-ink-500 mt-0.5">You pick a driver for each remaining stop.</div>
-          </div>
-        </label>
-        <label class="flex items-start gap-3 p-3 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
-          <input type="radio" name="redistribute" value="keep" class="mt-0.5" />
-          <div>
-            <div class="font-semibold text-[13px]">Keep on ${driver}'s list</div>
-            <div class="text-[11.5px] text-ink-500 mt-0.5">In case ${driver} comes in late or you'll handle it tomorrow.</div>
-          </div>
-        </label>
-      </div>
-
-      <div class="border border-ink-200 rounded overflow-hidden">
-        <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[10.5px] font-semibold uppercase tracking-wider text-ink-500">${driver}'s remaining stops</div>
-        <div class="divide-y divide-ink-200 max-h-56 overflow-y-auto">
-          ${pending.map(s => `
-            <div class="px-3 py-2 flex items-center gap-3 text-[12.5px]">
-              <div class="flex-1">
-                <div class="font-medium">${s.cust}</div>
-                <div class="text-[11px] text-ink-500">${s.addr} · ${s.units}</div>
-              </div>
-              ${tagFor(s.type)}
-            </div>`).join('')}
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
-        <button onclick="closeModal()" class="btn-secondary">Cancel</button>
-        <button onclick="applyRedistribute('${driver}')" class="btn-primary">Apply</button>
-      </div>
-    </div>`;
-  document.getElementById('modal').classList.remove('hidden');
-  refreshIcons();
-}
-
-function applyRedistribute(driver){
-  const choice = document.querySelector('input[name="redistribute"]:checked')?.value || 'auto';
-  if (choice === 'keep'){
-    closeModal();
-    toast(`Stops kept on ${driver}'s list.`);
-    renderBoard();
-    return;
-  }
-  const pending = driverData[driver].filter(s => s.status === 'pending');
-  const otherDrivers = Object.keys(driverMeta).filter(d => d !== driver && driverMeta[d].status === 'active');
-  if (otherDrivers.length === 0){
-    toast('No other active drivers to take stops.');
-    return;
-  }
-  if (choice === 'auto'){
-    // Alternate stops between the active drivers
-    pending.forEach((s, i) => {
-      const target = otherDrivers[i % otherDrivers.length];
-      driverData[driver] = driverData[driver].filter(x => x !== s);
-      driverData[target].push(s);
-    });
-    closeModal();
-    toast(`${pending.length} stops redistributed to ${otherDrivers.join(' & ')}.`);
-    todaysChanges.unshift({ time: nowStr(), text: `${driver} out — ${pending.length} stops auto-redistributed to ${otherDrivers.join(' & ')}.`, kind:'retire' });
-  } else {
-    // Manual: simplest demo move all to first other driver
-    const target = otherDrivers[0];
-    pending.forEach(s => {
-      driverData[driver] = driverData[driver].filter(x => x !== s);
-      driverData[target].push(s);
-    });
-    closeModal();
-    toast(`Manual reassign demo — moved all stops to ${target} (real version lets you pick per stop).`);
-    todaysChanges.unshift({ time: nowStr(), text: `${driver}'s ${pending.length} stops manually moved to ${target}.`, kind:'add' });
-  }
-  renderBoard();
-  renderTodaysChanges();
-}
-
-function openAddTempDriver(){
-  document.getElementById('modal-content').innerHTML = `
-    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
-      <div>
-        <div class="font-semibold text-[15px]">Add a temporary driver for today</div>
-        <div class="text-[12.5px] text-ink-500">Use when Greg pulls in a helper or runs a route himself</div>
-      </div>
-      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
-    </div>
-    <form onsubmit="event.preventDefault(); closeModal(); toast('Temp driver added — Kim can promote them to permanent later.');" class="px-5 py-4 space-y-3">
-      <div><label class="block text-[12.5px] font-medium mb-1">Name</label><input required placeholder="e.g. Greg, Carlos, Tyler" class="input w-full" /></div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Phone</label><input placeholder="256-555-0000" class="input w-full" /></div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Pull stops from</label>
-        <select class="input w-full">
-          <option>Auto-balance from busiest drivers</option>
-          <option>Greg's queue</option>
-          <option>Bradley's queue</option>
-          <option>None — just add empty</option>
-        </select>
-      </div>
-      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
-        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
-        <button type="submit" class="btn-primary">Add for today</button>
-      </div>
-    </form>`;
-  document.getElementById('modal').classList.remove('hidden');
-  refreshIcons();
-}
-
-/* ============ ICON HELPER ============ */
-function refreshIcons(){ try { lucide.createIcons(); } catch(e){} }
-
-/* ============ INIT ============ */
-renderRecents();
-renderCustomers();
-renderSchedules();
-renderDriversTable();
-renderDriverPills();
-renderNotifBell();
-renderBoard();
-renderDriver();
-renderDrafts();
-renderTodaysChanges();
-document.getElementById('cust-search').addEventListener('input', e => renderCustomers(e.target.value));
-refreshIcons();
-</script>
-</body>
-</html>
-                                                                                                            
+            <div class="text-[11.5px

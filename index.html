@@ -123,6 +123,57 @@
     #report-overlay { position:absolute; left:0; top:0; right:0; bottom:0; background:white !important; }
     .report-page { box-shadow:none; border:none; margin:0; padding:24px 32px; max-width:none; }
   }
+
+  /* ============== Responsive: tablet (iPad portrait) and phones ============== */
+  @media (max-width: 1024px) {
+    /* Greg's dispatch: stack the changes feed under the board */
+    [data-view="greg"] .grid.grid-cols-3 { grid-template-columns: 1fr !important; }
+    [data-view="greg"] .grid.grid-cols-3 > .col-span-2 { grid-column: span 1 / span 1 !important; }
+    /* Drivers row label can wrap */
+    #driver-pills { flex-wrap: wrap; gap: 6px; }
+  }
+
+  @media (max-width: 768px) {
+    /* Header — wrap nicely on phone */
+    header { padding: 8px 12px !important; gap: 8px; flex-wrap: wrap; }
+    header img#brand-logo { height: 36px !important; }
+    header .role-btn { padding: 4px 8px !important; font-size: 11px !important; }
+
+    /* Kim's office: stack sidebar above main */
+    [data-view="kim"] > .flex { flex-direction: column; }
+    [data-view="kim"] aside { width: 100% !important; min-height: 0 !important; border-right: 0 !important; border-bottom: 1px solid #e2e8f0; padding: 8px 10px !important; }
+    [data-view="kim"] aside nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+    [data-view="kim"] aside nav button { padding: 4px 10px !important; font-size: 12px !important; }
+    [data-view="kim"] main { padding: 16px !important; max-width: 100% !important; }
+
+    /* Customer portal: same treatment */
+    [data-view="customer"] .flex { flex-direction: column; }
+    [data-view="customer"] aside { width: 100% !important; min-height: 0 !important; border-right: 0 !important; border-bottom: 1px solid #e2e8f0; padding: 8px 10px !important; }
+    [data-view="customer"] aside nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+    [data-view="customer"] aside nav button { padding: 4px 10px !important; font-size: 12px !important; }
+    [data-view="customer"] main { padding: 16px !important; max-width: 100% !important; }
+
+    /* Greg's dispatch: stack driver columns */
+    [data-view="greg"] #dispatch-board { grid-template-columns: 1fr !important; }
+    [data-view="greg"] .h-64 { height: 200px !important; }
+    [data-view="greg"] .px-6.py-5 { padding: 14px !important; }
+
+    /* Driver phone frame becomes full screen on real phones */
+    .phone-frame { width: 100% !important; height: auto !important; min-height: calc(100vh - 50px) !important; border-radius: 0 !important; padding: 0 !important; box-shadow: none !important; background: white !important; }
+    .phone-screen { border-radius: 0 !important; }
+    [data-view="driver"] > .grid { padding: 0 !important; min-height: auto !important; }
+
+    /* Modals: make them mobile-friendly */
+    #modal > div { max-width: 100vw !important; max-height: 100vh !important; border-radius: 0 !important; }
+
+    /* Tables: allow horizontal scroll instead of breaking */
+    .card.overflow-hidden { overflow-x: auto; }
+    table { min-width: 540px; }
+
+    /* Grids that should stack */
+    .grid.grid-cols-3, .grid.grid-cols-4 { grid-template-columns: 1fr !important; }
+    .grid.grid-cols-2 { grid-template-columns: 1fr !important; }
+  }
 </style>
 </head>
 <body class="text-ink-900 font-sans min-h-screen text-[14px]">
@@ -2627,64 +2678,4 @@ function toggleDriverMenu(driver, ev){
     <button onclick="markDriverOut('${driver}','out_today')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Out today (sick / no-show)</button>
     <button onclick="markDriverOut('${driver}','out_week')"  class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Out this week (vacation)</button>
     <div class="border-t border-ink-200 my-1"></div>
-    <button onclick="openRedistribute('${driver}')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Reassign all stops…</button>
-  `;
-  document.body.appendChild(menu);
-  openMenu = menu;
-  setTimeout(() => document.addEventListener('click', closeOpenMenu, { once: true }), 0);
-}
-function closeOpenMenu(){ if (openMenu) { openMenu.remove(); openMenu = null; } }
-
-function markDriverOut(driver, kind){
-  closeOpenMenu();
-  driverMeta[driver].status = kind;
-  renderDriverPills();
-  // Open redistribute modal with their pending stops
-  openRedistribute(driver, true);
-}
-function markDriverActive(driver){
-  closeOpenMenu();
-  driverMeta[driver].status = 'active';
-  renderDriverPills();
-  renderBoard();
-  toast(`${driver} is back on the route.`);
-  todaysChanges.unshift({ time: nowStr(), text: `${driver} marked back on duty.`, kind:'add' });
-  renderTodaysChanges();
-}
-
-function openRedistribute(driver, fromCallout){
-  closeOpenMenu();
-  const pending = driverData[driver].filter(s => s.status === 'pending');
-  const otherDrivers = Object.keys(driverMeta).filter(d => d !== driver && driverMeta[d].status === 'active');
-  if (pending.length === 0){
-    toast(`${driver} has no remaining stops to reassign.`);
-    if (fromCallout){ renderBoard(); }
-    return;
-  }
-  const status = driverMeta[driver].status;
-  const banner = fromCallout
-    ? `<div class="bg-amber-50 border border-amber-300 rounded p-3 text-[12px] text-amber-900 mb-1"><strong>${driver} is out ${status==='out_week'?'this week':'today'}.</strong> What about their ${pending.length} remaining stop${pending.length===1?'':'s'}?</div>`
-    : '';
-  document.getElementById('modal-content').innerHTML = `
-    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
-      <div>
-        <div class="font-semibold text-[15px]">Reassign ${driver}'s stops</div>
-        <div class="text-[12.5px] text-ink-500">${pending.length} pending stop${pending.length===1?'':'s'} on today's route</div>
-      </div>
-      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
-    </div>
-    <div class="px-5 py-4 space-y-4">
-      ${banner}
-      <div class="space-y-2">
-        <label class="flex items-start gap-3 p-3 border border-ink-900 bg-ink-50 rounded cursor-pointer">
-          <input type="radio" name="redistribute" value="auto" checked class="mt-0.5" />
-          <div>
-            <div class="font-semibold text-[13px]">Auto-redistribute by proximity <span class="text-[11px] text-ink-500 font-normal ml-1">(recommended)</span></div>
-            <div class="text-[11.5px] text-ink-500 mt-0.5">Splits the ${pending.length} stops among ${otherDrivers.join(' & ')} based on closest current location.</div>
-          </div>
-        </label>
-        <label class="flex items-start gap-3 p-3 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
-          <input type="radio" name="redistribute" value="manual" class="mt-0.5" />
-          <div>
-            <div class="font-semibold text-[13px]">Manually assign each</div>
-            <div class="text-[11.5px
+    <button onclick="openRedistribute('${driver}')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Re

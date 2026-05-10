@@ -2846,6 +2846,19 @@ function openAddTempDriver(){
 function refreshIcons(){ try { lucide.createIcons(); } catch(e){} }
 
 /* ============ INIT ============ */
+// Auto-pick a default role based on screen size. In production, auth would do this.
+(function autoSelectRole(){
+  const w = window.innerWidth;
+  let role = 'kim';
+  if (w < 700) role = 'driver';
+  else if (w < 1100) role = 'greg';
+  if (role !== 'kim'){
+    setTimeout(() => {
+      const btn = document.querySelector(`.role-btn[data-role="${role}"]`);
+      if (btn) btn.click();
+    }, 0);
+  }
+})();
 renderRecents();
 renderCustomers();
 renderToilets();

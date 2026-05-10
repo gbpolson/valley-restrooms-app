@@ -123,57 +123,6 @@
     #report-overlay { position:absolute; left:0; top:0; right:0; bottom:0; background:white !important; }
     .report-page { box-shadow:none; border:none; margin:0; padding:24px 32px; max-width:none; }
   }
-
-  /* ============== Responsive: tablet (iPad portrait) and phones ============== */
-  @media (max-width: 1024px) {
-    /* Greg's dispatch: stack the changes feed under the board */
-    [data-view="greg"] .grid.grid-cols-3 { grid-template-columns: 1fr !important; }
-    [data-view="greg"] .grid.grid-cols-3 > .col-span-2 { grid-column: span 1 / span 1 !important; }
-    /* Drivers row label can wrap */
-    #driver-pills { flex-wrap: wrap; gap: 6px; }
-  }
-
-  @media (max-width: 768px) {
-    /* Header — wrap nicely on phone */
-    header { padding: 8px 12px !important; gap: 8px; flex-wrap: wrap; }
-    header img#brand-logo { height: 36px !important; }
-    header .role-btn { padding: 4px 8px !important; font-size: 11px !important; }
-
-    /* Kim's office: stack sidebar above main */
-    [data-view="kim"] > .flex { flex-direction: column; }
-    [data-view="kim"] aside { width: 100% !important; min-height: 0 !important; border-right: 0 !important; border-bottom: 1px solid #e2e8f0; padding: 8px 10px !important; }
-    [data-view="kim"] aside nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }
-    [data-view="kim"] aside nav button { padding: 4px 10px !important; font-size: 12px !important; }
-    [data-view="kim"] main { padding: 16px !important; max-width: 100% !important; }
-
-    /* Customer portal: same treatment */
-    [data-view="customer"] .flex { flex-direction: column; }
-    [data-view="customer"] aside { width: 100% !important; min-height: 0 !important; border-right: 0 !important; border-bottom: 1px solid #e2e8f0; padding: 8px 10px !important; }
-    [data-view="customer"] aside nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }
-    [data-view="customer"] aside nav button { padding: 4px 10px !important; font-size: 12px !important; }
-    [data-view="customer"] main { padding: 16px !important; max-width: 100% !important; }
-
-    /* Greg's dispatch: stack driver columns */
-    [data-view="greg"] #dispatch-board { grid-template-columns: 1fr !important; }
-    [data-view="greg"] .h-64 { height: 200px !important; }
-    [data-view="greg"] .px-6.py-5 { padding: 14px !important; }
-
-    /* Driver phone frame becomes full screen on real phones */
-    .phone-frame { width: 100% !important; height: auto !important; min-height: calc(100vh - 50px) !important; border-radius: 0 !important; padding: 0 !important; box-shadow: none !important; background: white !important; }
-    .phone-screen { border-radius: 0 !important; }
-    [data-view="driver"] > .grid { padding: 0 !important; min-height: auto !important; }
-
-    /* Modals: make them mobile-friendly */
-    #modal > div { max-width: 100vw !important; max-height: 100vh !important; border-radius: 0 !important; }
-
-    /* Tables: allow horizontal scroll instead of breaking */
-    .card.overflow-hidden { overflow-x: auto; }
-    table { min-width: 540px; }
-
-    /* Grids that should stack */
-    .grid.grid-cols-3, .grid.grid-cols-4 { grid-template-columns: 1fr !important; }
-    .grid.grid-cols-2 { grid-template-columns: 1fr !important; }
-  }
 </style>
 </head>
 <body class="text-ink-900 font-sans min-h-screen text-[14px]">
@@ -216,12 +165,13 @@
     <aside class="w-52 border-r border-ink-200 min-h-[calc(100vh-90px)] p-3 bg-ink-50/40">
       <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 px-2 font-semibold">Office</div>
       <nav class="flex flex-col gap-0.5">
-        <button class="nav-btn active text-left px-3 py-1.5 rounded text-[13px] font-medium" data-pane="home">Actions</button>
+        <button class="nav-btn active text-left px-3 py-1.5 rounded text-[13px] font-medium" data-pane="home">Today</button>
         <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100 flex items-center justify-between" data-pane="drafts">
           <span>Drafts from Greg</span>
           <span id="drafts-badge" class="bg-brand-600 text-white text-[10px] font-semibold px-1.5 rounded">2</span>
         </button>
         <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="customers">Customers</button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="toilets">Toilets</button>
         <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="schedules">Schedules</button>
         <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="drivers">Drivers</button>
       </nav>
@@ -231,7 +181,7 @@
 
       <div data-pane-content="home">
         <div class="flex items-baseline justify-between mb-5">
-          <h1 class="text-xl font-semibold tracking-tight">Actions</h1>
+          <h1 class="text-xl font-semibold tracking-tight">Today</h1>
           <div class="text-[12.5px] text-ink-500">Friday, May 8</div>
         </div>
 
@@ -297,6 +247,11 @@
         <div id="customer-detail-view" class="hidden"></div>
       </div>
 
+      <div data-pane-content="toilets" class="hidden">
+        <h1 class="text-xl font-semibold tracking-tight mb-4">Toilet inventory</h1>
+        <div class="grid grid-cols-4 gap-2.5" id="toilet-grid"></div>
+      </div>
+
       <div data-pane-content="drivers" class="hidden">
         <div class="flex items-center justify-between mb-1">
           <h1 class="text-xl font-semibold tracking-tight">Drivers</h1>
@@ -350,19 +305,15 @@
     <div class="flex items-center justify-between mb-4">
       <div>
         <h1 class="text-xl font-semibold tracking-tight">Dispatch</h1>
-        <p class="text-ink-500 text-[12.5px]" id="dispatch-subtitle">Friday, May 8 · drag stops to reorder or reassign</p>
+        <p class="text-ink-500 text-[12.5px]">Friday, May 8 · drag stops to reorder or reassign</p>
       </div>
       <div class="flex items-center gap-1.5">
         <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
-          <button class="day-btn px-3 py-1 text-[12.5px] font-medium bg-white shadow-sm rounded" data-day="today" onclick="setDispatchDay('today')">Today</button>
-          <button class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">Tomorrow</button>
-          <button id="day-date-btn" class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500 inline-flex items-center gap-1.5" onclick="openDatePicker()">
-            <i data-lucide="calendar" class="ico-sm"></i><span id="day-date-label">Pick a date</span>
-          </button>
-          <input id="dispatch-date-picker" type="date" class="sr-only absolute" onchange="setDispatchDate(this.value)" />
+          <button class="day-btn px-3 py-1 text-[12.5px] font-medium bg-white shadow-sm rounded" data-day="today">Today</button>
+          <button class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500" data-day="tomorrow">Tomorrow</button>
         </div>
         <button onclick="autoRoute()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="zap"></i>Auto-route all</button>
-        <button onclick="openInlineStop('Greg')" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="plus"></i>Stop for today</button>
+        <button onclick="openInlineStop('Mike')" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="plus"></i>Stop for today</button>
         <button onclick="openQuickCapture()" class="btn-danger inline-flex items-center gap-1.5"><i data-lucide="mic"></i>New job</button>
       </div>
     </div>
@@ -390,8 +341,9 @@
         <text x="820" y="225" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">MADISON</text>
 
         <!-- Routes -->
-        <path id="path-greg"    d="M 70 130 Q 280 70 480 95 Q 660 115 800 65 Q 880 50 950 90"   stroke="#ea580c" stroke-width="2.5" fill="none" stroke-dasharray="7 5" class="path-flow"/>
-        <path id="path-bradley" d="M 70 130 Q 230 195 420 175 Q 590 165 760 195 Q 870 200 950 170" stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-dasharray="7 5" class="path-flow"/>
+        <path id="path-mike"  d="M 70 130 Q 240 70 400 100 Q 580 130 760 80 Q 870 60 950 95"  stroke="#ea580c" stroke-width="2.5" fill="none" stroke-dasharray="7 5" class="path-flow"/>
+        <path id="path-tony"  d="M 70 130 Q 230 200 420 175 Q 590 160 770 195 Q 880 200 950 175" stroke="#10b981" stroke-width="2.5" fill="none" stroke-dasharray="7 5" class="path-flow"/>
+        <path id="path-jorge" d="M 70 130 Q 200 105 360 120 Q 530 130 690 105 Q 830 85 950 115"  stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-dasharray="7 5" class="path-flow"/>
 
         <!-- Stop dots -->
         <g id="stops-overlay"></g>
@@ -403,20 +355,22 @@
         </g>
 
         <!-- Trucks (rendered by JS) -->
-        <g id="truck-greg-group"></g>
-        <g id="truck-bradley-group"></g>
+        <g id="truck-mike-group"></g>
+        <g id="truck-tony-group"></g>
+        <g id="truck-jorge-group"></g>
       </svg>
 
       <!-- Legend overlay -->
       <div class="absolute top-3 right-3 bg-white border border-ink-200 rounded p-2.5 text-[11px] space-y-1.5">
-        <div id="legend-greg"    class="flex items-center gap-2"><span class="w-3 h-0.5 bg-orange-600"></span><span class="font-semibold">Greg · East</span><span class="text-ink-500" id="legend-greg-progress">—</span></div>
-        <div id="legend-bradley" class="flex items-center gap-2"><span class="w-3 h-0.5 bg-blue-500"></span><span class="font-semibold">Bradley · West</span><span class="text-ink-500" id="legend-bradley-progress">—</span></div>
+        <div id="legend-mike"  class="flex items-center gap-2"><span class="w-3 h-0.5 bg-orange-600"></span><span class="font-semibold">Mike</span><span class="text-ink-500" id="legend-mike-progress">—</span></div>
+        <div id="legend-tony"  class="flex items-center gap-2"><span class="w-3 h-0.5 bg-emerald-500"></span><span class="font-semibold">Tony</span><span class="text-ink-500" id="legend-tony-progress">—</span></div>
+        <div id="legend-jorge" class="flex items-center gap-2"><span class="w-3 h-0.5 bg-blue-500"></span><span class="font-semibold">Jorge</span><span class="text-ink-500" id="legend-jorge-progress">—</span></div>
       </div>
       <div class="absolute bottom-3 left-3 text-[11px] text-ink-500 bg-white border border-ink-200 px-2 py-1 rounded">Updated 2s ago</div>
     </div>
 
-    <div class="grid grid-cols-3 gap-3">
-      <div class="col-span-2 grid grid-cols-2 gap-3" id="dispatch-board"></div>
+    <div class="grid grid-cols-4 gap-3">
+      <div class="col-span-3 grid grid-cols-3 gap-3" id="dispatch-board"></div>
       <aside class="card overflow-hidden self-start">
         <div class="px-3 py-2 border-b border-ink-200">
           <div class="text-[12.5px] font-semibold">Today's changes</div>
@@ -437,8 +391,8 @@
 
         <div class="bg-ink-900 text-white px-5 py-3.5">
           <div class="text-[11px] opacity-70">Friday, May 8</div>
-          <div class="text-lg font-semibold">Greg's route — East</div>
-          <div class="text-[11.5px] opacity-70 mt-0.5" id="driver-progress">3 of 7 stops complete · est. 1h 45m left</div>
+          <div class="text-lg font-semibold">Mike's route</div>
+          <div class="text-[11.5px] opacity-70 mt-0.5" id="driver-progress">3 of 8 stops complete · est. 2h 15m left</div>
         </div>
 
         <div class="px-4 pt-3" id="active-stop"></div>
@@ -504,48 +458,62 @@
 <script>
 /* ============ MOCK DATA ============ */
 const customers = [
-  { id:1, name:'Joe Still / Brent',          phone:'256-555-0118', addr:'446 Jeff Rd., Huntsville, AL',                          toilets:4,  route:'E', day:'Mon, Thu',     last:'2026-05-08' },
-  { id:2, name:'MVP',                        phone:'256-555-0119', addr:'855 Jeff Rd. NW, Huntsville, AL',                       toilets:1,  route:'E', day:'Mon, Tue, Wed',last:'2026-05-08' },
-  { id:3, name:'Turner Construction',        phone:'256-555-0142', addr:'Toyota / 1 Cottonvalley Dr, Huntsville, AL',            toilets:6,  route:'E', day:'Mon, Wed, Thu',last:'2026-05-07' },
-  { id:4, name:'Adams Homes',                phone:'256-555-0177', addr:'Multiple subdivisions across North Alabama',            toilets:14, route:'W', day:'Mon, Tue, Fri',last:'2026-05-08' },
-  { id:5, name:'Hathaway Construction',      phone:'256-555-0199', addr:'Clift Farms, 8140 Hwy 72 W, Madison, AL',               toilets:3,  route:'E', day:'Mon, Thu',     last:'2026-05-08' },
-  { id:6, name:'Stoneridge Homes',           phone:'256-555-0123', addr:'Shields Park, 124 Shields Lake Dr, Huntsville',         toilets:6,  route:'W', day:'Tue, Wed, Thu',last:'2026-05-08' },
-  { id:7, name:'Fite Building',              phone:'256-555-0144', addr:'1030 Old Monrovia Rd., Huntsville, AL',                 toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-08' },
-  { id:8, name:'Webster Homes',              phone:'256-555-0155', addr:'Monroe Manor, 202 Stafford View Ln, Meridianville',     toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-04' },
-  { id:9, name:'Robbins & Morton',           phone:'256-555-0166', addr:'SCI Sanmina, 13000 S. Memorial Pkwy, Huntsville',       toilets:2,  route:'E', day:'Tue, Thu',     last:'2026-05-06' },
-  { id:10,name:'Pearce Construction',        phone:'256-555-0188', addr:'Huntsville Aquatic Center, 2213 Drake Ave',             toilets:2,  route:'E', day:'Tue, Wed',     last:'2026-05-06' },
-  { id:11,name:'Legacy Premier Homes',       phone:'256-555-0211', addr:'Old Stone, 24206 Beacon Circle, Athens',                toilets:1,  route:'W', day:'Tue, Fri',     last:'2026-05-08' },
-  { id:12,name:'Grayson Carter & Sons',      phone:'256-555-0233', addr:'New subdivision across from 4569 Winchester',           toilets:2,  route:'W', day:'Tue, Wed, Fri',last:'2026-05-08' },
+  { id:1, name:'Absolute Custom Remodeling', phone:'256-555-0118', addr:'1 Stockton St., Huntsville AL', toilets:1, route:'G', day:'Tue', last:'2026-04-30' },
+  { id:2, name:'APEL Machine', phone:'256-620-1081', addr:'914 West Elm St., Athens AL', toilets:1, route:'G', day:'Wed', last:'2026-04-29' },
+  { id:3, name:'Ashley Thompson Construction', phone:'256-555-0142', addr:'500 West Morgan Rd., Decatur AL', toilets:2, route:'B', day:'Mon', last:'2026-05-04' },
+  { id:4, name:'Decatur Builders Co.', phone:'256-555-0177', addr:'42 Industrial Park, Decatur AL', toilets:3, route:'B', day:'Mon, Thu', last:'2026-05-04' },
+  { id:5, name:'Hampton Inn Madison', phone:'256-555-0199', addr:'4870 University Dr., Madison AL', toilets:2, route:'H', day:'Fri', last:'2026-05-01' },
+  { id:6, name:'Madison Park (City)', phone:'256-555-0123', addr:'700 Main St., Madison AL', toilets:4, route:'H', day:'Tue, Fri', last:'2026-05-05' },
+  { id:7, name:'Smith Wedding (event)', phone:'256-555-0211', addr:'88 Riverside Ln, Athens AL', toilets:5, route:'—', day:'EVENT', last:'—' },
+  { id:8, name:'River Festival 2026 (event)', phone:'256-555-0233', addr:'Ditto Landing, Huntsville AL', toilets:12, route:'—', day:'EVENT', last:'—' },
+];
+const toilets = [
+  {n:'NGC-101', type:'Standard', loc:'Absolute Custom Remodeling'},
+  {n:'NGC-102', type:'Standard', loc:'APEL Machine'},
+  {n:'NGC-103', type:'Standard', loc:'Ashley Thompson Construction'},
+  {n:'NGC-104', type:'Standard', loc:'Ashley Thompson Construction'},
+  {n:'TanSat-12', type:'Handicap', loc:'Decatur Builders Co.'},
+  {n:'NGC-105', type:'Standard', loc:'Decatur Builders Co.'},
+  {n:'NGC-106', type:'Standard', loc:'Decatur Builders Co.'},
+  {n:'NGC-107', type:'Standard', loc:'Hampton Inn Madison'},
+  {n:'NGC-108', type:'Standard', loc:'Hampton Inn Madison'},
+  {n:'NGC-110', type:'Standard', loc:'Available'},
+  {n:'NGC-111', type:'Standard', loc:'Available'},
+  {n:'VIP-04',  type:'VIP',      loc:'Available'},
 ];
 const driverData = {
-  Greg: [
-    {id:'g1', cust:'Joe Still / Brent',         addr:'446 Jeff Rd., Huntsville, AL',                 units:'4 standard',             type:'clean', status:'completed', completedAt:'7:42a'},
-    {id:'g2', cust:'MVP',                       addr:'855 Jeff Rd. NW, Huntsville, AL',              units:'1 standard',             type:'clean', status:'completed', completedAt:'8:14a'},
-    {id:'g3', cust:'Hathaway Construction',     addr:'Clift Farms, 8140 Hwy 72 W, Madison, AL',      units:'3 standard',             type:'clean', status:'completed', completedAt:'8:55a'},
-    {id:'g4', cust:'Turner Construction',       addr:'Toyota / 1 Cottonvalley Dr, Huntsville, AL',   units:'5 standard, 1 handicap', type:'clean', status:'active',    notes:'Job site — watch for forklifts, badge in at trailer'},
-    {id:'g5', cust:'Robbins & Morton',          addr:'SCI Sanmina, 13000 S. Memorial Pkwy, Huntsville', units:'2 standard',           type:'clean', status:'pending'},
-    {id:'g6', cust:'Bart Darwin Builders',      addr:'Mullins Bend, 160 Stony Crossing Rd, Meridianville', units:'1 standard',        type:'clean', status:'pending'},
-    {id:'g7', cust:'Pearce Construction',       addr:'Huntsville Aquatic Center, 2213 Drake Ave',    units:'2 standard',             type:'clean', status:'pending', notes:'Park opens at 8 — be done by then'},
+  Mike: [
+    {id:'m1', cust:'Absolute Custom Remodeling', addr:'1 Stockton St., Huntsville', toilet:'NGC-101', type:'clean', status:'completed', completedAt:'7:42a'},
+    {id:'m2', cust:'River Oaks Estates',         addr:'1110 River Oaks Dr, Madison',toilet:'NGC-115',         type:'clean', status:'completed', completedAt:'8:21a'},
+    {id:'m3', cust:'Decatur Builders Co.',       addr:'42 Industrial Park, Decatur',toilet:'3 units',          type:'clean', status:'completed', completedAt:'9:08a'},
+    {id:'m4', cust:'Hampton Inn Madison',        addr:'4870 University Dr., Madison',toilet:'NGC-107, NGC-108',type:'clean', status:'active',    notes:'Both units in side parking — gate code 4490'},
+    {id:'m5', cust:'Madison Park (City)',        addr:'700 Main St., Madison',      toilet:'4 units',          type:'clean', status:'pending',   notes:'Park opens at 8 — be done by then'},
+    {id:'m6', cust:'Smith Wedding',              addr:'88 Riverside Ln, Athens',    toilet:'5 units',          type:'deliver', status:'pending', notes:'Drop near east gate'},
+    {id:'m7', cust:'Holler Trucking',            addr:'8845 Hwy 31, Athens',        toilet:'NGC-119',          type:'clean', status:'pending'},
   ],
-  Bradley: [
-    {id:'b1', cust:'Adams Homes',               addr:'Monrovia Manor, 126 Earle Phillips, Madison',  units:'1 standard',             type:'clean', status:'completed', completedAt:'7:30a'},
-    {id:'b2', cust:'Stoneridge Homes',          addr:'Shields Park, 124 Shields Lake Dr',            units:'2 standard',             type:'clean', status:'completed', completedAt:'8:18a'},
-    {id:'b3', cust:'Fite Building',             addr:'1030 Old Monrovia Rd., Huntsville, AL',        units:'2 standard',             type:'clean', status:'active',    notes:'Building entrance — drop pump on south side'},
-    {id:'b4', cust:'Webster Homes',             addr:'Monroe Manor, 202 Stafford View Ln, Meridianville', units:'2 standard',         type:'clean', status:'pending'},
-    {id:'b5', cust:'Grayson Carter',            addr:'New subdivision across from 4569 Winchester',  units:'2 standard',             type:'clean', status:'pending'},
-    {id:'b6', cust:'Legacy Premier Homes',      addr:'Old Stone, 24206 Beacon Circle',               units:'1 standard',             type:'clean', status:'pending'},
-    {id:'b7', cust:'Lynn Persell',              addr:'Ellenwood, 19230 Rachels Loop',                units:'1 standard',             type:'clean', status:'pending'},
-    {id:'b8', cust:'Hawkins Groundwork',        addr:'Jones Rd. substation, Athens, AL',             units:'1 standard',             type:'pickup',status:'pending', notes:'Project finished — pickup'},
+  Tony: [
+    {id:'t0', cust:'Tanner Park Construction',   addr:'88 Tanner Industrial, Tanner',toilet:'NGC-120',         type:'clean', status:'completed', completedAt:'7:30a'},
+    {id:'t1', cust:'Ashley Thompson Construction',addr:'500 West Morgan Rd., Decatur',toilet:'NGC-103, NGC-104',type:'clean', status:'active',   notes:'Job site — watch for forklifts'},
+    {id:'t2', cust:'Decatur Steel Co.',          addr:'1810 Industrial Pkwy, Decatur',toilet:'NGC-122',         type:'clean', status:'pending'},
+    {id:'t3', cust:'River Festival 2026',        addr:'Ditto Landing, Huntsville',  toilet:'12 units',         type:'pickup', status:'pending', notes:'Event ended Sun — pickup all units'},
+    {id:'t4', cust:'Carter Roofing',             addr:'455 Hwy 31, Hartselle',      toilet:'NGC-125',          type:'clean', status:'pending'},
+  ],
+  Jorge: [
+    {id:'j1', cust:'APEL Machine',               addr:'914 West Elm St., Athens',   toilet:'NGC-102',          type:'clean', status:'active'},
+    {id:'j2', cust:'Greenbrier Methodist',       addr:'2200 Greenbrier Pkwy, Madison',toilet:'NGC-118',         type:'clean', status:'pending'},
+    {id:'j3', cust:'Athens Steel Co.',           addr:'200 Industrial Blvd, Athens',toilet:'NGC-130',          type:'clean', status:'pending'},
+    {id:'j4', cust:'Lawler Construction',        addr:'77 Lindsay Ln, Athens',      toilet:'NGC-131',          type:'clean', status:'pending'},
   ]
 };
 const driverMeta = {
-  Greg:    { routeCode: 'E', color: '#ea580c', colorClass:'bg-orange-600', headingTo: 'Turner Construction (Toyota)', status: 'active' },
-  Bradley: { routeCode: 'W', color: '#3b82f6', colorClass:'bg-blue-500',   headingTo: 'Fite Building (1030 Old Monrovia)', status: 'active' },
+  Mike:  { routeCode: 'H', color: '#ea580c', colorClass:'bg-orange-600',  headingTo: 'Hampton Inn Madison',         status: 'active' },
+  Tony:  { routeCode: 'B', color: '#10b981', colorClass:'bg-emerald-500', headingTo: 'Ashley Thompson Construction', status: 'active' },
+  Jorge: { routeCode: 'G', color: '#3b82f6', colorClass:'bg-blue-500',    headingTo: 'APEL Machine',                 status: 'active' },
 };
 const recents = [
-  { when:'Today 9:14am', who:'Kim',  what:'Added recurring: Hawkins Groundwork — Tue/Fri, Route W, Bradley — $90' },
-  { when:'Yesterday',    who:'Kim',  what:'Added recurring: Hathaway Construction (Clift Farms) — Mon/Thu, Route E, Greg — $90' },
-  { when:'May 5',        who:'Greg', what:'Moved Adams Homes — Summit Lakes from Tue to Tue/Fri permanently' },
+  { when:'Today 9:14am', who:'Kim', what:'Added recurring: Holler Trucking — Wed, Route G, Jorge — $90' },
+  { when:'Yesterday',    who:'Kim', what:'Added event: Smith Wedding — Drop 5/14, Pickup 5/16, 5 units, Mike' },
+  { when:'May 5',        who:'Greg',what:'Moved Madison Park from Mon to Tue/Fri permanently' },
 ];
 
 /* ============ ROLE / NAV ============ */
@@ -602,18 +570,17 @@ function renderCustomers(filter=''){
     </tr>`).join('');
 }
 function renderToilets(){
-  // Toilet inventory pane removed — Greg doesn't track per-unit IDs.
-  return;
-  /* legacy template:
+  document.getElementById('toilet-grid').innerHTML = toilets.map(t => {
+    const avail = t.loc === 'Available';
     return `<div class="card p-3">
       <div class="flex items-center justify-between mb-1">
-        <div class="font-mono text-[12.5px] font-semibold">UNIT</div>
-        <span class="text-[10px] uppercase tracking-wider font-semibold text-ink-500">Out</span>
+        <div class="font-mono text-[12.5px] font-semibold">${t.n}</div>
+        <span class="text-[10px] uppercase tracking-wider font-semibold ${avail?'text-green-700':'text-ink-500'}">${avail?'Avail':'Out'}</span>
       </div>
-      <div class="text-[11.5px] text-ink-500">type</div>
-      <div class="text-[12.5px] mt-0.5">loc</div>
+      <div class="text-[11.5px] text-ink-500">${t.type}</div>
+      <div class="text-[12.5px] mt-0.5">${t.loc}</div>
     </div>`;
-  */
+  }).join('');
 }
 function renderSchedules(){
   const rec = customers.filter(c => c.day !== 'EVENT');
@@ -625,7 +592,7 @@ function renderSchedules(){
       </td>
       <td class="px-3 py-2.5 ${c.retired?'line-through text-ink-500':''}">${c.day}</td>
       <td class="px-3 py-2.5"><span class="tag ${c.retired?'tag-skip':'tag-deliver'}">Route ${c.route}</span></td>
-      <td class="px-3 py-2.5 ${c.retired?'line-through text-ink-500':''}">${c.route==='E'?'Greg':'Bradley'}</td>
+      <td class="px-3 py-2.5 ${c.retired?'line-through text-ink-500':''}">${c.route==='G'?'Jorge':c.route==='B'?'Tony':'Mike'}</td>
       <td class="px-3 py-2.5 ${c.retired?'line-through text-ink-500':''}">$90.00</td>
       <td class="px-3 py-2.5 text-right">
         ${c.retired
@@ -643,77 +610,61 @@ function reactivate(btn){
 
 /* ============ CUSTOMER DETAIL + REPORT ============ */
 const customerDetails = {
-  4: { // Adams Homes — major homebuilder, multiple subdivisions
-    email:'office@adamshomes.com', billingAddr:'P.O. Box 4421, Madison AL 35758', sinceDate:'2018-09-22',
+  4: { // Decatur Builders Co. — multi-site construction company
+    email:'office@decaturbuilders.com', billingAddr:'P.O. Box 8821, Decatur AL 35601', sinceDate:'2022-04-15',
     locations: [
-      { id:1, label:'Heritage Estates / Heritage Village', address:'16073 Bruton Dr., Harvest, AL',                         units:'8 standard',   started:'2024-04-12', active:true },
-      { id:2, label:'Brookfield Manor',                    address:'292 Abercorn Dr., Triana, AL',                           units:'6 standard',   started:'2024-07-08', active:true },
-      { id:3, label:'Summit Lakes',                        address:'Summit Lakes Dr., Athens, AL',                          units:'5 standard',   started:'2025-02-11', active:true },
-      { id:4, label:'Monrovia Manor',                      address:'126 Earle Phillips, Madison, AL',                       units:'1 standard',   started:'2024-08-17', active:true },
-      { id:5, label:'Burwell Gardens',                     address:'135 Brooklawn Dr, Harvest, AL',                         units:'',             started:'2023-11-03', endedAt:'2025-12-04', active:false },
+      { id:1, label:'Industrial Park site',  address:'42 Industrial Park, Decatur AL',  toilets:['NGC-105','NGC-106','TanSat-12'], started:'2024-08-12', active:true },
+      { id:2, label:'Hwy 31 Expansion',      address:'4400 Hwy 31, Decatur AL',         toilets:['NGC-140','NGC-141'],              started:'2025-03-04', active:true },
+      { id:3, label:'Westgate Project',      address:'88 Westgate Pkwy, Decatur AL',    toilets:[],                                 started:'2024-11-01', endedAt:'2025-12-15', active:false },
     ],
     history: [
-      { date:'2026-05-08', type:'clean',   loc:'Monrovia Manor',                       units:'1 standard',   driver:'Bradley', notes:'' },
-      { date:'2026-05-06', type:'clean',   loc:'Heritage Estates / Heritage Village',  units:'8 standard',   driver:'Bradley', notes:'Watch for kids playing — neighborhood' },
-      { date:'2026-05-05', type:'clean',   loc:'Brookfield Manor',                     units:'6 standard',   driver:'Bradley', notes:'' },
-      { date:'2026-05-02', type:'clean',   loc:'Summit Lakes',                         units:'5 standard',   driver:'Bradley', notes:'' },
-      { date:'2026-05-01', type:'clean',   loc:'Monrovia Manor',                       units:'1 standard',   driver:'Bradley', notes:'' },
-      { date:'2026-04-29', type:'clean',   loc:'Heritage Estates / Heritage Village',  units:'8 standard',   driver:'Bradley', notes:'' },
-      { date:'2026-04-28', type:'clean',   loc:'Brookfield Manor',                     units:'6 standard',   driver:'Bradley', notes:'' },
-      { date:'2026-04-25', type:'clean',   loc:'Summit Lakes',                         units:'5 standard',   driver:'Bradley', notes:'' },
-      { date:'2026-04-24', type:'clean',   loc:'Monrovia Manor',                       units:'1 standard',   driver:'Greg',    notes:'Bradley out — Greg covered' },
-      { date:'2026-04-22', type:'clean',   loc:'Heritage Estates / Heritage Village',  units:'8 standard',   driver:'Bradley', notes:'' },
-      { date:'2026-04-21', type:'clean',   loc:'Brookfield Manor',                     units:'6 standard',   driver:'Bradley', notes:'' },
-      { date:'2026-02-11', type:'deliver', loc:'Summit Lakes',                         units:'5 standard',   driver:'Bradley', notes:'New subdivision opened — initial 5 units' },
-      { date:'2025-12-04', type:'pickup',  loc:'Burwell Gardens',                      units:'2 standard',   driver:'Greg',    notes:'Subdivision sold out — site retired from route' },
+      { date:'2026-05-04', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Tony', notes:'' },
+      { date:'2026-05-01', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-04-27', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Tony', notes:'Watch for forklifts' },
+      { date:'2026-04-24', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-04-20', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Tony', notes:'' },
+      { date:'2026-04-17', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-04-13', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Mike', notes:'Tony out — Mike covered' },
+      { date:'2026-04-10', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-04-06', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Tony', notes:'' },
+      { date:'2026-04-03', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-03-04', type:'deliver', loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'New site, near gate' },
+      { date:'2025-12-15', type:'pickup',  loc:'Westgate Project',     toilets:'2 units',                     driver:'Mike', notes:'Project completed, retired from route' },
     ]
   },
-  3: { // Turner Construction
-    email:'pm@turnerconstruction.com', billingAddr:'1 Cottonvalley Dr, Huntsville AL 35824', sinceDate:'2019-03-04',
+  5: { // Hampton Inn Madison
+    email:'manager@hamptonmadison.com', billingAddr:'4870 University Dr., Madison AL 35758', sinceDate:'2024-11-08',
     locations: [
-      { id:1, label:'Toyota / Cottonvalley Dr', address:'Toyota / 1 Cottonvalley Dr, Huntsville, AL', units:'5 standard, 1 handicap', started:'2019-03-04', active:true }
+      { id:1, label:'Side parking',  address:'4870 University Dr., Madison AL', toilets:['NGC-107','NGC-108'], started:'2024-11-08', active:true }
     ],
     history: [
-      { date:'2026-05-08', type:'clean',   loc:'Toyota / Cottonvalley Dr', units:'5 standard, 1 handicap', driver:'Greg', notes:'Job site — watch for forklifts, badge in at trailer' },
-      { date:'2026-05-06', type:'clean',   loc:'Toyota / Cottonvalley Dr', units:'5 standard, 1 handicap', driver:'Greg', notes:'' },
-      { date:'2026-05-04', type:'clean',   loc:'Toyota / Cottonvalley Dr', units:'5 standard, 1 handicap', driver:'Greg', notes:'' },
-      { date:'2026-05-01', type:'clean',   loc:'Toyota / Cottonvalley Dr', units:'5 standard, 1 handicap', driver:'Greg', notes:'' },
-      { date:'2026-04-29', type:'clean',   loc:'Toyota / Cottonvalley Dr', units:'5 standard, 1 handicap', driver:'Greg', notes:'' },
-      { date:'2026-04-27', type:'clean',   loc:'Toyota / Cottonvalley Dr', units:'5 standard, 1 handicap', driver:'Greg', notes:'' },
+      { date:'2026-05-08', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-05-01', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-04-24', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-04-17', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-04-10', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-04-03', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2024-11-08', type:'deliver', loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'Initial drop-off' },
     ]
   },
-  7: { // Fite Building
-    email:'office@fitebuilding.com', billingAddr:'1030 Old Monrovia Rd., Huntsville AL 35806', sinceDate:'2020-05-18',
+  6: { // Madison Park
+    email:'parks@madisonal.gov', billingAddr:'700 Main St., Madison AL 35758', sinceDate:'2023-05-01',
     locations: [
-      { id:1, label:'Old Monrovia Rd HQ', address:'1030 Old Monrovia Rd., Huntsville, AL', units:'2 standard', started:'2020-05-18', active:true }
+      { id:1, label:'Pavilion area',  address:'700 Main St., Madison AL', toilets:['NGC-150','NGC-151','NGC-152','VIP-04'], started:'2023-05-01', active:true }
     ],
     history: [
-      { date:'2026-05-08', type:'clean',   loc:'Old Monrovia Rd HQ', units:'2 standard', driver:'Bradley', notes:'Building entrance — drop pump on south side' },
-      { date:'2026-05-06', type:'clean',   loc:'Old Monrovia Rd HQ', units:'2 standard', driver:'Bradley', notes:'' },
-      { date:'2026-05-04', type:'clean',   loc:'Old Monrovia Rd HQ', units:'2 standard', driver:'Bradley', notes:'' },
-      { date:'2026-05-01', type:'clean',   loc:'Old Monrovia Rd HQ', units:'2 standard', driver:'Bradley', notes:'' },
-      { date:'2026-04-29', type:'clean',   loc:'Old Monrovia Rd HQ', units:'2 standard', driver:'Bradley', notes:'' },
-    ]
-  },
-  6: { // Stoneridge Homes
-    email:'office@stoneridgehomes.com', billingAddr:'124 Shields Lake Dr, Huntsville AL 35811', sinceDate:'2021-08-30',
-    locations: [
-      { id:1, label:'Shields Park development', address:'Shields Park, 124 Shields Lake Dr', units:'2 standard, 1 hand-wash', started:'2024-09-15', active:true },
-      { id:2, label:'Phase 2 expansion',         address:'Shields Park Lot 14/1, Huntsville AL', units:'3 standard',          started:'2025-06-01', active:true }
-    ],
-    history: [
-      { date:'2026-05-08', type:'clean',  loc:'Shields Park development', units:'2 standard, 1 hand-wash', driver:'Bradley', notes:'' },
-      { date:'2026-05-07', type:'clean',  loc:'Phase 2 expansion',         units:'3 standard',             driver:'Bradley', notes:'' },
-      { date:'2026-05-06', type:'clean',  loc:'Shields Park development', units:'2 standard, 1 hand-wash', driver:'Bradley', notes:'' },
-      { date:'2026-05-05', type:'clean',  loc:'Phase 2 expansion',         units:'3 standard',             driver:'Bradley', notes:'' },
-      { date:'2026-05-01', type:'clean',  loc:'Shields Park development', units:'2 standard, 1 hand-wash', driver:'Bradley', notes:'' },
+      { date:'2026-05-08', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'Park opens at 8' },
+      { date:'2026-05-05', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'' },
+      { date:'2026-05-01', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'' },
+      { date:'2026-04-28', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'' },
+      { date:'2026-04-24', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'' },
     ]
   }
 };
 function getCustomerDetail(customerId){
   return customerDetails[customerId] || {
     email:'—', billingAddr:'(none on file)', sinceDate:'—',
-    locations:[{ id:1, label:'Service location', address:customers.find(c=>c.id===customerId)?.addr || '', units:'', started:'—', active:true }],
+    locations:[{ id:1, label:'Service location', address:customers.find(c=>c.id===customerId)?.addr || '', toilets:[], started:'—', active:true }],
     history:[]
   };
 }
@@ -779,7 +730,7 @@ function openCustomerDetail(customerId){
             </div>
             <div class="text-[11.5px] text-ink-500">Since ${loc.started}</div>
           </div>
-          ${loc.units ? `<div class="text-[12px] mt-2 text-ink-700"><span class="text-ink-500">Units on site: </span>${loc.units}</div>` : '<div class="text-[11.5px] text-ink-500 italic mt-1">No units currently deployed</div>'}
+          ${loc.toilets.length ? `<div class="flex flex-wrap gap-1 mt-2">${loc.toilets.map(t => `<span class="font-mono text-[11px] bg-ink-50 border border-ink-200 rounded px-1.5 py-0.5">${t}</span>`).join('')}</div>` : '<div class="text-[11.5px] text-ink-500 italic mt-1">No units currently deployed</div>'}
         </div>`).join('')}
     </div>
 
@@ -797,7 +748,7 @@ function openCustomerDetail(customerId){
             <th class="text-left px-3 py-2 font-semibold w-28">Date</th>
             <th class="text-left px-3 py-2 font-semibold">Service</th>
             <th class="text-left px-3 py-2 font-semibold">Location</th>
-            <th class="text-left px-3 py-2 font-semibold">Units</th>
+            <th class="text-left px-3 py-2 font-semibold">Toilets</th>
             <th class="text-left px-3 py-2 font-semibold">Driver</th>
             <th class="text-left px-3 py-2 font-semibold">Notes</th>
           </tr>
@@ -814,7 +765,7 @@ function historyRows(hist){
       <td class="px-3 py-2 font-mono text-[11.5px]">${h.date}</td>
       <td class="px-3 py-2">${tagFor(h.type)}</td>
       <td class="px-3 py-2">${h.loc}</td>
-      <td class="px-3 py-2 text-[12px]">${h.units}</td>
+      <td class="px-3 py-2 font-mono text-[11.5px]">${h.toilets}</td>
       <td class="px-3 py-2">${h.driver}</td>
       <td class="px-3 py-2 text-ink-500 italic">${h.notes||''}</td>
     </tr>`).join('');
@@ -921,7 +872,7 @@ function buildReportHTML(c, d, fromDate, toDate){
                 ${events.map(e => `<tr>
                   <td>${e.date}</td>
                   <td><span class="report-svc report-svc-${e.type}">${e.type==='deliver'?'Delivery':e.type==='clean'?'Cleaning':e.type==='pickup'?'Pickup':e.type}</span></td>
-                  <td>${e.units}</td>
+                  <td>${e.toilets}</td>
                   <td>${e.driver}</td>
                   <td>${e.notes||''}</td>
                 </tr>`).join('')}
@@ -959,11 +910,12 @@ function recurringFormHTML(p){
   const days = d.days || [];
   const toiletCount = d.toilets || '';
   const routeOpts = [
-    { code:'E', label:'E — East / Huntsville-Madison-Athens (Greg)' },
-    { code:'W', label:'W — West / Athens-Tanner-Madison (Bradley)' },
+    { code:'G', label:'G — Athens / Tanner (Jorge)' },
+    { code:'B', label:'B — Decatur / Hartselle (Tony)' },
+    { code:'H', label:'H — Huntsville / Madison (Mike)' },
   ];
-  const routeMatch = (d.route || '').match(/^([EW])/);
-  const routeCode = routeMatch ? routeMatch[1] : 'E';
+  const routeMatch = (d.route || '').match(/^([GBH])/);
+  const routeCode = routeMatch ? routeMatch[1] : 'G';
   const banner = p ? `
     <div class="bg-amber-50 border border-amber-300 rounded p-3 text-[12px] text-amber-900 mb-1">
       <strong>Pre-filled from Greg's note.</strong> Double-check anything that looks off, then save.
@@ -1019,7 +971,7 @@ function recurringFormHTML(p){
           </select>
         </div>
         <div><label class="block text-[12.5px] font-medium mb-1">Override driver <span class="text-ink-500 font-normal">(optional)</span></label>
-          <select class="input w-full"><option>Use route default</option><option>Greg</option><option>Bradley</option></select>
+          <select class="input w-full"><option>Use route default</option><option>Mike</option><option>Tony</option><option>Jorge</option></select>
         </div>
       </div>
       <div>
@@ -1083,7 +1035,7 @@ function eventFormHTML(p){
       <div class="grid grid-cols-2 gap-3">
         <div><label class="block text-[12.5px] font-medium mb-1">Driver</label>
           <select class="input w-full">
-            ${['Auto-assign by closest route','Greg','Bradley'].map(opt => {
+            ${['Auto-assign by closest route','Mike','Tony','Jorge'].map(opt => {
               const sel = (d.driver === opt || (d.driver === 'Auto-assign' && opt.startsWith('Auto-assign'))) ? 'selected' : '';
               return `<option ${sel}>${opt}</option>`;
             }).join('')}
@@ -1111,107 +1063,8 @@ function eventFormHTML(p){
 function submitForm(e, kind){ e.preventDefault(); closeModal(); toast(kind==='recurring' ? 'Saved. Future stops added to driver routes.' : 'Event booked. Drop-off, cleanings, and pickup scheduled.'); }
 function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'), 2800); }
 
-/* ============ DISPATCH DAY STATE ============ */
-let dispatchDay = 'today'; // 'today', 'tomorrow', or YYYY-MM-DD string
-
-// Saturday = light. Sunday = closed (no work). Future weekdays = projection from recurring.
-const tomorrowData = {
-  Greg: [
-    {id:'gt1', cust:'Mendoza Wedding',     addr:'88 Riverside Ln, Athens, AL',   units:'5 standard, 1 handicap', type:'deliver', status:'scheduled', notes:'Drop near east gate'},
-    {id:'gt2', cust:'Turner Construction', addr:'Toyota / 1 Cottonvalley Dr, Huntsville', units:'5 standard, 1 handicap', type:'clean', status:'scheduled', notes:'Saturday job-site cleaning'},
-  ],
-  Bradley: [
-    {id:'bt1', cust:'Hawkins Groundwork',  addr:'Jones Rd. substation, Athens, AL', units:'1 standard', type:'pickup',  status:'scheduled', notes:'Customer requested Sat pickup'},
-  ]
-};
-
-function projectedDataFor(dateStr){
-  // Generate a planning view for any future date by projecting today's customers as 'scheduled'
-  const proj = {};
-  Object.keys(driverData).forEach(driver => {
-    proj[driver] = driverData[driver]
-      .filter(s => s.status !== 'pickup') // pickups are one-shots, don't repeat
-      .map(s => ({ ...s, id: 'p'+s.id, status: 'scheduled', completedAt: undefined }));
-  });
-  return proj;
-}
-
-function getCurrentDispatchData(){
-  if (dispatchDay === 'today')    return driverData;
-  if (dispatchDay === 'tomorrow') return tomorrowData;
-  return projectedDataFor(dispatchDay);
-}
-
-function isViewingToday(){ return dispatchDay === 'today'; }
-
-function formatDispatchLabel(){
-  if (dispatchDay === 'today')    return 'Friday, May 8 · today';
-  if (dispatchDay === 'tomorrow') return 'Saturday, May 9 · tomorrow';
-  // YYYY-MM-DD → "Mon, May 11"
-  const d = new Date(dispatchDay + 'T12:00:00');
-  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
-}
-
-function setDispatchDay(day){
-  dispatchDay = day;
-  // Update toggle visual state
-  document.querySelectorAll('.day-btn').forEach(b => {
-    b.classList.remove('bg-white','shadow-sm','rounded');
-    b.classList.add('text-ink-500');
-  });
-  const activeBtn = document.querySelector(`[data-day="${day}"]`);
-  if (activeBtn){ activeBtn.classList.add('bg-white','shadow-sm','rounded'); activeBtn.classList.remove('text-ink-500'); }
-  // Reset date label
-  const lbl = document.getElementById('day-date-label');
-  if (lbl) lbl.textContent = 'Pick a date';
-  renderBoard();
-  renderTodaysChanges();
-  updateDispatchSubtitle();
-  refreshIcons();
-}
-
-function openDatePicker(){
-  const inp = document.getElementById('dispatch-date-picker');
-  if (!inp) return;
-  // Default to next Monday (May 11) for the demo
-  if (!inp.value) inp.value = '2026-05-11';
-  if (inp.showPicker) try { inp.showPicker(); return; } catch(e) {}
-  inp.click();
-}
-
-function setDispatchDate(dateStr){
-  if (!dateStr) return;
-  dispatchDay = dateStr;
-  // Update visuals
-  document.querySelectorAll('.day-btn').forEach(b => {
-    b.classList.remove('bg-white','shadow-sm','rounded');
-    b.classList.add('text-ink-500');
-  });
-  const dateBtn = document.getElementById('day-date-btn');
-  dateBtn.classList.add('bg-white','shadow-sm','rounded');
-  dateBtn.classList.remove('text-ink-500');
-  const d = new Date(dateStr + 'T12:00:00');
-  document.getElementById('day-date-label').textContent = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
-  renderBoard();
-  renderTodaysChanges();
-  updateDispatchSubtitle();
-  refreshIcons();
-}
-
-function updateDispatchSubtitle(){
-  const sub = document.getElementById('dispatch-subtitle');
-  if (!sub) return;
-  if (isViewingToday()){
-    sub.textContent = 'Friday, May 8 · drag stops to reorder or reassign';
-  } else if (dispatchDay === 'tomorrow'){
-    sub.textContent = `${formatDispatchLabel()} · auto-built — drivers see this at 6am`;
-  } else {
-    sub.textContent = `${formatDispatchLabel()} · projected from recurring schedules`;
-  }
-}
-
 /* ============ GREG — DISPATCH BOARD ============ */
-const driverColors = { Greg:'bg-orange-600', Bradley:'bg-blue-500' };
+const driverColors = { Mike:'bg-orange-600', Tony:'bg-emerald-500', Jorge:'bg-blue-500' };
 function tagFor(type){
   if(type==='clean')   return '<span class="tag tag-clean">Clean</span>';
   if(type==='deliver') return '<span class="tag tag-deliver">Deliver</span>';
@@ -1221,8 +1074,7 @@ function tagFor(type){
 }
 function statusOrder(s){ return s.status==='completed'?0 : s.status==='active'?1 : 2; }
 function progressOf(driver){
-  const data = getCurrentDispatchData();
-  const arr = data[driver] || [];
+  const arr = driverData[driver];
   const done = arr.filter(s=>s.status==='completed').length;
   const total = arr.length;
   // Position halfway through the active stop, or at end of completed if no active
@@ -1232,12 +1084,11 @@ function progressOf(driver){
 }
 function renderBoard(){
   const board = document.getElementById('dispatch-board');
-  const currentData = getCurrentDispatchData();
-  board.innerHTML = Object.entries(currentData).map(([driver, stops])=>{
+  board.innerHTML = Object.entries(driverData).map(([driver, stops])=>{
     const meta = driverMeta[driver];
     const p = progressOf(driver);
     const sorted = [...stops].sort((a,b)=>statusOrder(a)-statusOrder(b));
-    const barColor = meta.colorClass;
+    const barColor = driver==='Mike'?'bg-orange-600':driver==='Tony'?'bg-emerald-500':'bg-blue-500';
     const isOut = meta.status !== 'active';
     return `
     <div class="card overflow-hidden ${isOut?'opacity-75':''}">
@@ -1269,7 +1120,7 @@ function renderBoard(){
             </div>
             <div class="text-[13px] font-semibold leading-tight stop-name">${s.cust}</div>
             <div class="text-[11.5px] text-ink-500 leading-tight">${s.addr}</div>
-            <div class="text-[11.5px] text-ink-700 mt-1">${s.units}</div>
+            <div class="text-[11.5px] text-ink-700 mt-1 font-mono">${s.toilet}</div>
             ${s.notes ? `<div class="text-[11.5px] italic text-ink-500 mt-1">"${s.notes}"</div>` : ''}
             ${isCompleted ? '' : `
               <div class="flex gap-2 mt-1.5">
@@ -1288,17 +1139,15 @@ function renderBoard(){
 
 /* ============ MAP TRUCKS ============ */
 function positionTrucks(){
-  // For non-today views, park trucks at depot (route hasn't started)
-  const isToday = isViewingToday();
-  Object.keys(driverMeta).forEach(driver => {
+  ['Mike','Tony','Jorge'].forEach(driver => {
     const path = document.getElementById(`path-${driver.toLowerCase()}`);
     const group = document.getElementById(`truck-${driver.toLowerCase()}-group`);
     const meta = driverMeta[driver];
     if (!path || !group) return;
-    if (meta.status !== 'active' || !isToday){
+    if (meta.status !== 'active'){
       group.innerHTML = '';
-      // dim the path for out drivers or non-today views
-      path.style.opacity = isToday ? '0.2' : '0.45';
+      // dim the path for out drivers
+      path.style.opacity = '0.2';
       path.style.animationPlayState = 'paused';
       return;
     } else {
@@ -1338,21 +1187,17 @@ function positionTrucks(){
   });
 
   // legend progress text
-  Object.keys(driverMeta).forEach(driver => {
+  ['Mike','Tony','Jorge'].forEach(driver => {
     const p = progressOf(driver);
     const el = document.getElementById(`legend-${driver.toLowerCase()}-progress`);
-    if (el) el.textContent = `· ${p.done}/${p.total} done`;
+    if (el) el.textContent = `${p.done}/${p.total} done · → ${driverMeta[driver].headingTo}`;
   });
 }
 let dragSrc = null;
-function dragStart(e, driver, id){
-  if (!isViewingToday()){ e.preventDefault(); toast('View only — switch to Today to make changes.'); return; }
-  dragSrc = {driver, id}; e.target.classList.add('dragging');
-}
+function dragStart(e, driver, id){ dragSrc = {driver, id}; e.target.classList.add('dragging'); }
 function dragEnd(e){ e.target.classList.remove('dragging'); document.querySelectorAll('.col-hover').forEach(el=>el.classList.remove('col-hover')); }
 function dropStop(e, targetDriver){
   e.preventDefault();
-  if (!isViewingToday()){ toast('View only — switch to Today to reassign.'); return; }
   if (!dragSrc) return;
   const srcList = driverData[dragSrc.driver];
   const idx = srcList.findIndex(s => s.id === dragSrc.id);
@@ -1364,13 +1209,11 @@ function dropStop(e, targetDriver){
   toast(`Moved ${moved.cust} to ${targetDriver}`);
 }
 function pinNext(driver, id){
-  if (!isViewingToday()){ toast('View only — switch to Today to pin a stop.'); return; }
   const arr = driverData[driver];
   const idx = arr.findIndex(s => s.id === id);
-  if (idx > 0) { const [s] = arr.splice(idx,1); arr.unshift(s); renderBoard(); toast('Pinned to next on driver phone'); }
+  if (idx > 0) { const [s] = arr.splice(idx,1); arr.unshift(s); renderBoard(); toast('Pinned to next on driver\'s phone'); }
 }
 function autoRoute(){
-  if (!isViewingToday()){ toast('Auto-route runs against today only — Tomorrow auto-builds itself overnight.'); return; }
   Object.keys(driverData).forEach(k => driverData[k].sort(() => Math.random() - 0.5));
   renderBoard();
   toast('All routes optimized by address proximity');
@@ -1381,7 +1224,7 @@ const drafts = [
   {
     id:'d1', captured:'Today 8:42am', via:'Voice memo (0:18)',
     raw:'Hey Kim, got a new one — Joe Smith Construction at 1247 Oak Street in Decatur, needs two standard units, weekly Mondays and Thursdays, ninety bucks each, his number is 256-555-1234.',
-    parsed:{ customer:'Joe Smith Construction', phone:'256-555-1234', address:'1247 Oak Street, Decatur AL', toilets:2, type:'Standard', days:['M','Th'], route:'W — West / Athens-Tanner (Bradley)', price:90, kind:'recurring' }
+    parsed:{ customer:'Joe Smith Construction', phone:'256-555-1234', address:'1247 Oak Street, Decatur AL', toilets:2, type:'Standard', days:['M','Th'], route:'B — Decatur / Hartselle (Tony)', price:90, kind:'recurring' }
   },
   {
     id:'d2', captured:'Yesterday 4:15pm', via:'Text message',
@@ -1539,8 +1382,7 @@ function sendQuickCapture(){
 /* ============ INLINE TODAY-STOP ============ */
 let stopState = null;
 function openInlineStop(driver){
-  if (!isViewingToday()){ toast('Add-stop works on Today. For future days, change the recurring schedule on the customer.'); return; }
-  stopState = { driver, customer: null, serviceType: 'clean', unitCount: 1, unitType: 'Standard toilet', when: 'next' };
+  stopState = { driver, customer: null, serviceType: 'clean', selectedToilets: [], when: 'next' };
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white z-10">
       <div>
@@ -1643,7 +1485,7 @@ function newCustomerInline(){
   renderToiletPicker();
 }
 function setServiceType(type){
-  stopState.serviceType = type;
+  stopState.serviceType = type; stopState.selectedToilets = [];
   document.querySelectorAll('.svc-btn').forEach(b => { b.classList.remove('ring-1','ring-ink-900','bg-ink-50'); });
   const sel = document.querySelector(`[data-svc-btn="${type}"]`);
   sel.classList.add('ring-1','ring-ink-900','bg-ink-50');
@@ -1653,52 +1495,65 @@ function renderToiletPicker(){
   const block = document.getElementById('toilet-block'); const label = document.getElementById('toilet-label'); const opts = document.getElementById('toilet-options');
   if (!block) return;
   if (!stopState.customer){
-    opts.innerHTML = `<div class="text-[12.5px] text-ink-500 italic p-3 bg-ink-50 border border-ink-200 rounded">Pick a customer first.</div>`;
+    opts.innerHTML = `<div class="text-[12.5px] text-ink-500 italic p-3 bg-ink-50 border border-ink-200 rounded">Pick a customer first to see their toilets.</div>`;
     return;
   }
   const t = stopState.serviceType;
-  const c = customers.find(x => x.id === stopState.customer.id);
-  const customerCount = c?.toilets || 1;
-  if (!stopState.unitCount) stopState.unitCount = (t === 'deliver' || t === 'swap') ? 1 : customerCount;
+  const cn = stopState.customer.name;
+  const deployed = toilets.filter(x => x.loc === cn);
+  const available = toilets.filter(x => x.loc === 'Available');
 
-  const labelText = {
-    clean:'How many units to clean?',
-    pickup:'How many units to pick up?',
-    deliver:'How many units to deliver?',
-    swap:'How many units to swap?'
-  }[t];
-  label.textContent = labelText;
-
-  const helperText = {
-    clean:`Default is the count we have on file at this location.`,
-    pickup:`Pickup all or some — Greg can mark site retired after.`,
-    deliver:`Pick a quantity and type. Multiple types? Add a note below.`,
-    swap:`Driver returns old units to the shop and delivers fresh ones.`
-  }[t];
-
-  opts.innerHTML = `
-    <div class="flex items-center gap-3 p-3 border border-ink-200 rounded">
-      <input type="number" min="1" value="${stopState.unitCount}" oninput="stopState.unitCount=parseInt(this.value)||1" class="input w-20" />
-      <select id="stop-unit-type" onchange="stopState.unitType=this.value" class="input flex-1">
-        <option>Standard toilet</option>
-        <option>Handicap toilet</option>
-        <option>VIP toilet</option>
-        <option>Hand-wash station</option>
-        <option>Septic tank</option>
-        <option>Mixed (specify in notes)</option>
-      </select>
-    </div>
-    <div class="text-[11.5px] text-ink-500 mt-1.5">${helperText}</div>`;
-  if (!stopState.unitType) stopState.unitType = 'Standard toilet';
+  if (t === 'clean' || t === 'pickup'){
+    label.textContent = t === 'clean' ? 'Which toilet(s) to clean?' : 'Which toilet(s) to pick up?';
+    if (!deployed.length){
+      opts.innerHTML = `<div class="text-[12.5px] text-amber-700 bg-amber-50 border border-amber-200 rounded p-3">No units currently deployed at <strong>${cn}</strong>${t==='clean'?'. Did you mean Deliver?':'.'}</div>`;
+      return;
+    }
+    opts.innerHTML = deployed.map(x => `
+      <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+        <input type="checkbox" onchange="toggleToilet('${x.n}',this.checked)" />
+        <div class="flex-1">
+          <div class="font-mono text-[12.5px] font-semibold">${x.n}</div>
+          <div class="text-[11.5px] text-ink-500">${x.type} · deployed at ${x.loc}</div>
+        </div>
+      </label>`).join('');
+  } else if (t === 'deliver'){
+    label.textContent = 'Which available unit(s) to deliver?';
+    if (!available.length){
+      opts.innerHTML = `<div class="text-[12.5px] text-amber-700 bg-amber-50 border border-amber-200 rounded p-3">No units available in inventory.</div>`;
+      return;
+    }
+    opts.innerHTML = available.map(x => `
+      <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+        <input type="checkbox" onchange="toggleToilet('${x.n}',this.checked)" />
+        <div class="flex-1">
+          <div class="font-mono text-[12.5px] font-semibold">${x.n}</div>
+          <div class="text-[11.5px] text-ink-500">${x.type} · available</div>
+        </div>
+      </label>`).join('');
+  } else if (t === 'swap'){
+    label.textContent = 'Swap (old + new)';
+    opts.innerHTML = `
+      <div class="grid grid-cols-2 gap-3">
+        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1.5">Old (deployed)</div>
+          ${deployed.length ? deployed.map(x => `<div class="font-mono text-[12px] bg-ink-50 border border-ink-200 rounded p-2 mb-1">${x.n}</div>`).join('') : '<div class="text-[12px] text-ink-500 italic">None deployed</div>'}
+        </div>
+        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1.5">New (available)</div>
+          ${available.slice(0,2).map(x => `<div class="font-mono text-[12px] bg-ink-50 border border-ink-200 rounded p-2 mb-1">${x.n}</div>`).join('')}
+        </div>
+      </div>
+      <div class="text-[11.5px] text-ink-500 italic mt-2">Driver returns the old unit to the shop and delivers the new one.</div>`;
+  }
 }
+function toggleToilet(name, checked){ if (checked) stopState.selectedToilets.push(name); else stopState.selectedToilets = stopState.selectedToilets.filter(n => n !== name); }
 function submitInlineStop2(driver){
   if (!stopState.customer){ toast('Pick a customer first.'); return; }
   const t = stopState.serviceType;
-  const unitDescription = `${stopState.unitCount || 1} ${(stopState.unitType || 'standard').toLowerCase().replace(' toilet','')}`;
+  if ((t==='clean'||t==='deliver'||t==='pickup') && stopState.selectedToilets.length===0){ toast('Pick at least one toilet.'); return; }
   const newStop = {
     id: 's'+Date.now(),
     cust: stopState.customer.name, addr: stopState.customer.addr,
-    units: unitDescription,
+    toilet: stopState.selectedToilets.length ? stopState.selectedToilets.join(', ') : '—',
     type: t, notes: document.getElementById('stop-notes')?.value || '',
     status: 'pending'
   };
@@ -1712,21 +1567,16 @@ function submitInlineStop2(driver){
 
 /* ============ TODAY'S CHANGES ============ */
 const todaysChanges = [
-  { time:'9:08a', text:'Greg completed Hathaway Construction (Clift Farms)', kind:'add' },
-  { time:'8:42a', text:'Greg added Pearce Construction to the route (today only)', kind:'add' },
-  { time:'8:18a', text:'Bradley completed Stoneridge Homes (Shields Park)', kind:'add' },
-  { time:'8:14a', text:'Greg completed MVP (855 Jeff Rd)', kind:'add' },
-  { time:'7:42a', text:'Greg completed Joe Still / Brent (446 Jeff Rd)', kind:'add' },
-  { time:'7:30a', text:'Bradley completed Adams Homes (Monrovia Manor)', kind:'add' },
-  { time:'7:00a', text:'Greg and Bradley started routes', kind:'add' },
+  { time:'9:08a', text:'Mike completed Decatur Builders Co.', kind:'add' },
+  { time:'8:42a', text:'Greg added Holler Trucking to Mike (today only)', kind:'add' },
+  { time:'8:21a', text:'Mike completed River Oaks Estates', kind:'add' },
+  { time:'7:42a', text:'Mike completed Absolute Custom Remodeling', kind:'add' },
+  { time:'7:30a', text:'Tony completed Tanner Park Construction', kind:'add' },
+  { time:'7:08a', text:'All drivers started routes', kind:'add' },
 ];
 function nowStr(){ const d = new Date(); return d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); }
 function renderTodaysChanges(){
   const el = document.getElementById('changes-feed'); if (!el) return;
-  if (typeof isViewingToday === 'function' && !isViewingToday()){
-    el.innerHTML = `<div class="text-[12px] text-ink-500 italic p-3 leading-relaxed">Showing planned route for ${formatDispatchLabel()}.<br><br>Drivers won't see this until 6am that day. Greg can preview and adjust here.</div>`;
-    return;
-  }
   if (!todaysChanges.length){
     el.innerHTML = `<div class="text-[12px] text-ink-500 italic p-3">No changes yet today.</div>`;
     return;
@@ -1739,16 +1589,17 @@ function renderTodaysChanges(){
 }
 
 /* ============ DRIVER VIEW ============ */
-const driverActive = { cust:'Turner Construction', addr:'Toyota / 1 Cottonvalley Dr, Huntsville, AL', units:'5 standard, 1 handicap', type:'clean', notes:'Job site — watch for forklifts, badge in at trailer', etaMin: 6 };
+const driverActive = { cust:'Hampton Inn Madison', addr:'4870 University Dr., Madison AL', toilet:'NGC-107, NGC-108', type:'clean', notes:'Both units in side parking — gate code 4490', etaMin: 8 };
 const upNext = [
-  { cust:'Robbins & Morton',     addr:'SCI Sanmina, 13000 S. Memorial Pkwy', type:'clean', tag:'10:25' },
-  { cust:'Bart Darwin Builders', addr:'Mullins Bend, 160 Stony Crossing Rd', type:'clean', tag:'11:10' },
-  { cust:'Pearce Construction',  addr:'Huntsville Aquatic Center, 2213 Drake Ave', type:'clean', tag:'12:00' },
+  { cust:'Madison Park (City)',     addr:'700 Main St., Madison',         type:'clean',   tag:'10:15' },
+  { cust:'Smith Wedding',           addr:'88 Riverside Ln, Athens',       type:'deliver', tag:'11:00' },
+  { cust:'Holler Trucking',         addr:'8845 Hwy 31, Athens',           type:'clean',   tag:'12:30' },
+  { cust:'Greenbrier Methodist',    addr:'2200 Greenbrier Pkwy, Madison', type:'clean',   tag:'1:15' },
 ];
 const done = [
-  { cust:'Joe Still / Brent',     addr:'446 Jeff Rd., Huntsville',                type:'clean' },
-  { cust:'MVP',                   addr:'855 Jeff Rd. NW, Huntsville',             type:'clean' },
-  { cust:'Hathaway Construction', addr:'Clift Farms, 8140 Hwy 72 W, Madison',     type:'clean' },
+  { cust:'Absolute Custom Remodeling', addr:'1 Stockton St., Huntsville', type:'clean' },
+  { cust:'APEL Machine',               addr:'914 West Elm St., Athens',   type:'clean' },
+  { cust:'Decatur Builders Co.',       addr:'42 Industrial Park, Decatur',type:'clean' },
 ];
 
 function renderDriver(){
@@ -1760,7 +1611,7 @@ function renderDriver(){
       </div>
       <div class="text-[15px] font-semibold leading-tight">${driverActive.cust}</div>
       <div class="text-[12.5px] text-ink-700 mt-0.5">${driverActive.addr}</div>
-      <div class="text-[11.5px] text-ink-500 mt-0.5">${driverActive.units} · ETA ${driverActive.etaMin} min</div>
+      <div class="text-[11.5px] text-ink-500 mt-0.5 font-mono">${driverActive.toilet} · ETA ${driverActive.etaMin} min</div>
       ${driverActive.notes ? `<div class="text-[12px] bg-amber-50 border border-amber-200 rounded p-2 mt-2.5"><i data-lucide="alert-triangle" class="ico-sm inline-block align-text-bottom mr-1 text-amber-700"></i>${driverActive.notes}</div>` : ''}
       <button onclick="navigateNow()" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded mt-3 text-[14px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate</button>
       <div class="grid grid-cols-3 gap-1.5 mt-1.5">
@@ -1800,54 +1651,46 @@ function markDone(action){
 }
 function advanceToNextStop(){
   const next = upNext.shift();
-  if (next) { driverActive.cust = next.cust; driverActive.addr = next.addr; driverActive.type = next.type; driverActive.units = '—'; driverActive.notes = ''; driverActive.etaMin = 5 + Math.floor(Math.random()*15); }
+  if (next) { driverActive.cust = next.cust; driverActive.addr = next.addr; driverActive.type = next.type; driverActive.toilet = '—'; driverActive.notes = ''; driverActive.etaMin = 5 + Math.floor(Math.random()*15); }
   setTimeout(renderDriver, 600);
 }
 function showPickupConfirm(){
   const cust = driverActive.cust;
-  const units = driverActive.units || '';
+  const units = (driverActive.toilet || 'NGC-107').split(/[,+]/).map(s => s.trim()).filter(Boolean);
+  const unitRows = units.map(u => `
+    <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+      <input type="checkbox" name="pickup-unit" value="${u}" checked />
+      <div class="flex-1">
+        <div class="font-mono text-[12.5px] font-semibold">${u}</div>
+        <div class="text-[11px] text-ink-500">deployed at ${cust}</div>
+      </div>
+      <span class="tag tag-pickup">Picked up</span>
+    </label>`).join('');
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 sticky top-0 bg-white">
       <div class="font-semibold text-[15px]">Confirm pickup</div>
       <div class="text-[12.5px] text-ink-500">${cust}</div>
     </div>
     <div class="px-5 py-4 space-y-4">
-      <div class="border border-ink-200 rounded p-3 bg-ink-50/40">
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Picking up</div>
-        <div class="text-[14px] font-semibold">${units || 'All units at this site'}</div>
-        <div class="text-[11.5px] text-ink-500 mt-0.5">at ${cust}</div>
-      </div>
-
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Did you pick up everything that was deployed here?</label>
-        <div class="space-y-1.5 mt-2">
-          <label class="flex items-center gap-2 text-[13px] p-2.5 border border-ink-900 bg-ink-50 rounded cursor-pointer">
-            <input type="radio" name="full" value="all" checked />
-            <span><strong>Yes</strong> — picked up everything (${units || 'all units'})</span>
-          </label>
-          <label class="flex items-center gap-2 text-[13px] p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
-            <input type="radio" name="full" value="partial" />
-            <span><strong>Partial</strong> — only some units, others stayed on site</span>
-          </label>
-        </div>
+        <label class="block text-[12.5px] font-medium mb-1.5">Which unit(s) did you pick up?</label>
+        <div class="space-y-1.5">${unitRows}</div>
       </div>
-
       <div class="border border-amber-300 bg-amber-50 rounded p-3">
-        <div class="text-[12.5px] font-semibold text-amber-900 mb-1">Is the site empty now?</div>
+        <div class="text-[12.5px] font-semibold text-amber-900 mb-1">Was this the last unit at this site?</div>
         <p class="text-[11.5px] text-amber-800 mb-2.5">If yes, <strong>${cust}</strong> will be retired from the recurring route — no more weekly stops auto-generated. Today's pickup stays on the route history.</p>
         <div class="space-y-1.5">
           <label class="flex items-center gap-2 text-[13px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
-            <input type="radio" name="retire" value="yes" checked /><span><strong>Yes</strong> — site is empty, retire from route</span>
+            <input type="radio" name="retire" value="yes" checked /><span><strong>Yes</strong> — retire from route, no more scheduled cleanings</span>
           </label>
           <label class="flex items-center gap-2 text-[13px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
-            <input type="radio" name="retire" value="partial" /><span><strong>Some units still here</strong> — keep schedule active</span>
+            <input type="radio" name="retire" value="partial" /><span><strong>Partial</strong> — they still have other units on site, just remove this one</span>
           </label>
           <label class="flex items-center gap-2 text-[13px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
-            <input type="radio" name="retire" value="no" /><span><strong>Replacement coming</strong> — keep schedule active</span>
+            <input type="radio" name="retire" value="no" /><span><strong>No</strong> — replacement coming, keep schedule active</span>
           </label>
         </div>
       </div>
-
       <div>
         <label class="block text-[12.5px] font-medium mb-1">Notes <span class="text-ink-500 font-normal">(optional)</span></label>
         <input id="pickup-notes" placeholder="e.g. Project finished, Greg said this was the last week" class="input w-full" />
@@ -2046,7 +1889,7 @@ const portalInvoices = [
   { num:'2026-0163', date:'2026-05-08', period:'May 2026 (in progress)', amount:407.50, status:'open', due:'2026-05-23', paidOn:null },
 ];
 const portalRequests = [
-  { id:'r1', type:'extra_clean', when:'2026-05-06', summary:'Extra cleaning at Heritage Estates — Saturday open house', status:'completed', resolution:'Bradley cleaned 5/7. $90 added to May invoice.' },
+  { id:'r1', type:'extra_clean', when:'2026-05-06', summary:'Extra cleaning at Industrial Park — VP visit Thursday', status:'completed', resolution:'Tony cleaned 5/7. $90 added to May invoice.' },
   { id:'r2', type:'add_units',   when:'2026-04-29', summary:'Requested 2 additional standards at Hwy 31 site',       status:'completed', resolution:'Delivered 5/4 (NGC-140, NGC-141)' },
   { id:'r3', type:'pickup',      when:'2025-12-10', summary:'Pickup request — Westgate Project',                      status:'completed', resolution:'Picked up 12/15. Site retired from route.' },
 ];
@@ -2087,12 +1930,12 @@ function portalOverview(c, d){
       <div class="card p-4">
         <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Next service</div>
         <div class="text-[15px] font-semibold">${nextService}</div>
-        <div class="text-[12px] text-ink-500 mt-0.5">Monrovia Manor · Bradley</div>
+        <div class="text-[12px] text-ink-500 mt-0.5">Industrial Park site · Tony</div>
       </div>
       <div class="card p-4">
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Active sites</div>
-        <div class="text-[15px] font-semibold">${d.locations.filter(l=>l.active).length}</div>
-        <div class="text-[12px] text-ink-500 mt-0.5">${d.locations.filter(l=>l.active).map(l=>l.units).filter(Boolean).join(' · ')}</div>
+        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Active units</div>
+        <div class="text-[15px] font-semibold">${d.locations.filter(l=>l.active).reduce((n,l)=>n+l.toilets.length,0)} units</div>
+        <div class="text-[12px] text-ink-500 mt-0.5">Across ${d.locations.filter(l=>l.active).length} site${d.locations.filter(l=>l.active).length===1?'':'s'}</div>
       </div>
       <div class="card p-4">
         <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Balance due</div>
@@ -2108,7 +1951,7 @@ function portalOverview(c, d){
           ${recent.map((h,i) => `
             <div class="px-3 py-2.5 ${i>0?'border-t border-ink-200':''} flex items-center gap-3 text-[12.5px]">
               <div class="font-mono text-[11.5px] text-ink-500 w-20">${h.date}</div>
-              <div class="flex-1"><div class="font-medium">${h.loc}</div><div class="text-[11px] text-ink-500">${h.units} · ${h.driver}</div></div>
+              <div class="flex-1"><div class="font-medium">${h.loc}</div><div class="text-[11px] text-ink-500">${h.toilets} · ${h.driver}</div></div>
               ${tagFor(h.type)}
             </div>`).join('')}
         </div>
@@ -2149,9 +1992,9 @@ function portalLocations(c, d){
             </div>
             ${loc.active ? '<button class="btn-secondary text-[12px]">Edit</button>' : ''}
           </div>
-          ${loc.units ? `
+          ${loc.toilets.length ? `
             <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mt-2 mb-1">Units deployed</div>
-            <div class="text-[12.5px] text-ink-700">${loc.units}</div>` : '<div class="text-[12px] text-ink-500 italic mt-2">No units currently deployed</div>'}
+            <div class="flex flex-wrap gap-1.5">${loc.toilets.map(t => `<span class="font-mono text-[11.5px] bg-ink-50 border border-ink-200 rounded px-2 py-0.5">${t}</span>`).join('')}</div>` : '<div class="text-[12px] text-ink-500 italic mt-2">No units currently deployed</div>'}
         </div>`).join('')}
     </div>`;
 }
@@ -2180,7 +2023,7 @@ function portalHistory(c, d){
               <td class="px-3 py-2 font-mono text-[11.5px]">${h.date}</td>
               <td class="px-3 py-2">${tagFor(h.type)}</td>
               <td class="px-3 py-2">${h.loc}</td>
-              <td class="px-3 py-2 text-[12px]">${h.units}</td>
+              <td class="px-3 py-2 font-mono text-[11.5px]">${h.toilets}</td>
               <td class="px-3 py-2">${h.driver}</td>
             </tr>`).join('')}
         </tbody>
@@ -2497,10 +2340,10 @@ function portalSettings(c, d){
 
 /* ============ NOTIFICATIONS ============ */
 const notifications = [
-  { id:'n1', role:'greg', type:'problem',  when:'9:14a',  title:'Access blocked — Hawkins Groundwork',  body:'"Gate locked at the Jones Rd substation, no one on site. Tried calling, no answer."', unread:true,  photo:false },
-  { id:'n2', role:'kim',  type:'sms',      when:'8:47a',  title:'SMS reply — Fite Building',            body:'"Thanks Bradley, looks great!" — auto-tagged positive',                  unread:true,  photo:false },
+  { id:'n1', role:'greg', type:'problem',  when:'9:14a',  title:'Access blocked — River Festival 2026', body:'"Gate locked, no one on site to let me in. Tried calling, no answer."', unread:true,  photo:false },
+  { id:'n2', role:'kim',  type:'sms',      when:'8:47a',  title:'SMS reply — Hampton Inn Madison',       body:'"Thanks Mike, looks great!" — auto-tagged positive',                  unread:true,  photo:false },
   { id:'n3', role:'kim',  type:'draft',    when:'8:42a',  title:'New draft from Greg',                   body:'Joe Smith Construction — 2 standards, weekly Mon/Thu',                  unread:true,  photo:false },
-  { id:'n4', role:'greg', type:'sms',      when:'8:33a',  title:'SMS reply — Adams Homes',               body:'"Can we move next Tue cleaning to Wed? Foundation pour at Summit Lakes."',              unread:true,  photo:false },
+  { id:'n4', role:'greg', type:'sms',      when:'8:33a',  title:'SMS reply — Decatur Builders',          body:'"Can we move next Tue cleaning to Wed? Foundation pour."',              unread:true,  photo:false },
   { id:'n5', role:'kim',  type:'draft',    when:'Yest 4:15p', title:'New draft from Greg',               body:'Mendoza Wedding — event 6/14 to 6/16',                                   unread:false, photo:false },
 ];
 function getCurrentRole(){
@@ -2586,9 +2429,10 @@ function openNotification(id){
 
 /* ============ KIM — PERMANENT DRIVERS PANE ============ */
 const driverRoster = [
-  { name:'Greg Polson', phone:'256-771-3612', route:'E — East / Huntsville-Madison', status:'active', started:'2003-03-01' },
-  { name:'Bradley',     phone:'256-555-0302', route:'W — West / Athens-Tanner',      status:'active', started:'2018-07-15' },
-  { name:'Carlos',      phone:'256-555-0304', route:'(was W — Athens)',              status:'former', started:'2015-04-02' },
+  { name:'Mike',  phone:'256-555-0301', route:'H — Huntsville / Madison',  status:'active',   started:'2019-06-12' },
+  { name:'Tony',  phone:'256-555-0302', route:'B — Decatur / Hartselle',   status:'active',   started:'2021-03-08' },
+  { name:'Jorge', phone:'256-555-0303', route:'G — Athens / Tanner',        status:'active',   started:'2023-09-21' },
+  { name:'Carlos',phone:'256-555-0304', route:'(was H — Huntsville)',       status:'former',   started:'2018-04-02' },
 ];
 function renderDriversTable(){
   const tbody = document.getElementById('drivers-table');
@@ -2678,4 +2522,187 @@ function toggleDriverMenu(driver, ev){
     <button onclick="markDriverOut('${driver}','out_today')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Out today (sick / no-show)</button>
     <button onclick="markDriverOut('${driver}','out_week')"  class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Out this week (vacation)</button>
     <div class="border-t border-ink-200 my-1"></div>
-    <button onclick="openRedistribute('${driver}')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Re
+    <button onclick="openRedistribute('${driver}')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Reassign all stops…</button>
+  `;
+  document.body.appendChild(menu);
+  openMenu = menu;
+  setTimeout(() => document.addEventListener('click', closeOpenMenu, { once: true }), 0);
+}
+function closeOpenMenu(){ if (openMenu) { openMenu.remove(); openMenu = null; } }
+
+function markDriverOut(driver, kind){
+  closeOpenMenu();
+  driverMeta[driver].status = kind;
+  renderDriverPills();
+  // Open redistribute modal with their pending stops
+  openRedistribute(driver, true);
+}
+function markDriverActive(driver){
+  closeOpenMenu();
+  driverMeta[driver].status = 'active';
+  renderDriverPills();
+  renderBoard();
+  toast(`${driver} is back on the route.`);
+  todaysChanges.unshift({ time: nowStr(), text: `${driver} marked back on duty.`, kind:'add' });
+  renderTodaysChanges();
+}
+
+function openRedistribute(driver, fromCallout){
+  closeOpenMenu();
+  const pending = driverData[driver].filter(s => s.status === 'pending');
+  const otherDrivers = Object.keys(driverMeta).filter(d => d !== driver && driverMeta[d].status === 'active');
+  if (pending.length === 0){
+    toast(`${driver} has no remaining stops to reassign.`);
+    if (fromCallout){ renderBoard(); }
+    return;
+  }
+  const status = driverMeta[driver].status;
+  const banner = fromCallout
+    ? `<div class="bg-amber-50 border border-amber-300 rounded p-3 text-[12px] text-amber-900 mb-1"><strong>${driver} is out ${status==='out_week'?'this week':'today'}.</strong> What about their ${pending.length} remaining stop${pending.length===1?'':'s'}?</div>`
+    : '';
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">Reassign ${driver}'s stops</div>
+        <div class="text-[12.5px] text-ink-500">${pending.length} pending stop${pending.length===1?'':'s'} on today's route</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <div class="px-5 py-4 space-y-4">
+      ${banner}
+      <div class="space-y-2">
+        <label class="flex items-start gap-3 p-3 border border-ink-900 bg-ink-50 rounded cursor-pointer">
+          <input type="radio" name="redistribute" value="auto" checked class="mt-0.5" />
+          <div>
+            <div class="font-semibold text-[13px]">Auto-redistribute by proximity <span class="text-[11px] text-ink-500 font-normal ml-1">(recommended)</span></div>
+            <div class="text-[11.5px] text-ink-500 mt-0.5">Splits the ${pending.length} stops among ${otherDrivers.join(' & ')} based on closest current location.</div>
+          </div>
+        </label>
+        <label class="flex items-start gap-3 p-3 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+          <input type="radio" name="redistribute" value="manual" class="mt-0.5" />
+          <div>
+            <div class="font-semibold text-[13px]">Manually assign each</div>
+            <div class="text-[11.5px] text-ink-500 mt-0.5">You pick a driver for each remaining stop.</div>
+          </div>
+        </label>
+        <label class="flex items-start gap-3 p-3 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+          <input type="radio" name="redistribute" value="keep" class="mt-0.5" />
+          <div>
+            <div class="font-semibold text-[13px]">Keep on ${driver}'s list</div>
+            <div class="text-[11.5px] text-ink-500 mt-0.5">In case ${driver} comes in late or you'll handle it tomorrow.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="border border-ink-200 rounded overflow-hidden">
+        <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[10.5px] font-semibold uppercase tracking-wider text-ink-500">${driver}'s remaining stops</div>
+        <div class="divide-y divide-ink-200 max-h-56 overflow-y-auto">
+          ${pending.map(s => `
+            <div class="px-3 py-2 flex items-center gap-3 text-[12.5px]">
+              <div class="flex-1">
+                <div class="font-medium">${s.cust}</div>
+                <div class="text-[11px] text-ink-500">${s.addr} · ${s.toilet}</div>
+              </div>
+              ${tagFor(s.type)}
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button onclick="applyRedistribute('${driver}')" class="btn-primary">Apply</button>
+      </div>
+    </div>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+
+function applyRedistribute(driver){
+  const choice = document.querySelector('input[name="redistribute"]:checked')?.value || 'auto';
+  if (choice === 'keep'){
+    closeModal();
+    toast(`Stops kept on ${driver}'s list.`);
+    renderBoard();
+    return;
+  }
+  const pending = driverData[driver].filter(s => s.status === 'pending');
+  const otherDrivers = Object.keys(driverMeta).filter(d => d !== driver && driverMeta[d].status === 'active');
+  if (otherDrivers.length === 0){
+    toast('No other active drivers to take stops.');
+    return;
+  }
+  if (choice === 'auto'){
+    // Alternate stops between the active drivers
+    pending.forEach((s, i) => {
+      const target = otherDrivers[i % otherDrivers.length];
+      driverData[driver] = driverData[driver].filter(x => x !== s);
+      driverData[target].push(s);
+    });
+    closeModal();
+    toast(`${pending.length} stops redistributed to ${otherDrivers.join(' & ')}.`);
+    todaysChanges.unshift({ time: nowStr(), text: `${driver} out — ${pending.length} stops auto-redistributed to ${otherDrivers.join(' & ')}.`, kind:'retire' });
+  } else {
+    // Manual: simplest demo move all to first other driver
+    const target = otherDrivers[0];
+    pending.forEach(s => {
+      driverData[driver] = driverData[driver].filter(x => x !== s);
+      driverData[target].push(s);
+    });
+    closeModal();
+    toast(`Manual reassign demo — moved all stops to ${target} (real version lets you pick per stop).`);
+    todaysChanges.unshift({ time: nowStr(), text: `${driver}'s ${pending.length} stops manually moved to ${target}.`, kind:'add' });
+  }
+  renderBoard();
+  renderTodaysChanges();
+}
+
+function openAddTempDriver(){
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">Add a temporary driver for today</div>
+        <div class="text-[12.5px] text-ink-500">Use when Greg pulls in a helper or runs a route himself</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <form onsubmit="event.preventDefault(); closeModal(); toast('Temp driver added — Kim can promote them to permanent later.');" class="px-5 py-4 space-y-3">
+      <div><label class="block text-[12.5px] font-medium mb-1">Name</label><input required placeholder="e.g. Greg, Carlos, Tyler" class="input w-full" /></div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Phone</label><input placeholder="256-555-0000" class="input w-full" /></div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Pull stops from</label>
+        <select class="input w-full">
+          <option>Auto-balance from busiest drivers</option>
+          <option>Mike's queue</option>
+          <option>Tony's queue</option>
+          <option>Jorge's queue</option>
+          <option>None — just add empty</option>
+        </select>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">Add for today</button>
+      </div>
+    </form>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+
+/* ============ ICON HELPER ============ */
+function refreshIcons(){ try { lucide.createIcons(); } catch(e){} }
+
+/* ============ INIT ============ */
+renderRecents();
+renderCustomers();
+renderToilets();
+renderSchedules();
+renderDriversTable();
+renderDriverPills();
+renderNotifBell();
+renderBoard();
+renderDriver();
+renderDrafts();
+renderTodaysChanges();
+document.getElementById('cust-search').addEventListener('input', e => renderCustomers(e.target.value));
+refreshIcons();
+</script>
+</body>
+</html>

@@ -1,0 +1,2708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Valley Portable Restrooms — Operations</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: { 50:'#fef2f2', 100:'#fee2e2', 500:'#dc2626', 600:'#b91c1c', 700:'#7f1d1d' },
+          ink:   { 950:'#020617', 900:'#0f172a', 800:'#1e293b', 700:'#334155', 500:'#64748b', 400:'#94a3b8', 300:'#cbd5e1', 200:'#e2e8f0', 100:'#f1f5f9', 50:'#f8fafc' },
+        },
+        fontFamily: { sans: ['ui-sans-serif','-apple-system','BlinkMacSystemFont','"Inter"','"Segoe UI"','Roboto','sans-serif'], mono: ['ui-monospace','SFMono-Regular','"SF Mono"','Menlo','monospace'] },
+      }
+    }
+  }
+</script>
+<style>
+  body { background: #ffffff; color:#0f172a; font-feature-settings: "ss01","cv11"; }
+  .demo-banner { background: #0f172a; }
+  /* tighten Lucide icons */
+  [data-lucide] { width:16px; height:16px; stroke-width:2; flex-shrink:0; }
+  .ico-sm [data-lucide] { width:14px; height:14px; }
+  .ico-lg [data-lucide] { width:20px; height:20px; }
+  .ico-xl [data-lucide] { width:28px; height:28px; stroke-width:1.75; }
+
+  .stop-card { transition: background .12s ease, border-color .12s ease; }
+  .stop-card:hover { background:#f8fafc; }
+  .stop-card.dragging { opacity:.4; }
+  .col-hover { background: #fef2f2 !important; }
+
+  .tag { font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 4px; letter-spacing: .04em; text-transform: uppercase; display:inline-flex; align-items:center; gap:5px; }
+  .tag::before { content:''; width:6px; height:6px; border-radius:50%; }
+  .tag-clean   { background:#f1f5f9; color:#1e293b; } .tag-clean::before   { background:#16a34a; }
+  .tag-deliver { background:#f1f5f9; color:#1e293b; } .tag-deliver::before { background:#2563eb; }
+  .tag-pickup  { background:#f1f5f9; color:#1e293b; } .tag-pickup::before  { background:#d97706; }
+  .tag-event   { background:#f1f5f9; color:#1e293b; } .tag-event::before   { background:#7c3aed; }
+  .tag-skip    { background:#f1f5f9; color:#1e293b; } .tag-skip::before    { background:#64748b; }
+
+  .nav-btn.active { background:#0f172a; color:white; }
+  .cust-nav.active { background:#0f172a; color:white; }
+  .role-btn { transition: background .15s ease, color .15s ease; }
+  .role-btn:hover { color:#0f172a; }
+  .role-btn.active { background:#dc2626; color:white; box-shadow: 0 1px 2px rgba(220,38,38,.3); }
+  .role-btn.active:hover { color:white; background:#b91c1c; }
+
+  .phone-frame { width: 380px; height: 760px; border-radius: 40px; background:#0f172a; padding: 12px; box-shadow: 0 20px 50px -20px rgba(2,6,23,.45); }
+  .phone-screen { width:100%; height:100%; border-radius: 30px; overflow:hidden; background:white; display:flex; flex-direction:column; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  /* avoid heavy AI-y shadows; use sharp 1px borders */
+  .card { background:white; border:1px solid #e2e8f0; border-radius:8px; }
+  .card-hover { transition: border-color .12s; } .card-hover:hover { border-color:#94a3b8; }
+  .input  { background:white; border:1px solid #cbd5e1; border-radius:6px; padding:8px 10px; font-size:13.5px; line-height:1.4; }
+  .input:focus { outline:none; border-color:#0f172a; box-shadow: 0 0 0 3px rgba(15,23,42,.08); }
+  .btn-primary  { background:#0f172a; color:white; padding:7px 14px; border-radius:6px; font-size:13px; font-weight:600; }
+  .btn-primary:hover { background:#1e293b; }
+  .btn-secondary { background:white; color:#0f172a; border:1px solid #cbd5e1; padding:7px 14px; border-radius:6px; font-size:13px; font-weight:500; }
+  .btn-secondary:hover { background:#f8fafc; }
+  .btn-danger { background:#b91c1c; color:white; padding:7px 14px; border-radius:6px; font-size:13px; font-weight:600; }
+  .btn-danger:hover { background:#7f1d1d; }
+  .btn-quiet { color:#64748b; padding:7px 12px; border-radius:6px; font-size:13px; }
+  .btn-quiet:hover { color:#0f172a; background:#f1f5f9; }
+
+  /* Route map animations */
+  @keyframes flow { to { stroke-dashoffset: -20; } }
+  .path-flow { animation: flow 1.4s linear infinite; }
+  @keyframes wobble { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-1px); } }
+  .truck-body { animation: wobble .7s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes pulse-soft { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+  .pulse { animation: pulse-soft 1.6s ease-in-out infinite; }
+
+  /* Stop card statuses on dispatch board */
+  .stop-completed { background:#f8fafc; opacity:.6; }
+  .stop-completed .stop-name { text-decoration: line-through; }
+  .stop-active { border-color:#dc2626 !important; background:#fef2f2; box-shadow: 0 0 0 1px #dc2626 inset; }
+  .progress-bar { height:4px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
+  .progress-bar > div { height:100%; transition: width .3s ease; }
+
+  /* Customer report — looks like a real document */
+  .report-toolbar { position:sticky; top:0; z-index:5; background:#0f172a; color:white; padding:10px 24px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .report-toolbar .input { background:white; color:#0f172a; }
+  .report-page { max-width: 850px; margin: 24px auto 64px; background:white; padding:48px 56px; border:1px solid #e2e8f0; box-shadow: 0 4px 16px rgba(2,6,23,.06); }
+  .report-header { display:flex; align-items:center; gap:18px; padding-bottom:18px; border-bottom: 3px solid #dc2626; margin-bottom:24px; }
+  .report-logo { height:64px; width:auto; }
+  .report-header-text { flex:1; }
+  .report-company { font-size:18px; font-weight:800; letter-spacing:.04em; color:#dc2626; }
+  .report-company-sub { font-size:11.5px; color:#475569; margin-top:2px; }
+  .report-meta { font-size:12px; color:#0f172a; text-align:right; }
+  .report-title { font-size:22px; font-weight:700; color:#0f172a; letter-spacing:-.01em; }
+  .report-subtitle { font-size:13px; color:#64748b; margin-bottom:20px; }
+  .report-customer { display:grid; grid-template-columns:1fr 1fr; gap:24px; padding:14px 18px; background:#f8fafc; border-left:3px solid #dc2626; margin-bottom:24px; font-size:12.5px; }
+  .report-block-label { font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#64748b; font-weight:700; margin-bottom:4px; }
+  .report-empty { text-align:center; padding:32px; color:#94a3b8; font-style:italic; }
+  .report-location { margin-bottom:22px; }
+  .report-location-header { display:flex; justify-content:space-between; align-items:flex-end; padding-bottom:6px; margin-bottom:8px; border-bottom:1px solid #e2e8f0; }
+  .report-location-name { font-size:14.5px; font-weight:700; color:#0f172a; }
+  .report-location-addr { font-size:11.5px; color:#64748b; }
+  .report-location-stats { font-size:11px; color:#475569; display:flex; gap:14px; }
+  .report-location-stats strong { color:#dc2626; }
+  .report-table { width:100%; border-collapse:collapse; font-size:11.5px; }
+  .report-table thead th { text-align:left; padding:6px 10px; background:#f1f5f9; color:#475569; font-size:9.5px; text-transform:uppercase; letter-spacing:.06em; font-weight:700; }
+  .report-table tbody td { padding:7px 10px; border-bottom:1px solid #e2e8f0; vertical-align:top; }
+  .report-svc { font-size:9.5px; font-weight:700; padding:1px 6px; border-radius:3px; letter-spacing:.04em; text-transform:uppercase; }
+  .report-svc-clean   { background:#dcfce7; color:#166534; }
+  .report-svc-deliver { background:#dbeafe; color:#1e40af; }
+  .report-svc-pickup  { background:#fef3c7; color:#92400e; }
+  .report-footer { margin-top:36px; padding-top:18px; border-top:1px solid #e2e8f0; text-align:center; font-size:11.5px; color:#475569; }
+  .report-footer-sub { font-size:10.5px; color:#94a3b8; margin-top:4px; }
+
+  /* Print: only show the report page */
+  @media print {
+    body * { visibility: hidden; }
+    #report-overlay, #report-overlay * { visibility: visible; }
+    .report-toolbar { display:none !important; }
+    #report-overlay { position:absolute; left:0; top:0; right:0; bottom:0; background:white !important; }
+    .report-page { box-shadow:none; border:none; margin:0; padding:24px 32px; max-width:none; }
+  }
+</style>
+</head>
+<body class="text-ink-900 font-sans min-h-screen text-[14px]">
+
+<div class="demo-banner text-white text-[11px] px-4 py-1 text-center tracking-wide">
+  Mockup preview · click around · use the role switch in the top right
+</div>
+
+<header class="bg-white border-b border-ink-200 px-5 py-3 flex items-center justify-between sticky top-0 z-30">
+  <div class="flex items-center gap-3">
+    <img id="brand-logo" src="valley_logo.png" alt="Valley Portable Restrooms" class="h-12 w-auto" onerror="this.onerror=null; this.src='https://lirp.cdn-website.com/b7735397/dms3rep/multi/opt/logo+no+number-1920w.png'; this.addEventListener('error', () => { document.getElementById('brand-logo-fallback').classList.remove('hidden'); this.classList.add('hidden'); }, { once: true });" />
+    <div id="brand-logo-fallback" class="hidden h-12 px-3 grid place-items-center bg-brand-500 rounded">
+      <div class="text-white font-extrabold tracking-tight leading-none text-[18px]">VALLEY</div>
+      <div class="text-white/80 font-semibold tracking-widest leading-none text-[8px] mt-0.5">PORTABLE RESTROOMS</div>
+    </div>
+    <div class="leading-tight border-l border-ink-200 pl-3 ml-1">
+      <div class="font-semibold text-[14px]">Operations</div>
+      <div class="text-[11px] text-ink-500">Tanner, AL · (256) 771-3612</div>
+    </div>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="relative">
+      <button onclick="toggleNotifPanel(event)" id="notif-bell-btn" class="relative w-9 h-9 grid place-items-center rounded hover:bg-ink-100 text-ink-700">
+        <i data-lucide="bell"></i>
+        <span id="notif-badge" class="hidden absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-brand-500 text-white text-[10px] font-bold grid place-items-center">0</span>
+      </button>
+    </div>
+    <div class="flex items-center gap-1 bg-ink-100 p-1 rounded-md text-ink-700">
+      <button class="role-btn active px-3 py-1.5 rounded text-[12.5px] font-medium" data-role="kim">Kim · Office</button>
+      <button class="role-btn px-3 py-1.5 rounded text-[12.5px] font-medium" data-role="greg">Greg · Dispatch</button>
+      <button class="role-btn px-3 py-1.5 rounded text-[12.5px] font-medium" data-role="driver">Driver</button>
+      <button class="role-btn px-3 py-1.5 rounded text-[12.5px] font-medium" data-role="customer">Customer</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================== KIM VIEW ================================================ -->
+<section data-view="kim" class="role-view">
+  <div class="flex">
+    <aside class="w-52 border-r border-ink-200 min-h-[calc(100vh-90px)] p-3 bg-ink-50/40">
+      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 px-2 font-semibold">Office</div>
+      <nav class="flex flex-col gap-0.5">
+        <button class="nav-btn active text-left px-3 py-1.5 rounded text-[13px] font-medium" data-pane="home">Today</button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100 flex items-center justify-between" data-pane="drafts">
+          <span>Drafts from Greg</span>
+          <span id="drafts-badge" class="bg-brand-600 text-white text-[10px] font-semibold px-1.5 rounded">2</span>
+        </button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="customers">Customers</button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="toilets">Toilets</button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="schedules">Schedules</button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="drivers">Drivers</button>
+      </nav>
+    </aside>
+
+    <main class="flex-1 p-7 max-w-5xl">
+
+      <div data-pane-content="home">
+        <div class="flex items-baseline justify-between mb-5">
+          <h1 class="text-xl font-semibold tracking-tight">Today</h1>
+          <div class="text-[12.5px] text-ink-500">Friday, May 8</div>
+        </div>
+
+        <div id="drafts-banner" class="card flex items-center gap-3 p-3 mb-5">
+          <div class="w-8 h-8 grid place-items-center rounded bg-ink-100"><i data-lucide="inbox"></i></div>
+          <div class="flex-1">
+            <div class="text-[13.5px] font-medium">Greg sent you <span id="drafts-banner-count">2</span> new jobs to enter</div>
+            <div class="text-[12px] text-ink-500">Captured from voice memos &amp; texts this morning</div>
+          </div>
+          <button onclick="document.querySelector('[data-pane=drafts]').click()" class="btn-primary">Review</button>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 mb-8">
+          <button onclick="openForm('recurring')" class="card card-hover text-left p-4">
+            <div class="flex items-center gap-2 mb-1.5"><i data-lucide="plus" class="text-ink-700"></i><span class="text-[13px] font-semibold">New recurring customer</span></div>
+            <div class="text-[12.5px] text-ink-500 leading-snug">Standing weekly service. Days, route, driver, toilets, price.</div>
+          </button>
+          <button onclick="openForm('event')" class="card card-hover text-left p-4">
+            <div class="flex items-center gap-2 mb-1.5"><i data-lucide="plus" class="text-ink-700"></i><span class="text-[13px] font-semibold">New event booking</span></div>
+            <div class="text-[12.5px] text-ink-500 leading-snug">One-time job. Drop-off, optional cleanings, pickup.</div>
+          </button>
+          <button onclick="document.querySelector('[data-pane=customers]').click()" class="card card-hover text-left p-4">
+            <div class="flex items-center gap-2 mb-1.5"><i data-lucide="search" class="text-ink-700"></i><span class="text-[13px] font-semibold">Find a customer</span></div>
+            <div class="text-[12.5px] text-ink-500 leading-snug">Edit details, change schedule, cancel a job.</div>
+          </button>
+        </div>
+
+        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Recently added</div>
+        <div class="card divide-y divide-ink-200" id="recent-list"></div>
+      </div>
+
+      <div data-pane-content="drafts" class="hidden">
+        <div class="flex items-baseline justify-between mb-1">
+          <h1 class="text-xl font-semibold tracking-tight">Drafts from Greg</h1>
+          <span class="text-[11.5px] text-ink-500">Auto-parsed from voice memos &amp; texts</span>
+        </div>
+        <p class="text-ink-500 text-[13px] mb-5">Click a draft to confirm details and add to a route.</p>
+        <div class="space-y-3" id="drafts-list"></div>
+      </div>
+
+      <div data-pane-content="customers" class="hidden">
+        <div id="customer-list-view">
+          <div class="flex items-center justify-between mb-4">
+            <h1 class="text-xl font-semibold tracking-tight">Customers</h1>
+            <input id="cust-search" placeholder="Name, address, phone…" class="input w-72" />
+          </div>
+          <div class="card overflow-hidden">
+            <table class="w-full text-[13px]">
+              <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+                <tr>
+                  <th class="text-left px-3 py-2 font-semibold">Customer</th>
+                  <th class="text-left px-3 py-2 font-semibold">Location</th>
+                  <th class="text-left px-3 py-2 font-semibold">Toilets</th>
+                  <th class="text-left px-3 py-2 font-semibold">Schedule</th>
+                  <th class="text-left px-3 py-2 font-semibold">Route</th>
+                  <th class="text-left px-3 py-2 font-semibold">Last service</th>
+                </tr>
+              </thead>
+              <tbody id="cust-table"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="customer-detail-view" class="hidden"></div>
+      </div>
+
+      <div data-pane-content="toilets" class="hidden">
+        <h1 class="text-xl font-semibold tracking-tight mb-4">Toilet inventory</h1>
+        <div class="grid grid-cols-4 gap-2.5" id="toilet-grid"></div>
+      </div>
+
+      <div data-pane-content="drivers" class="hidden">
+        <div class="flex items-center justify-between mb-1">
+          <h1 class="text-xl font-semibold tracking-tight">Drivers</h1>
+          <button onclick="openAddPermanentDriver()" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="plus" class="ico-sm"></i>Add driver</button>
+        </div>
+        <p class="text-ink-500 text-[13px] mb-4">Permanent roster. For someone calling out today, use the Drivers pill row on Greg's dispatch view instead.</p>
+        <div class="card overflow-hidden">
+          <table class="w-full text-[13px]">
+            <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+              <tr>
+                <th class="text-left px-3 py-2 font-semibold">Driver</th>
+                <th class="text-left px-3 py-2 font-semibold">Phone</th>
+                <th class="text-left px-3 py-2 font-semibold">Default route</th>
+                <th class="text-left px-3 py-2 font-semibold">Status</th>
+                <th class="text-left px-3 py-2 font-semibold">Started</th>
+                <th class="text-left px-3 py-2"></th>
+              </tr>
+            </thead>
+            <tbody id="drivers-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div data-pane-content="schedules" class="hidden">
+        <h1 class="text-xl font-semibold tracking-tight mb-1">Recurring schedules</h1>
+        <p class="text-ink-500 text-[13px] mb-4">Active weekly customers. Greg can move days or routes here permanently.</p>
+        <div class="card overflow-hidden">
+          <table class="w-full text-[13px]">
+            <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+              <tr>
+                <th class="text-left px-3 py-2 font-semibold">Customer</th>
+                <th class="text-left px-3 py-2 font-semibold">Days</th>
+                <th class="text-left px-3 py-2 font-semibold">Route</th>
+                <th class="text-left px-3 py-2 font-semibold">Driver</th>
+                <th class="text-left px-3 py-2 font-semibold">$ / service</th>
+                <th class="text-left px-3 py-2"></th>
+              </tr>
+            </thead>
+            <tbody id="sched-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</section>
+
+<!-- ========================================== GREG / DISPATCH ============================================ -->
+<section data-view="greg" class="role-view hidden">
+  <div class="px-6 py-5">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h1 class="text-xl font-semibold tracking-tight">Dispatch</h1>
+        <p class="text-ink-500 text-[12.5px]">Friday, May 8 · drag stops to reorder or reassign</p>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
+          <button class="day-btn px-3 py-1 text-[12.5px] font-medium bg-white shadow-sm rounded" data-day="today">Today</button>
+          <button class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500" data-day="tomorrow">Tomorrow</button>
+        </div>
+        <button onclick="autoRoute()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="zap"></i>Auto-route all</button>
+        <button onclick="openInlineStop('Mike')" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="plus"></i>Stop for today</button>
+        <button onclick="openQuickCapture()" class="btn-danger inline-flex items-center gap-1.5"><i data-lucide="mic"></i>New job</button>
+      </div>
+    </div>
+
+    <div class="card mb-3 px-3 py-2 flex items-center gap-3">
+      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Drivers today</div>
+      <div id="driver-pills" class="flex items-center gap-1.5 flex-1"></div>
+      <button onclick="openAddTempDriver()" class="text-[12px] text-ink-500 hover:text-ink-900 font-medium inline-flex items-center gap-1"><i data-lucide="plus" class="ico-sm"></i>Add temp driver</button>
+    </div>
+
+    <div class="card mb-4 h-64 relative overflow-hidden bg-ink-50">
+      <svg viewBox="0 0 1000 250" preserveAspectRatio="xMidYMid meet" class="absolute inset-0 w-full h-full" id="route-map" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#cbd5e1" stroke-width=".5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- City labels -->
+        <text x="50" y="22" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">TANNER (SHOP)</text>
+        <text x="280" y="65" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">ATHENS</text>
+        <text x="495" y="218" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">DECATUR</text>
+        <text x="780" y="55" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">HUNTSVILLE</text>
+        <text x="820" y="225" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">MADISON</text>
+
+        <!-- Routes -->
+        <path id="path-mike"  d="M 70 130 Q 240 70 400 100 Q 580 130 760 80 Q 870 60 950 95"  stroke="#ea580c" stroke-width="2.5" fill="none" stroke-dasharray="7 5" class="path-flow"/>
+        <path id="path-tony"  d="M 70 130 Q 230 200 420 175 Q 590 160 770 195 Q 880 200 950 175" stroke="#10b981" stroke-width="2.5" fill="none" stroke-dasharray="7 5" class="path-flow"/>
+        <path id="path-jorge" d="M 70 130 Q 200 105 360 120 Q 530 130 690 105 Q 830 85 950 115"  stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-dasharray="7 5" class="path-flow"/>
+
+        <!-- Stop dots -->
+        <g id="stops-overlay"></g>
+
+        <!-- Depot -->
+        <g transform="translate(70, 130)">
+          <circle r="11" fill="#0f172a"/>
+          <circle r="4" fill="white"/>
+        </g>
+
+        <!-- Trucks (rendered by JS) -->
+        <g id="truck-mike-group"></g>
+        <g id="truck-tony-group"></g>
+        <g id="truck-jorge-group"></g>
+      </svg>
+
+      <!-- Legend overlay -->
+      <div class="absolute top-3 right-3 bg-white border border-ink-200 rounded p-2.5 text-[11px] space-y-1.5">
+        <div id="legend-mike"  class="flex items-center gap-2"><span class="w-3 h-0.5 bg-orange-600"></span><span class="font-semibold">Mike</span><span class="text-ink-500" id="legend-mike-progress">—</span></div>
+        <div id="legend-tony"  class="flex items-center gap-2"><span class="w-3 h-0.5 bg-emerald-500"></span><span class="font-semibold">Tony</span><span class="text-ink-500" id="legend-tony-progress">—</span></div>
+        <div id="legend-jorge" class="flex items-center gap-2"><span class="w-3 h-0.5 bg-blue-500"></span><span class="font-semibold">Jorge</span><span class="text-ink-500" id="legend-jorge-progress">—</span></div>
+      </div>
+      <div class="absolute bottom-3 left-3 text-[11px] text-ink-500 bg-white border border-ink-200 px-2 py-1 rounded">Updated 2s ago</div>
+    </div>
+
+    <div class="grid grid-cols-4 gap-3">
+      <div class="col-span-3 grid grid-cols-3 gap-3" id="dispatch-board"></div>
+      <aside class="card overflow-hidden self-start">
+        <div class="px-3 py-2 border-b border-ink-200">
+          <div class="text-[12.5px] font-semibold">Today's changes</div>
+          <div class="text-[11px] text-ink-500">Adds, retirements, skips</div>
+        </div>
+        <div id="changes-feed"></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ DRIVER VIEW =============================================== -->
+<section data-view="driver" class="role-view hidden">
+  <div class="grid place-items-center py-8 bg-ink-50 min-h-[calc(100vh-90px)]">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="bg-black text-white text-[10.5px] px-5 py-1 flex justify-between"><span>9:41</span><span>100%</span></div>
+
+        <div class="bg-ink-900 text-white px-5 py-3.5">
+          <div class="text-[11px] opacity-70">Friday, May 8</div>
+          <div class="text-lg font-semibold">Mike's route</div>
+          <div class="text-[11.5px] opacity-70 mt-0.5" id="driver-progress">3 of 8 stops complete · est. 2h 15m left</div>
+        </div>
+
+        <div class="px-4 pt-3" id="active-stop"></div>
+
+        <div class="flex-1 overflow-y-auto px-4 pb-4 mt-3">
+          <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Up next</div>
+          <div id="driver-list" class="space-y-1.5"></div>
+
+          <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold mt-5">Completed</div>
+          <div id="driver-done" class="space-y-1.5 opacity-70"></div>
+        </div>
+
+        <div class="border-t border-ink-200 bg-white px-4 py-2 flex justify-around text-[11.5px]">
+          <button class="text-ink-900 font-semibold inline-flex items-center gap-1"><i data-lucide="list"></i>Route</button>
+          <button class="text-ink-500 inline-flex items-center gap-1"><i data-lucide="map"></i>Map</button>
+          <button class="text-ink-500 inline-flex items-center gap-1"><i data-lucide="user"></i>Me</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ CUSTOMER PORTAL ========================================== -->
+<section data-view="customer" class="role-view hidden">
+  <div class="bg-ink-900 text-white px-6 py-2.5 flex items-center justify-between text-[12px]">
+    <div class="flex items-center gap-2"><i data-lucide="user-circle" class="ico-sm"></i>Signed in as <strong>Decatur Builders Co.</strong> · office@decaturbuilders.com</div>
+    <button class="opacity-70 hover:opacity-100 underline">Sign out</button>
+  </div>
+  <div class="flex">
+    <aside class="w-52 border-r border-ink-200 min-h-[calc(100vh-130px)] p-3 bg-ink-50/40">
+      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 px-2 font-semibold">Your account</div>
+      <nav class="flex flex-col gap-0.5">
+        <button class="cust-nav active text-left px-3 py-1.5 rounded text-[13px] font-medium" data-cpane="overview">Overview</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="locations">Locations &amp; units</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="history">Service history</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="request">Request service</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="billing">Billing &amp; invoices</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="settings">Settings</button>
+      </nav>
+      <div class="mt-6 px-3 py-2.5 bg-white border border-ink-200 rounded text-[11.5px]">
+        <div class="text-ink-500 mb-1">Need help?</div>
+        <div class="font-semibold mb-0.5">Greg Polson</div>
+        <div class="text-ink-700">(256) 771-3612</div>
+        <div class="text-ink-700 break-all">Greg@ValleyRestrooms.com</div>
+      </div>
+    </aside>
+    <main class="flex-1 p-7 max-w-5xl" id="customer-main"></main>
+  </div>
+</section>
+
+<div id="modal" class="fixed inset-0 bg-black/40 z-40 hidden grid place-items-center p-4">
+  <div class="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-ink-200">
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<div id="report-overlay" class="fixed inset-0 bg-ink-100 z-50 hidden overflow-y-auto">
+  <div id="report-content"></div>
+</div>
+
+<div id="toast" class="fixed bottom-5 right-5 bg-ink-900 text-white px-4 py-2 rounded text-[12.5px] z-50 hidden border border-ink-700"></div>
+
+<script>
+/* ============ MOCK DATA ============ */
+const customers = [
+  { id:1, name:'Absolute Custom Remodeling', phone:'256-555-0118', addr:'1 Stockton St., Huntsville AL', toilets:1, route:'G', day:'Tue', last:'2026-04-30' },
+  { id:2, name:'APEL Machine', phone:'256-620-1081', addr:'914 West Elm St., Athens AL', toilets:1, route:'G', day:'Wed', last:'2026-04-29' },
+  { id:3, name:'Ashley Thompson Construction', phone:'256-555-0142', addr:'500 West Morgan Rd., Decatur AL', toilets:2, route:'B', day:'Mon', last:'2026-05-04' },
+  { id:4, name:'Decatur Builders Co.', phone:'256-555-0177', addr:'42 Industrial Park, Decatur AL', toilets:3, route:'B', day:'Mon, Thu', last:'2026-05-04' },
+  { id:5, name:'Hampton Inn Madison', phone:'256-555-0199', addr:'4870 University Dr., Madison AL', toilets:2, route:'H', day:'Fri', last:'2026-05-01' },
+  { id:6, name:'Madison Park (City)', phone:'256-555-0123', addr:'700 Main St., Madison AL', toilets:4, route:'H', day:'Tue, Fri', last:'2026-05-05' },
+  { id:7, name:'Smith Wedding (event)', phone:'256-555-0211', addr:'88 Riverside Ln, Athens AL', toilets:5, route:'—', day:'EVENT', last:'—' },
+  { id:8, name:'River Festival 2026 (event)', phone:'256-555-0233', addr:'Ditto Landing, Huntsville AL', toilets:12, route:'—', day:'EVENT', last:'—' },
+];
+const toilets = [
+  {n:'NGC-101', type:'Standard', loc:'Absolute Custom Remodeling'},
+  {n:'NGC-102', type:'Standard', loc:'APEL Machine'},
+  {n:'NGC-103', type:'Standard', loc:'Ashley Thompson Construction'},
+  {n:'NGC-104', type:'Standard', loc:'Ashley Thompson Construction'},
+  {n:'TanSat-12', type:'Handicap', loc:'Decatur Builders Co.'},
+  {n:'NGC-105', type:'Standard', loc:'Decatur Builders Co.'},
+  {n:'NGC-106', type:'Standard', loc:'Decatur Builders Co.'},
+  {n:'NGC-107', type:'Standard', loc:'Hampton Inn Madison'},
+  {n:'NGC-108', type:'Standard', loc:'Hampton Inn Madison'},
+  {n:'NGC-110', type:'Standard', loc:'Available'},
+  {n:'NGC-111', type:'Standard', loc:'Available'},
+  {n:'VIP-04',  type:'VIP',      loc:'Available'},
+];
+const driverData = {
+  Mike: [
+    {id:'m1', cust:'Absolute Custom Remodeling', addr:'1 Stockton St., Huntsville', toilet:'NGC-101', type:'clean', status:'completed', completedAt:'7:42a'},
+    {id:'m2', cust:'River Oaks Estates',         addr:'1110 River Oaks Dr, Madison',toilet:'NGC-115',         type:'clean', status:'completed', completedAt:'8:21a'},
+    {id:'m3', cust:'Decatur Builders Co.',       addr:'42 Industrial Park, Decatur',toilet:'3 units',          type:'clean', status:'completed', completedAt:'9:08a'},
+    {id:'m4', cust:'Hampton Inn Madison',        addr:'4870 University Dr., Madison',toilet:'NGC-107, NGC-108',type:'clean', status:'active',    notes:'Both units in side parking — gate code 4490'},
+    {id:'m5', cust:'Madison Park (City)',        addr:'700 Main St., Madison',      toilet:'4 units',          type:'clean', status:'pending',   notes:'Park opens at 8 — be done by then'},
+    {id:'m6', cust:'Smith Wedding',              addr:'88 Riverside Ln, Athens',    toilet:'5 units',          type:'deliver', status:'pending', notes:'Drop near east gate'},
+    {id:'m7', cust:'Holler Trucking',            addr:'8845 Hwy 31, Athens',        toilet:'NGC-119',          type:'clean', status:'pending'},
+  ],
+  Tony: [
+    {id:'t0', cust:'Tanner Park Construction',   addr:'88 Tanner Industrial, Tanner',toilet:'NGC-120',         type:'clean', status:'completed', completedAt:'7:30a'},
+    {id:'t1', cust:'Ashley Thompson Construction',addr:'500 West Morgan Rd., Decatur',toilet:'NGC-103, NGC-104',type:'clean', status:'active',   notes:'Job site — watch for forklifts'},
+    {id:'t2', cust:'Decatur Steel Co.',          addr:'1810 Industrial Pkwy, Decatur',toilet:'NGC-122',         type:'clean', status:'pending'},
+    {id:'t3', cust:'River Festival 2026',        addr:'Ditto Landing, Huntsville',  toilet:'12 units',         type:'pickup', status:'pending', notes:'Event ended Sun — pickup all units'},
+    {id:'t4', cust:'Carter Roofing',             addr:'455 Hwy 31, Hartselle',      toilet:'NGC-125',          type:'clean', status:'pending'},
+  ],
+  Jorge: [
+    {id:'j1', cust:'APEL Machine',               addr:'914 West Elm St., Athens',   toilet:'NGC-102',          type:'clean', status:'active'},
+    {id:'j2', cust:'Greenbrier Methodist',       addr:'2200 Greenbrier Pkwy, Madison',toilet:'NGC-118',         type:'clean', status:'pending'},
+    {id:'j3', cust:'Athens Steel Co.',           addr:'200 Industrial Blvd, Athens',toilet:'NGC-130',          type:'clean', status:'pending'},
+    {id:'j4', cust:'Lawler Construction',        addr:'77 Lindsay Ln, Athens',      toilet:'NGC-131',          type:'clean', status:'pending'},
+  ]
+};
+const driverMeta = {
+  Mike:  { routeCode: 'H', color: '#ea580c', colorClass:'bg-orange-600',  headingTo: 'Hampton Inn Madison',         status: 'active' },
+  Tony:  { routeCode: 'B', color: '#10b981', colorClass:'bg-emerald-500', headingTo: 'Ashley Thompson Construction', status: 'active' },
+  Jorge: { routeCode: 'G', color: '#3b82f6', colorClass:'bg-blue-500',    headingTo: 'APEL Machine',                 status: 'active' },
+};
+const recents = [
+  { when:'Today 9:14am', who:'Kim', what:'Added recurring: Holler Trucking — Wed, Route G, Jorge — $90' },
+  { when:'Yesterday',    who:'Kim', what:'Added event: Smith Wedding — Drop 5/14, Pickup 5/16, 5 units, Mike' },
+  { when:'May 5',        who:'Greg',what:'Moved Madison Park from Mon to Tue/Fri permanently' },
+];
+
+/* ============ ROLE / NAV ============ */
+document.querySelectorAll('.role-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.role-view').forEach(v=>v.classList.add('hidden'));
+    document.querySelector(`[data-view="${btn.dataset.role}"]`).classList.remove('hidden');
+    if (btn.dataset.role === 'greg')     { renderDriverPills(); renderBoard(); renderTodaysChanges(); }
+    if (btn.dataset.role === 'driver')   renderDriver();
+    if (btn.dataset.role === 'customer') renderCustomerPortal('overview');
+    renderNotifBell();
+    refreshIcons();
+  });
+});
+document.querySelectorAll('[data-view="kim"] .nav-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('[data-view="kim"] .nav-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('[data-pane-content]').forEach(p=>p.classList.add('hidden'));
+    document.querySelector(`[data-pane-content="${btn.dataset.pane}"]`).classList.remove('hidden');
+    refreshIcons();
+  });
+});
+
+/* ============ KIM HOME — recents ============ */
+function renderRecents(){
+  document.getElementById('recent-list').innerHTML = recents.map(r => `
+    <div class="px-3 py-2.5 flex items-center justify-between hover:bg-ink-50">
+      <div>
+        <div class="text-[13px]">${r.what}</div>
+        <div class="text-[11.5px] text-ink-500">${r.when} · by ${r.who}</div>
+      </div>
+      <button class="text-[12px] text-ink-700 hover:text-ink-900 hover:underline">View</button>
+    </div>`).join('');
+}
+
+/* ============ CUSTOMERS / TOILETS / SCHEDULES ============ */
+function renderCustomers(filter=''){
+  const f = filter.toLowerCase();
+  const rows = customers.filter(c => !f || (c.name+c.addr+c.phone).toLowerCase().includes(f));
+  document.getElementById('cust-table').innerHTML = rows.map(c => `
+    <tr onclick="openCustomerDetail(${c.id})" class="border-t border-ink-200 hover:bg-ink-50 cursor-pointer ${c.retired?'opacity-60':''}">
+      <td class="px-3 py-2.5">
+        <div class="font-medium">${c.name}</div>
+        <div class="text-[11.5px] text-ink-500">${c.phone}</div>
+      </td>
+      <td class="px-3 py-2.5 text-ink-700">${c.addr}</td>
+      <td class="px-3 py-2.5">${c.toilets}</td>
+      <td class="px-3 py-2.5">${c.day === 'EVENT' ? '<span class="tag tag-event">Event</span>' : c.day}</td>
+      <td class="px-3 py-2.5">${c.route}</td>
+      <td class="px-3 py-2.5 text-ink-500 text-[12px]">${c.last}</td>
+    </tr>`).join('');
+}
+function renderToilets(){
+  document.getElementById('toilet-grid').innerHTML = toilets.map(t => {
+    const avail = t.loc === 'Available';
+    return `<div class="card p-3">
+      <div class="flex items-center justify-between mb-1">
+        <div class="font-mono text-[12.5px] font-semibold">${t.n}</div>
+        <span class="text-[10px] uppercase tracking-wider font-semibold ${avail?'text-green-700':'text-ink-500'}">${avail?'Avail':'Out'}</span>
+      </div>
+      <div class="text-[11.5px] text-ink-500">${t.type}</div>
+      <div class="text-[12.5px] mt-0.5">${t.loc}</div>
+    </div>`;
+  }).join('');
+}
+function renderSchedules(){
+  const rec = customers.filter(c => c.day !== 'EVENT');
+  document.getElementById('sched-table').innerHTML = rec.map(c => `
+    <tr class="border-t border-ink-200 hover:bg-ink-50 ${c.retired?'opacity-60':''}">
+      <td class="px-3 py-2.5 font-medium">
+        ${c.name}
+        ${c.retired ? '<div class="text-[11px] text-amber-700 font-semibold mt-0.5">Retired from route</div>' : ''}
+      </td>
+      <td class="px-3 py-2.5 ${c.retired?'line-through text-ink-500':''}">${c.day}</td>
+      <td class="px-3 py-2.5"><span class="tag ${c.retired?'tag-skip':'tag-deliver'}">Route ${c.route}</span></td>
+      <td class="px-3 py-2.5 ${c.retired?'line-through text-ink-500':''}">${c.route==='G'?'Jorge':c.route==='B'?'Tony':'Mike'}</td>
+      <td class="px-3 py-2.5 ${c.retired?'line-through text-ink-500':''}">$90.00</td>
+      <td class="px-3 py-2.5 text-right">
+        ${c.retired
+          ? '<button onclick="reactivate(this)" class="text-[12px] text-ink-900 font-medium hover:underline">Reactivate</button>'
+          : '<button class="text-[12px] text-ink-900 font-medium hover:underline">Edit</button>'}
+      </td>
+    </tr>`).join('');
+}
+function reactivate(btn){
+  const row = btn.closest('tr');
+  const name = row.querySelector('td').textContent.trim().split('\n')[0].trim();
+  const c = customers.find(x => x.name === name);
+  if (c) { c.retired = false; renderSchedules(); renderCustomers(); toast(`${name} reactivated.`); }
+}
+
+/* ============ CUSTOMER DETAIL + REPORT ============ */
+const customerDetails = {
+  4: { // Decatur Builders Co. — multi-site construction company
+    email:'office@decaturbuilders.com', billingAddr:'P.O. Box 8821, Decatur AL 35601', sinceDate:'2022-04-15',
+    locations: [
+      { id:1, label:'Industrial Park site',  address:'42 Industrial Park, Decatur AL',  toilets:['NGC-105','NGC-106','TanSat-12'], started:'2024-08-12', active:true },
+      { id:2, label:'Hwy 31 Expansion',      address:'4400 Hwy 31, Decatur AL',         toilets:['NGC-140','NGC-141'],              started:'2025-03-04', active:true },
+      { id:3, label:'Westgate Project',      address:'88 Westgate Pkwy, Decatur AL',    toilets:[],                                 started:'2024-11-01', endedAt:'2025-12-15', active:false },
+    ],
+    history: [
+      { date:'2026-05-04', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Tony', notes:'' },
+      { date:'2026-05-01', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-04-27', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Tony', notes:'Watch for forklifts' },
+      { date:'2026-04-24', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-04-20', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Tony', notes:'' },
+      { date:'2026-04-17', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-04-13', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Mike', notes:'Tony out — Mike covered' },
+      { date:'2026-04-10', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-04-06', type:'clean',   loc:'Industrial Park site', toilets:'NGC-105, NGC-106, TanSat-12', driver:'Tony', notes:'' },
+      { date:'2026-04-03', type:'clean',   loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'' },
+      { date:'2026-03-04', type:'deliver', loc:'Hwy 31 Expansion',     toilets:'NGC-140, NGC-141',            driver:'Tony', notes:'New site, near gate' },
+      { date:'2025-12-15', type:'pickup',  loc:'Westgate Project',     toilets:'2 units',                     driver:'Mike', notes:'Project completed, retired from route' },
+    ]
+  },
+  5: { // Hampton Inn Madison
+    email:'manager@hamptonmadison.com', billingAddr:'4870 University Dr., Madison AL 35758', sinceDate:'2024-11-08',
+    locations: [
+      { id:1, label:'Side parking',  address:'4870 University Dr., Madison AL', toilets:['NGC-107','NGC-108'], started:'2024-11-08', active:true }
+    ],
+    history: [
+      { date:'2026-05-08', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-05-01', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-04-24', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-04-17', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-04-10', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2026-04-03', type:'clean',   loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'' },
+      { date:'2024-11-08', type:'deliver', loc:'Side parking', toilets:'NGC-107, NGC-108', driver:'Mike', notes:'Initial drop-off' },
+    ]
+  },
+  6: { // Madison Park
+    email:'parks@madisonal.gov', billingAddr:'700 Main St., Madison AL 35758', sinceDate:'2023-05-01',
+    locations: [
+      { id:1, label:'Pavilion area',  address:'700 Main St., Madison AL', toilets:['NGC-150','NGC-151','NGC-152','VIP-04'], started:'2023-05-01', active:true }
+    ],
+    history: [
+      { date:'2026-05-08', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'Park opens at 8' },
+      { date:'2026-05-05', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'' },
+      { date:'2026-05-01', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'' },
+      { date:'2026-04-28', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'' },
+      { date:'2026-04-24', type:'clean',  loc:'Pavilion area', toilets:'4 units', driver:'Mike', notes:'' },
+    ]
+  }
+};
+function getCustomerDetail(customerId){
+  return customerDetails[customerId] || {
+    email:'—', billingAddr:'(none on file)', sinceDate:'—',
+    locations:[{ id:1, label:'Service location', address:customers.find(c=>c.id===customerId)?.addr || '', toilets:[], started:'—', active:true }],
+    history:[]
+  };
+}
+
+function openCustomerDetail(customerId){
+  const c = customers.find(x => x.id === customerId);
+  if (!c) return;
+  // make sure customers tab is active
+  document.querySelectorAll('[data-view="kim"] .nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-pane="customers"]').classList.add('active');
+  document.querySelectorAll('[data-pane-content]').forEach(p => p.classList.add('hidden'));
+  document.querySelector('[data-pane-content="customers"]').classList.remove('hidden');
+
+  document.getElementById('customer-list-view').classList.add('hidden');
+  const view = document.getElementById('customer-detail-view');
+  view.classList.remove('hidden');
+
+  const d = getCustomerDetail(customerId);
+  const totalServices = d.history.length;
+  const totalCleans = d.history.filter(h => h.type==='clean').length;
+  const activeLocations = d.locations.filter(l => l.active).length;
+  const lastService = d.history[0];
+
+  view.innerHTML = `
+    <div class="flex items-center justify-between mb-4">
+      <button onclick="closeCustomerDetail()" class="text-[12.5px] text-ink-700 hover:text-ink-900 font-medium inline-flex items-center gap-1"><i data-lucide="arrow-left" class="ico-sm"></i>All customers</button>
+      <div class="flex gap-2">
+        <button class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="pencil" class="ico-sm"></i>Edit</button>
+        <button onclick="openCustomerReport(${customerId})" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="file-text" class="ico-sm"></i>Generate report</button>
+      </div>
+    </div>
+
+    <div class="card p-5 mb-4">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <h1 class="text-xl font-semibold tracking-tight">${c.name}</h1>
+          <div class="text-[12.5px] text-ink-500 mt-0.5">Customer since ${d.sinceDate}</div>
+        </div>
+        ${c.retired ? '<span class="tag tag-skip">Retired</span>' : `<span class="tag tag-clean">Active · Route ${c.route}</span>`}
+      </div>
+      <div class="grid grid-cols-3 gap-4 text-[13px]">
+        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-0.5">Phone</div><div>${c.phone}</div></div>
+        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-0.5">Email</div><div>${d.email}</div></div>
+        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-0.5">Billing address</div><div>${d.billingAddr}</div></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-4 gap-3 mb-4">
+      <div class="card p-3"><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Active locations</div><div class="text-2xl font-semibold tracking-tight">${activeLocations}</div></div>
+      <div class="card p-3"><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Total services</div><div class="text-2xl font-semibold tracking-tight">${totalServices}</div></div>
+      <div class="card p-3"><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Cleanings</div><div class="text-2xl font-semibold tracking-tight">${totalCleans}</div></div>
+      <div class="card p-3"><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Last service</div><div class="text-[14px] font-semibold mt-1">${lastService?lastService.date:'—'}</div><div class="text-[11.5px] text-ink-500">${lastService?lastService.type+' · '+lastService.driver:''}</div></div>
+    </div>
+
+    <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Locations</div>
+    <div class="space-y-2 mb-5">
+      ${d.locations.map(loc => `
+        <div class="card p-3 ${!loc.active?'opacity-60':''}">
+          <div class="flex items-start justify-between mb-1.5">
+            <div>
+              <div class="font-semibold text-[13.5px]">${loc.label}${!loc.active?` <span class="text-[10px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1.5 py-0.5 rounded ml-1 font-semibold">Ended ${loc.endedAt||''}</span>`:''}</div>
+              <div class="text-[12px] text-ink-500">${loc.address}</div>
+            </div>
+            <div class="text-[11.5px] text-ink-500">Since ${loc.started}</div>
+          </div>
+          ${loc.toilets.length ? `<div class="flex flex-wrap gap-1 mt-2">${loc.toilets.map(t => `<span class="font-mono text-[11px] bg-ink-50 border border-ink-200 rounded px-1.5 py-0.5">${t}</span>`).join('')}</div>` : '<div class="text-[11.5px] text-ink-500 italic mt-1">No units currently deployed</div>'}
+        </div>`).join('')}
+    </div>
+
+    <div class="flex items-end justify-between mb-2">
+      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Service history</div>
+      <select id="history-filter" onchange="filterHistory(${customerId})" class="input text-[12px] py-1 px-2">
+        <option value="all">All locations</option>
+        ${d.locations.map(loc => `<option value="${loc.label}">${loc.label}</option>`).join('')}
+      </select>
+    </div>
+    <div class="card overflow-hidden">
+      <table class="w-full text-[12.5px]">
+        <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+          <tr>
+            <th class="text-left px-3 py-2 font-semibold w-28">Date</th>
+            <th class="text-left px-3 py-2 font-semibold">Service</th>
+            <th class="text-left px-3 py-2 font-semibold">Location</th>
+            <th class="text-left px-3 py-2 font-semibold">Toilets</th>
+            <th class="text-left px-3 py-2 font-semibold">Driver</th>
+            <th class="text-left px-3 py-2 font-semibold">Notes</th>
+          </tr>
+        </thead>
+        <tbody id="history-tbody">${historyRows(d.history)}</tbody>
+      </table>
+    </div>`;
+  refreshIcons();
+}
+function historyRows(hist){
+  if (!hist.length) return `<tr><td colspan="6" class="px-3 py-4 text-center text-ink-500 italic">No service history yet.</td></tr>`;
+  return hist.map(h => `
+    <tr class="border-t border-ink-200 hover:bg-ink-50">
+      <td class="px-3 py-2 font-mono text-[11.5px]">${h.date}</td>
+      <td class="px-3 py-2">${tagFor(h.type)}</td>
+      <td class="px-3 py-2">${h.loc}</td>
+      <td class="px-3 py-2 font-mono text-[11.5px]">${h.toilets}</td>
+      <td class="px-3 py-2">${h.driver}</td>
+      <td class="px-3 py-2 text-ink-500 italic">${h.notes||''}</td>
+    </tr>`).join('');
+}
+function filterHistory(customerId){
+  const sel = document.getElementById('history-filter').value;
+  const d = getCustomerDetail(customerId);
+  const filtered = sel==='all' ? d.history : d.history.filter(h => h.loc === sel);
+  document.getElementById('history-tbody').innerHTML = historyRows(filtered);
+}
+function closeCustomerDetail(){
+  document.getElementById('customer-list-view').classList.remove('hidden');
+  document.getElementById('customer-detail-view').classList.add('hidden');
+  document.getElementById('customer-detail-view').innerHTML = '';
+}
+
+function openCustomerReport(customerId){
+  const c = customers.find(x => x.id === customerId);
+  const d = getCustomerDetail(customerId);
+  const today = new Date().toISOString().slice(0,10);
+  const reportHTML = buildReportHTML(c, d, '', today);
+  document.getElementById('report-overlay').classList.remove('hidden');
+  document.getElementById('report-content').innerHTML = reportHTML;
+  refreshIcons();
+}
+function buildReportHTML(c, d, fromDate, toDate){
+  const filtered = d.history.filter(h => (!fromDate || h.date >= fromDate) && (!toDate || h.date <= toDate));
+  const byLocation = {};
+  filtered.forEach(h => { (byLocation[h.loc] = byLocation[h.loc] || []).push(h); });
+  const generated = new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+  const periodText = fromDate ? `${fromDate} to ${toDate}` : `Through ${toDate}`;
+
+  return `
+    <div class="report-toolbar">
+      <div class="flex items-center gap-2">
+        <label class="text-[12.5px] text-ink-500">From</label>
+        <input type="date" id="report-from" value="${fromDate}" class="input text-[12px] py-1 px-2" />
+        <label class="text-[12.5px] text-ink-500 ml-2">To</label>
+        <input type="date" id="report-to" value="${toDate}" class="input text-[12px] py-1 px-2" />
+        <button onclick="rebuildReport(${c.id})" class="btn-secondary ml-2">Update</button>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="window.print()" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="printer" class="ico-sm"></i>Print / Save PDF</button>
+        <button onclick="closeReport()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="x" class="ico-sm"></i>Close</button>
+      </div>
+    </div>
+    <div class="report-page">
+      <div class="report-header">
+        <img src="valley_logo.png" alt="Valley Portable Restrooms" class="report-logo" onerror="this.style.display='none'" />
+        <div class="report-header-text">
+          <div class="report-company">VALLEY PORTABLE RESTROOMS</div>
+          <div class="report-company-sub">Tanner, AL · (256) 771-3612 · Greg@ValleyRestrooms.com</div>
+        </div>
+        <div class="report-meta">
+          <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Generated</div>
+          <div>${generated}</div>
+        </div>
+      </div>
+
+      <div class="report-title">Service History Report</div>
+      <div class="report-subtitle">${periodText}</div>
+
+      <div class="report-customer">
+        <div class="report-customer-block">
+          <div class="report-block-label">Bill to</div>
+          <div class="font-semibold">${c.name}</div>
+          <div>${d.billingAddr}</div>
+          <div>${c.phone}</div>
+          <div>${d.email}</div>
+        </div>
+        <div class="report-customer-block">
+          <div class="report-block-label">Account</div>
+          <div>Customer since ${d.sinceDate}</div>
+          <div>${d.locations.length} location${d.locations.length===1?'':'s'} · ${d.locations.filter(l=>l.active).length} active</div>
+          <div>${filtered.length} service event${filtered.length===1?'':'s'} in this period</div>
+        </div>
+      </div>
+
+      ${Object.keys(byLocation).length === 0 ? '<div class="report-empty">No services recorded in this period.</div>' : ''}
+
+      ${Object.entries(byLocation).map(([locName, events]) => {
+        const locInfo = d.locations.find(l => l.label === locName);
+        const cleanings = events.filter(e => e.type === 'clean').length;
+        const deliveries = events.filter(e => e.type === 'deliver').length;
+        const pickups = events.filter(e => e.type === 'pickup').length;
+        return `
+          <div class="report-location">
+            <div class="report-location-header">
+              <div>
+                <div class="report-location-name">${locName}</div>
+                <div class="report-location-addr">${locInfo?locInfo.address:''}</div>
+              </div>
+              <div class="report-location-stats">
+                ${deliveries?`<span><strong>${deliveries}</strong> drop-off${deliveries===1?'':'s'}</span>`:''}
+                ${cleanings?`<span><strong>${cleanings}</strong> cleaning${cleanings===1?'':'s'}</span>`:''}
+                ${pickups?`<span><strong>${pickups}</strong> pickup${pickups===1?'':'s'}</span>`:''}
+              </div>
+            </div>
+            <table class="report-table">
+              <thead><tr>
+                <th>Date</th><th>Service</th><th>Units</th><th>Driver</th><th>Notes</th>
+              </tr></thead>
+              <tbody>
+                ${events.map(e => `<tr>
+                  <td>${e.date}</td>
+                  <td><span class="report-svc report-svc-${e.type}">${e.type==='deliver'?'Delivery':e.type==='clean'?'Cleaning':e.type==='pickup'?'Pickup':e.type}</span></td>
+                  <td>${e.toilets}</td>
+                  <td>${e.driver}</td>
+                  <td>${e.notes||''}</td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>`;
+      }).join('')}
+
+      <div class="report-footer">
+        <div>Thank you for choosing Valley Portable Restrooms.</div>
+        <div class="report-footer-sub">Questions about this report? Call Greg at (256) 771-3612 or email Greg@ValleyRestrooms.com</div>
+      </div>
+    </div>`;
+}
+function rebuildReport(customerId){
+  const from = document.getElementById('report-from').value;
+  const to   = document.getElementById('report-to').value;
+  const c = customers.find(x => x.id === customerId);
+  const d = getCustomerDetail(customerId);
+  document.getElementById('report-content').innerHTML = buildReportHTML(c, d, from, to);
+  refreshIcons();
+}
+function closeReport(){ document.getElementById('report-overlay').classList.add('hidden'); }
+
+/* ============ MODAL FORMS ============ */
+function openForm(kind, prefill){
+  document.getElementById('modal-content').innerHTML = kind === 'recurring' ? recurringFormHTML(prefill) : eventFormHTML(prefill);
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+function closeModal(){ document.getElementById('modal').classList.add('hidden'); }
+
+function recurringFormHTML(p){
+  const d = p || {};
+  const days = d.days || [];
+  const toiletCount = d.toilets || '';
+  const routeOpts = [
+    { code:'G', label:'G — Athens / Tanner (Jorge)' },
+    { code:'B', label:'B — Decatur / Hartselle (Tony)' },
+    { code:'H', label:'H — Huntsville / Madison (Mike)' },
+  ];
+  const routeMatch = (d.route || '').match(/^([GBH])/);
+  const routeCode = routeMatch ? routeMatch[1] : 'G';
+  const banner = p ? `
+    <div class="bg-amber-50 border border-amber-300 rounded p-3 text-[12px] text-amber-900 mb-1">
+      <strong>Pre-filled from Greg's note.</strong> Double-check anything that looks off, then save.
+    </div>` : '';
+  return `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">${p ? 'Confirm recurring customer' : 'New recurring customer'}</div>
+        <div class="text-[12.5px] text-ink-500">Standing weekly service</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <form onsubmit="submitForm(event,'recurring')" class="px-5 py-4 space-y-4">
+      ${banner}
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Customer name</label>
+        <input required value="${d.customer || ''}" placeholder="Start typing — existing customers autocomplete" class="input w-full" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">Phone</label><input value="${d.phone || ''}" placeholder="256-555-0100" class="input w-full" /></div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Email <span class="text-ink-500 font-normal">(optional)</span></label><input type="email" class="input w-full" /></div>
+      </div>
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Service address</label>
+        <input required value="${d.address || ''}" placeholder="123 Main St, Huntsville AL" class="input w-full" />
+        <div class="text-[11.5px] text-ink-500 mt-1">Geocoded so the driver gets navigation automatically.</div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">Number of toilets</label>
+          <select class="input w-full">
+            ${[1,2,3,4,'5+'].map(n => `<option ${String(toiletCount)===String(n)?'selected':''}>${n}</option>`).join('')}
+          </select>
+        </div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Toilet type</label>
+          <select class="input w-full">
+            ${['Standard','Handicap','VIP','+ Hand-wash sink'].map(t => `<option ${(d.type||'')===t?'selected':''}>${t}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-[12.5px] font-medium mb-2">Service days</label>
+        <div class="grid grid-cols-6 gap-1.5">
+          ${['M','T','W','Th','F','Sa'].map(dd=>`
+            <label class="border border-ink-300 rounded px-2 py-1.5 text-[13px] text-center cursor-pointer hover:bg-ink-50 has-[:checked]:bg-ink-900 has-[:checked]:border-ink-900 has-[:checked]:text-white font-medium">
+              <input type="checkbox" class="hidden" ${days.includes(dd)?'checked':''} /> ${dd}
+            </label>`).join('')}
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">Route</label>
+          <select class="input w-full">
+            ${routeOpts.map(r => `<option ${r.code===routeCode?'selected':''}>${r.label}</option>`).join('')}
+          </select>
+        </div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Override driver <span class="text-ink-500 font-normal">(optional)</span></label>
+          <select class="input w-full"><option>Use route default</option><option>Mike</option><option>Tony</option><option>Jorge</option></select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Price per service</label>
+        <div class="relative w-36"><span class="absolute left-2.5 top-2 text-ink-500">$</span><input value="${d.price ? d.price.toFixed ? d.price.toFixed(2) : d.price : '90.00'}" class="input w-full pl-6" /></div>
+      </div>
+      <div class="border border-ink-200 rounded p-3 bg-ink-50/40">
+        <div class="text-[12.5px] font-semibold mb-2">Customer notifications</div>
+        <div class="space-y-1.5 text-[13px]">
+          <label class="flex items-center gap-2"><input type="checkbox" checked /> Text after every cleaning</label>
+          <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on delivery</label>
+          <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on pickup</label>
+          <label class="flex items-center gap-2"><input type="checkbox" /> Include Google review request <span class="text-ink-500 text-[11.5px]">(skip for regulars)</span></label>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">${p ? 'Confirm & schedule' : 'Save & schedule'}</button>
+      </div>
+    </form>`;
+}
+function eventFormHTML(p){
+  const d = p || {};
+  const noClean = (d.cleanings || '').toLowerCase().includes('none');
+  const dailyClean = (d.cleanings || '').toLowerCase().includes('daily');
+  const specificClean = !noClean && !dailyClean && d.cleanings && d.cleanings !== 'None';
+  const banner = p ? `
+    <div class="bg-amber-50 border border-amber-300 rounded p-3 text-[12px] text-amber-900 mb-1">
+      <strong>Pre-filled from Greg's note.</strong> Double-check anything that looks off, then save.
+    </div>` : '';
+  return `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">${p ? 'Confirm event booking' : 'New event booking'}</div>
+        <div class="text-[12.5px] text-ink-500">One-time job — drop off, pickup, optional cleanings</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <form onsubmit="submitForm(event,'event')" class="px-5 py-4 space-y-4">
+      ${banner}
+      <div><label class="block text-[12.5px] font-medium mb-1">Customer / event name</label><input required value="${d.customer || ''}" placeholder="e.g. Smith Wedding, River Festival 2026" class="input w-full" /></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">Phone</label><input value="${d.phone || ''}" placeholder="256-555-0100" class="input w-full" /></div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Email <span class="text-ink-500 font-normal">(optional)</span></label><input type="email" class="input w-full" /></div>
+      </div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Event location</label><input required value="${d.address || ''}" placeholder="88 Riverside Ln, Athens AL" class="input w-full" /></div>
+      <div class="grid grid-cols-3 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">Drop-off date</label><input type="date" required value="${d.dropoff || ''}" class="input w-full" /></div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Pickup date</label><input type="date" required value="${d.pickup || ''}" class="input w-full" /></div>
+        <div><label class="block text-[12.5px] font-medium mb-1"># of toilets</label><input type="number" min="1" value="${d.toilets || 3}" class="input w-full" /></div>
+      </div>
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Cleanings during the event <span class="text-ink-500 font-normal">(optional)</span></label>
+        <div class="text-[11.5px] text-ink-500 mb-2">Most weddings need none. Festivals usually want one per day.</div>
+        <div class="space-y-1.5">
+          <label class="flex items-center gap-2 text-[13px]"><input type="checkbox" ${noClean?'checked':''} /> No cleanings</label>
+          <label class="flex items-center gap-2 text-[13px]"><input type="checkbox" ${dailyClean?'checked':''} /> Daily during event</label>
+          <label class="flex items-center gap-2 text-[13px]"><input type="checkbox" ${specificClean?'checked':''} /> Specific dates: <input type="text" value="${specificClean ? d.cleanings : ''}" placeholder="5/15, 5/16" class="input w-40 ml-1" /></label>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">Driver</label>
+          <select class="input w-full">
+            ${['Auto-assign by closest route','Mike','Tony','Jorge'].map(opt => {
+              const sel = (d.driver === opt || (d.driver === 'Auto-assign' && opt.startsWith('Auto-assign'))) ? 'selected' : '';
+              return `<option ${sel}>${opt}</option>`;
+            }).join('')}
+          </select>
+        </div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Total price</label>
+          <div class="relative"><span class="absolute left-2.5 top-2 text-ink-500">$</span><input value="${d.price ? d.price.toFixed ? d.price.toFixed(2) : d.price : '450.00'}" class="input w-full pl-6" /></div>
+        </div>
+      </div>
+      <div class="border border-ink-200 rounded p-3 bg-ink-50/40">
+        <div class="text-[12.5px] font-semibold mb-2">Customer notifications</div>
+        <div class="space-y-1.5 text-[13px]">
+          <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on delivery</label>
+          <label class="flex items-center gap-2"><input type="checkbox" checked /> Text after each cleaning</label>
+          <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on pickup</label>
+          <label class="flex items-center gap-2"><input type="checkbox" checked /> Include Google review request</label>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">${p ? 'Confirm & schedule' : 'Save & schedule'}</button>
+      </div>
+    </form>`;
+}
+function submitForm(e, kind){ e.preventDefault(); closeModal(); toast(kind==='recurring' ? 'Saved. Future stops added to driver routes.' : 'Event booked. Drop-off, cleanings, and pickup scheduled.'); }
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'), 2800); }
+
+/* ============ GREG — DISPATCH BOARD ============ */
+const driverColors = { Mike:'bg-orange-600', Tony:'bg-emerald-500', Jorge:'bg-blue-500' };
+function tagFor(type){
+  if(type==='clean')   return '<span class="tag tag-clean">Clean</span>';
+  if(type==='deliver') return '<span class="tag tag-deliver">Deliver</span>';
+  if(type==='pickup')  return '<span class="tag tag-pickup">Pickup</span>';
+  if(type==='swap')    return '<span class="tag tag-skip">Swap</span>';
+  return '';
+}
+function statusOrder(s){ return s.status==='completed'?0 : s.status==='active'?1 : 2; }
+function progressOf(driver){
+  const arr = driverData[driver];
+  const done = arr.filter(s=>s.status==='completed').length;
+  const total = arr.length;
+  // Position halfway through the active stop, or at end of completed if no active
+  const hasActive = arr.some(s=>s.status==='active');
+  const numerator = hasActive ? done + 0.5 : done;
+  return { done, total, pct: total ? numerator / total : 0 };
+}
+function renderBoard(){
+  const board = document.getElementById('dispatch-board');
+  board.innerHTML = Object.entries(driverData).map(([driver, stops])=>{
+    const meta = driverMeta[driver];
+    const p = progressOf(driver);
+    const sorted = [...stops].sort((a,b)=>statusOrder(a)-statusOrder(b));
+    const barColor = driver==='Mike'?'bg-orange-600':driver==='Tony'?'bg-emerald-500':'bg-blue-500';
+    const isOut = meta.status !== 'active';
+    return `
+    <div class="card overflow-hidden ${isOut?'opacity-75':''}">
+      <div class="px-3 py-2.5 border-b border-ink-200 ${isOut?'bg-red-50':''}">
+        <div class="flex items-center gap-2 mb-1.5">
+          <div class="w-7 h-7 rounded-full ${driverColors[driver]} text-white grid place-items-center text-[12px] font-semibold ${isOut?'opacity-50':''}">${driver[0]}</div>
+          <div class="flex-1">
+            <div class="font-semibold text-[13.5px] flex items-center gap-1.5">${driver}${isOut?` <span class="text-[10px] uppercase tracking-wider bg-red-600 text-white px-1.5 py-0.5 rounded font-semibold">${meta.status==='out_today'?'Out today':'Out this week'}</span>`:''}</div>
+            <div class="text-[11.5px] text-ink-500">${p.done} of ${p.total} done · Route ${meta.routeCode}</div>
+          </div>
+          <button onclick="toggleDriverMenu('${driver}', event)" class="text-ink-500 hover:text-ink-900"><i data-lucide="more-horizontal"></i></button>
+        </div>
+        <div class="progress-bar"><div class="${barColor}" style="width:${Math.round(p.pct*100)}%"></div></div>
+      </div>
+      <div class="p-2 space-y-1.5 min-h-[180px]" data-driver="${driver}" ondragover="event.preventDefault(); this.classList.add('col-hover');" ondragleave="this.classList.remove('col-hover');" ondrop="dropStop(event,'${driver}')">
+        ${sorted.map((s,i)=>{
+          const isCompleted = s.status==='completed';
+          const isActive = s.status==='active';
+          const cardCls = isCompleted ? 'stop-completed' : isActive ? 'stop-active' : '';
+          const seq = stops.indexOf(s)+1;
+          return `
+          <div ${isCompleted?'':'draggable="true"'} ${isCompleted?'':`ondragstart="dragStart(event,'${driver}','${s.id}')" ondragend="dragEnd(event)"`} class="stop-card border border-ink-200 rounded p-2.5 ${isCompleted?'':'cursor-grab active:cursor-grabbing'} ${cardCls}">
+            <div class="flex items-center justify-between mb-1">
+              <div class="text-[10.5px] font-mono text-ink-500 flex items-center gap-1.5">
+                ${isCompleted ? '<i data-lucide="check" class="ico-sm text-emerald-700"></i>' : isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-brand-500 pulse"></span>' : ''}
+                #${seq}${isCompleted ? ` · ${s.completedAt||''}` : isActive ? ' · NOW' : ''}
+              </div>
+              ${tagFor(s.type)}
+            </div>
+            <div class="text-[13px] font-semibold leading-tight stop-name">${s.cust}</div>
+            <div class="text-[11.5px] text-ink-500 leading-tight">${s.addr}</div>
+            <div class="text-[11.5px] text-ink-700 mt-1 font-mono">${s.toilet}</div>
+            ${s.notes ? `<div class="text-[11.5px] italic text-ink-500 mt-1">"${s.notes}"</div>` : ''}
+            ${isCompleted ? '' : `
+              <div class="flex gap-2 mt-1.5">
+                <button class="text-[11.5px] text-ink-900 font-medium hover:underline" onclick="pinNext('${driver}','${s.id}')">Do next</button>
+                <button class="text-[11.5px] text-ink-500 font-medium hover:underline">Reassign</button>
+              </div>`}
+          </div>`;
+        }).join('')}
+        <button onclick="openInlineStop('${driver}')" class="w-full border border-dashed border-ink-300 rounded py-1.5 text-[12px] text-ink-500 hover:border-ink-500 hover:text-ink-900">+ Add to today</button>
+      </div>
+    </div>`;
+  }).join('');
+  positionTrucks();
+  refreshIcons();
+}
+
+/* ============ MAP TRUCKS ============ */
+function positionTrucks(){
+  ['Mike','Tony','Jorge'].forEach(driver => {
+    const path = document.getElementById(`path-${driver.toLowerCase()}`);
+    const group = document.getElementById(`truck-${driver.toLowerCase()}-group`);
+    const meta = driverMeta[driver];
+    if (!path || !group) return;
+    if (meta.status !== 'active'){
+      group.innerHTML = '';
+      // dim the path for out drivers
+      path.style.opacity = '0.2';
+      path.style.animationPlayState = 'paused';
+      return;
+    } else {
+      path.style.opacity = '1';
+      path.style.animationPlayState = 'running';
+    }
+    const len = path.getTotalLength();
+    const p = progressOf(driver);
+    const point = path.getPointAtLength(len * p.pct);
+    const next = path.getPointAtLength(Math.min(len, len * p.pct + 5));
+    const angle = Math.atan2(next.y - point.y, next.x - point.x) * 180 / Math.PI;
+    group.innerHTML = `
+      <g transform="translate(${point.x.toFixed(1)}, ${point.y.toFixed(1)})">
+        <g transform="rotate(${angle.toFixed(1)})">
+          <g class="truck-body">
+            <!-- shadow -->
+            <ellipse cx="0" cy="11" rx="14" ry="2.5" fill="black" opacity=".18"/>
+            <!-- body -->
+            <rect x="-15" y="-8" width="30" height="16" rx="2.5" fill="${meta.color}" stroke="white" stroke-width="1.5"/>
+            <!-- cab window -->
+            <rect x="-13" y="-6" width="8" height="8" rx="1" fill="white" opacity=".95"/>
+            <!-- side stripe -->
+            <rect x="-3" y="-3" width="16" height="2" fill="white" opacity=".7"/>
+            <!-- wheels -->
+            <circle cx="-9" cy="9" r="2.6" fill="#0f172a"/>
+            <circle cx="9"  cy="9" r="2.6" fill="#0f172a"/>
+          </g>
+        </g>
+        <!-- label (does not rotate) -->
+        <g transform="translate(0, -22)">
+          <rect x="-58" y="-9" width="116" height="18" rx="9" fill="white" stroke="${meta.color}" stroke-width="1.5"/>
+          <text x="0" y="3.5" text-anchor="middle" font-size="9" font-weight="600" fill="#0f172a">
+            ${driver} · ${p.done}/${p.total} · ${meta.headingTo.length>16?meta.headingTo.substring(0,15)+'…':meta.headingTo}
+          </text>
+        </g>
+      </g>`;
+  });
+
+  // legend progress text
+  ['Mike','Tony','Jorge'].forEach(driver => {
+    const p = progressOf(driver);
+    const el = document.getElementById(`legend-${driver.toLowerCase()}-progress`);
+    if (el) el.textContent = `${p.done}/${p.total} done · → ${driverMeta[driver].headingTo}`;
+  });
+}
+let dragSrc = null;
+function dragStart(e, driver, id){ dragSrc = {driver, id}; e.target.classList.add('dragging'); }
+function dragEnd(e){ e.target.classList.remove('dragging'); document.querySelectorAll('.col-hover').forEach(el=>el.classList.remove('col-hover')); }
+function dropStop(e, targetDriver){
+  e.preventDefault();
+  if (!dragSrc) return;
+  const srcList = driverData[dragSrc.driver];
+  const idx = srcList.findIndex(s => s.id === dragSrc.id);
+  if (idx === -1) return;
+  const [moved] = srcList.splice(idx,1);
+  driverData[targetDriver].push(moved);
+  dragSrc = null;
+  renderBoard();
+  toast(`Moved ${moved.cust} to ${targetDriver}`);
+}
+function pinNext(driver, id){
+  const arr = driverData[driver];
+  const idx = arr.findIndex(s => s.id === id);
+  if (idx > 0) { const [s] = arr.splice(idx,1); arr.unshift(s); renderBoard(); toast('Pinned to next on driver\'s phone'); }
+}
+function autoRoute(){
+  Object.keys(driverData).forEach(k => driverData[k].sort(() => Math.random() - 0.5));
+  renderBoard();
+  toast('All routes optimized by address proximity');
+}
+
+/* ============ DRAFTS FROM GREG ============ */
+const drafts = [
+  {
+    id:'d1', captured:'Today 8:42am', via:'Voice memo (0:18)',
+    raw:'Hey Kim, got a new one — Joe Smith Construction at 1247 Oak Street in Decatur, needs two standard units, weekly Mondays and Thursdays, ninety bucks each, his number is 256-555-1234.',
+    parsed:{ customer:'Joe Smith Construction', phone:'256-555-1234', address:'1247 Oak Street, Decatur AL', toilets:2, type:'Standard', days:['M','Th'], route:'B — Decatur / Hartselle (Tony)', price:90, kind:'recurring' }
+  },
+  {
+    id:'d2', captured:'Yesterday 4:15pm', via:'Text message',
+    raw:'Mendoza wedding 6/14 to 6/16, 88 Riverside Lane Athens, 5 standards plus 1 handicap, no cleanings, $625 total. Bride is Maria Mendoza 256-555-7788.',
+    parsed:{ customer:'Mendoza Wedding', phone:'256-555-7788', address:'88 Riverside Lane, Athens AL', toilets:6, type:'5 Standard + 1 Handicap', dropoff:'2026-06-14', pickup:'2026-06-16', cleanings:'None', driver:'Auto-assign', price:625, kind:'event' }
+  },
+];
+
+function renderDrafts(){
+  const container = document.getElementById('drafts-list');
+  if (!container) return;
+  if (drafts.length === 0) {
+    container.innerHTML = `<div class="card p-8 text-center text-ink-500"><div class="mx-auto mb-2"><i data-lucide="inbox" class="ico-xl"></i></div><div class="text-[13px]">Inbox zero. No drafts from Greg.</div></div>`;
+  } else {
+    container.innerHTML = drafts.map(d => {
+      const p = d.parsed;
+      const kindTag = p.kind === 'event' ? '<span class="tag tag-event">Event</span>' : '<span class="tag tag-deliver">Recurring</span>';
+      const detailLines = p.kind === 'recurring'
+        ? `<div><span class="text-ink-500">Days:</span> ${p.days.join(', ')}</div>
+           <div><span class="text-ink-500">Toilets:</span> ${p.toilets} ${p.type}</div>
+           <div><span class="text-ink-500">Route:</span> ${p.route}</div>
+           <div><span class="text-ink-500">Price:</span> $${p.price}/service</div>`
+        : `<div><span class="text-ink-500">Drop-off:</span> ${p.dropoff}</div>
+           <div><span class="text-ink-500">Pickup:</span> ${p.pickup}</div>
+           <div><span class="text-ink-500">Toilets:</span> ${p.toilets} (${p.type})</div>
+           <div><span class="text-ink-500">Cleanings:</span> ${p.cleanings}</div>
+           <div><span class="text-ink-500">Total:</span> $${p.price}</div>`;
+      return `
+        <div class="card overflow-hidden">
+          <div class="px-4 py-2.5 bg-ink-50 border-b border-ink-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">${kindTag}<div class="text-[13.5px] font-semibold">${p.customer}</div></div>
+            <div class="text-[11.5px] text-ink-500">${d.captured} · ${d.via}</div>
+          </div>
+          <div class="px-4 py-3.5">
+            <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-1.5 font-semibold">Greg's note</div>
+            <div class="text-[13px] italic text-ink-700 mb-3">"${d.raw}"</div>
+            <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-1.5 font-semibold">Auto-extracted</div>
+            <div class="grid grid-cols-2 gap-y-1 text-[13px] mb-3">
+              <div><span class="text-ink-500">Customer:</span> ${p.customer}</div>
+              <div><span class="text-ink-500">Phone:</span> ${p.phone}</div>
+              <div class="col-span-2"><span class="text-ink-500">Address:</span> ${p.address}</div>
+              ${detailLines}
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="confirmDraft('${d.id}')" class="btn-primary">Confirm &amp; schedule</button>
+              <button onclick="editDraft('${d.id}')" class="btn-secondary">Edit first</button>
+              <button onclick="discardDraft('${d.id}')" class="btn-quiet">Discard</button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+  const count = drafts.length;
+  const badge = document.getElementById('drafts-badge');
+  if (badge) { badge.textContent = count; badge.classList.toggle('hidden', count === 0); }
+  const banner = document.getElementById('drafts-banner');
+  const bcount = document.getElementById('drafts-banner-count');
+  if (banner) banner.classList.toggle('hidden', count === 0);
+  if (bcount) bcount.textContent = count;
+  refreshIcons();
+}
+function confirmDraft(id){
+  const idx = drafts.findIndex(d => d.id === id); if (idx === -1) return;
+  const d = drafts[idx]; drafts.splice(idx, 1); renderDrafts();
+  toast(`${d.parsed.customer} scheduled. Stops added to driver's route.`);
+}
+function editDraft(id){
+  const d = drafts.find(x => x.id === id); if (!d) return;
+  openForm(d.parsed.kind, d.parsed);
+  setTimeout(() => toast("Form pre-filled from Greg's note."), 200);
+}
+function discardDraft(id){
+  if (!confirm('Discard this draft from Greg?')) return;
+  const idx = drafts.findIndex(d => d.id === id); drafts.splice(idx, 1); renderDrafts(); toast('Discarded.');
+}
+
+/* ============ GREG — QUICK CAPTURE ============ */
+function openQuickCapture(){
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">New job — quick capture</div>
+        <div class="text-[12.5px] text-ink-500">Just dump the info. We'll parse it and send a draft to Kim.</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <div class="px-5 py-4 space-y-4">
+      <div class="border border-ink-200 rounded p-3 flex items-center gap-3 bg-ink-50/40">
+        <button onclick="simulateRecord()" id="record-btn" class="w-12 h-12 rounded-full bg-brand-600 hover:bg-brand-700 text-white grid place-items-center"><i data-lucide="mic" class="ico-lg"></i></button>
+        <div class="flex-1">
+          <div class="font-semibold text-[12.5px]">Record a voice memo</div>
+          <div class="text-[11.5px] text-ink-500" id="record-status">Tap and start talking — say customer name, address, toilets, days, price.</div>
+        </div>
+        <div class="text-[11.5px] text-ink-500 hidden" id="record-time">0:00</div>
+      </div>
+
+      <div class="text-center text-[11px] text-ink-500 uppercase tracking-wider">or type / paste</div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Just write it like a text to Kim</label>
+        <textarea id="qc-text" rows="5" placeholder="e.g. Joe Smith Construction at 1247 Oak Street Decatur, two standards, weekly Mondays and Thursdays, $90 each, his cell is 256-555-1234" class="input w-full leading-relaxed"></textarea>
+      </div>
+
+      <div class="border border-ink-200 rounded p-3 text-[12px] text-ink-700 bg-ink-50/40">
+        No need for a perfect format. The parser pulls customer, phone, address, days, price, and toilet count. Kim sees a draft and can fix anything before drivers see the job.
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button onclick="sendQuickCapture()" class="btn-primary">Send to Kim</button>
+      </div>
+    </div>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+let recordTimer = null;
+function simulateRecord(){
+  const status = document.getElementById('record-status'); const time = document.getElementById('record-time'); const btn = document.getElementById('record-btn');
+  if (!recordTimer){
+    let s = 0;
+    btn.classList.add('animate-pulse');
+    btn.innerHTML = '<i data-lucide="square" class="ico-lg"></i>'; refreshIcons();
+    status.textContent = 'Recording — speak naturally.';
+    time.classList.remove('hidden');
+    recordTimer = setInterval(() => {
+      s++;
+      time.textContent = `0:${String(s).padStart(2,'0')}`;
+      if (s >= 12){
+        clearInterval(recordTimer); recordTimer = null;
+        btn.classList.remove('animate-pulse'); btn.innerHTML = '<i data-lucide="mic" class="ico-lg"></i>'; refreshIcons();
+        status.textContent = 'Transcribed: "Hampton Inn Madison needs an extra weekly cleaning, add Wednesdays, same price."';
+        document.getElementById('qc-text').value = 'Hampton Inn Madison needs an extra weekly cleaning, add Wednesdays, same price.';
+      }
+    }, 1000);
+  } else {
+    clearInterval(recordTimer); recordTimer = null;
+    btn.classList.remove('animate-pulse'); btn.innerHTML = '<i data-lucide="mic" class="ico-lg"></i>'; refreshIcons();
+    status.textContent = 'Stopped. Transcribing…';
+    time.classList.add('hidden');
+  }
+}
+function sendQuickCapture(){
+  const txt = (document.getElementById('qc-text').value || '').trim();
+  if (!txt){ toast('Type or record something first.'); return; }
+  drafts.unshift({
+    id:'d'+Date.now(), captured:'Just now', via:'Quick capture',
+    raw: txt,
+    parsed:{ customer:'(parsed customer)', phone:'(extracted)', address:'(extracted)', toilets:1, type:'Standard', days:['M'], route:'(suggested)', price:90, kind:'recurring' }
+  });
+  closeModal();
+  renderDrafts();
+  toast(`Sent to Kim — ${drafts.length} drafts pending.`);
+}
+
+/* ============ INLINE TODAY-STOP ============ */
+let stopState = null;
+function openInlineStop(driver){
+  stopState = { driver, customer: null, serviceType: 'clean', selectedToilets: [], when: 'next' };
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white z-10">
+      <div>
+        <div class="font-semibold text-[15px]">Add stop to ${driver}'s route today</div>
+        <div class="text-[12.5px] text-ink-500">One-off jobs that don't need a recurring schedule.</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <div class="px-5 py-4 space-y-5">
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Customer</label>
+        <input id="stop-cust-input" oninput="filterCustList(this.value)" autocomplete="off" placeholder="Type to search existing customers" class="input w-full" />
+        <div id="cust-list" class="border border-t-0 border-ink-300 rounded-b max-h-48 overflow-y-auto bg-white hidden"></div>
+        <button type="button" onclick="newCustomerInline()" id="new-cust-btn" class="hidden text-[12px] text-ink-900 mt-2 hover:underline"></button>
+        <div id="cust-selected" class="mt-2 hidden text-[12.5px] text-ink-700 bg-ink-50 border border-ink-200 rounded p-2"></div>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-2">Service type</label>
+        <div class="grid grid-cols-4 gap-2">
+          <button type="button" data-svc-btn="clean"   onclick="setServiceType('clean')"   class="svc-btn ring-1 ring-ink-900 bg-ink-50 border border-ink-200 rounded px-2 py-2.5 text-[12.5px] font-semibold hover:bg-ink-100">Clean</button>
+          <button type="button" data-svc-btn="deliver" onclick="setServiceType('deliver')" class="svc-btn border border-ink-200 rounded px-2 py-2.5 text-[12.5px] font-semibold hover:bg-ink-50">Deliver</button>
+          <button type="button" data-svc-btn="pickup"  onclick="setServiceType('pickup')"  class="svc-btn border border-ink-200 rounded px-2 py-2.5 text-[12.5px] font-semibold hover:bg-ink-50">Pickup</button>
+          <button type="button" data-svc-btn="swap"    onclick="setServiceType('swap')"    class="svc-btn border border-ink-200 rounded px-2 py-2.5 text-[12.5px] font-semibold hover:bg-ink-50">Swap</button>
+        </div>
+      </div>
+
+      <div id="toilet-block">
+        <label class="block text-[12.5px] font-medium mb-1" id="toilet-label">Which toilet?</label>
+        <div id="toilet-options" class="space-y-1.5"></div>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-2">Where in ${driver}'s route?</label>
+        <div class="space-y-1.5">
+          <label class="flex items-center gap-3 p-2.5 border border-ink-900 bg-ink-50 rounded cursor-pointer">
+            <input type="radio" name="when" value="next" checked onchange="stopState.when='next'" />
+            <div><div class="font-medium text-[13px]">Do next</div><div class="text-[11.5px] text-ink-500">Pushed to top of driver's queue</div></div>
+          </label>
+          <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+            <input type="radio" name="when" value="end" onchange="stopState.when='end'" />
+            <div><div class="font-medium text-[13px]">End of route</div><div class="text-[11.5px] text-ink-500">After all currently scheduled stops</div></div>
+          </label>
+          <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+            <input type="radio" name="when" value="auto" onchange="stopState.when='auto'" />
+            <div><div class="font-medium text-[13px]">Smart-place by location</div><div class="text-[11.5px] text-ink-500">Auto-router slots it where it minimizes drive time</div></div>
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Notes for driver <span class="text-ink-500 font-normal">(optional)</span></label>
+        <input id="stop-notes" placeholder="e.g. Gate code 4490, call when arriving" class="input w-full" />
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="button" onclick="submitInlineStop2('${driver}')" class="btn-primary">Add to ${driver}'s route</button>
+      </div>
+    </div>`;
+  document.getElementById('modal').classList.remove('hidden');
+  renderToiletPicker();
+  refreshIcons();
+}
+function filterCustList(val){
+  const list = document.getElementById('cust-list'); const newBtn = document.getElementById('new-cust-btn');
+  const q = val.trim().toLowerCase();
+  if (!q){ list.classList.add('hidden'); newBtn.classList.add('hidden'); return; }
+  const matches = customers.filter(c => (c.name + ' ' + c.addr + ' ' + c.phone).toLowerCase().includes(q));
+  if (matches.length){
+    list.innerHTML = matches.slice(0,6).map(c => `
+      <div onclick="selectCustomer(${c.id})" class="px-3 py-2 hover:bg-ink-50 cursor-pointer border-b border-ink-200/60 last:border-0">
+        <div class="text-[13px] font-medium">${c.name}</div>
+        <div class="text-[11.5px] text-ink-500">${c.addr} · ${c.phone}</div>
+      </div>`).join('');
+    list.classList.remove('hidden'); newBtn.classList.add('hidden');
+  } else {
+    list.classList.add('hidden');
+    newBtn.textContent = `+ Create new customer "${val}"`;
+    newBtn.classList.remove('hidden');
+  }
+}
+function selectCustomer(id){
+  const c = customers.find(x => x.id === id); if (!c) return;
+  stopState.customer = c;
+  document.getElementById('stop-cust-input').value = c.name;
+  document.getElementById('cust-list').classList.add('hidden');
+  const sel = document.getElementById('cust-selected'); sel.classList.remove('hidden');
+  sel.innerHTML = `<strong>${c.name}</strong> · ${c.addr} · ${c.phone}`;
+  renderToiletPicker();
+}
+function newCustomerInline(){
+  const name = document.getElementById('stop-cust-input').value.trim();
+  stopState.customer = { id: 'new', name, addr: '(needs address)', phone:'(needs phone)' };
+  document.getElementById('cust-list').classList.add('hidden');
+  document.getElementById('new-cust-btn').classList.add('hidden');
+  const sel = document.getElementById('cust-selected'); sel.classList.remove('hidden');
+  sel.innerHTML = `New customer: <strong>${name}</strong>. Kim will fill in address/phone after the stop is on the route.`;
+  renderToiletPicker();
+}
+function setServiceType(type){
+  stopState.serviceType = type; stopState.selectedToilets = [];
+  document.querySelectorAll('.svc-btn').forEach(b => { b.classList.remove('ring-1','ring-ink-900','bg-ink-50'); });
+  const sel = document.querySelector(`[data-svc-btn="${type}"]`);
+  sel.classList.add('ring-1','ring-ink-900','bg-ink-50');
+  renderToiletPicker();
+}
+function renderToiletPicker(){
+  const block = document.getElementById('toilet-block'); const label = document.getElementById('toilet-label'); const opts = document.getElementById('toilet-options');
+  if (!block) return;
+  if (!stopState.customer){
+    opts.innerHTML = `<div class="text-[12.5px] text-ink-500 italic p-3 bg-ink-50 border border-ink-200 rounded">Pick a customer first to see their toilets.</div>`;
+    return;
+  }
+  const t = stopState.serviceType;
+  const cn = stopState.customer.name;
+  const deployed = toilets.filter(x => x.loc === cn);
+  const available = toilets.filter(x => x.loc === 'Available');
+
+  if (t === 'clean' || t === 'pickup'){
+    label.textContent = t === 'clean' ? 'Which toilet(s) to clean?' : 'Which toilet(s) to pick up?';
+    if (!deployed.length){
+      opts.innerHTML = `<div class="text-[12.5px] text-amber-700 bg-amber-50 border border-amber-200 rounded p-3">No units currently deployed at <strong>${cn}</strong>${t==='clean'?'. Did you mean Deliver?':'.'}</div>`;
+      return;
+    }
+    opts.innerHTML = deployed.map(x => `
+      <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+        <input type="checkbox" onchange="toggleToilet('${x.n}',this.checked)" />
+        <div class="flex-1">
+          <div class="font-mono text-[12.5px] font-semibold">${x.n}</div>
+          <div class="text-[11.5px] text-ink-500">${x.type} · deployed at ${x.loc}</div>
+        </div>
+      </label>`).join('');
+  } else if (t === 'deliver'){
+    label.textContent = 'Which available unit(s) to deliver?';
+    if (!available.length){
+      opts.innerHTML = `<div class="text-[12.5px] text-amber-700 bg-amber-50 border border-amber-200 rounded p-3">No units available in inventory.</div>`;
+      return;
+    }
+    opts.innerHTML = available.map(x => `
+      <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+        <input type="checkbox" onchange="toggleToilet('${x.n}',this.checked)" />
+        <div class="flex-1">
+          <div class="font-mono text-[12.5px] font-semibold">${x.n}</div>
+          <div class="text-[11.5px] text-ink-500">${x.type} · available</div>
+        </div>
+      </label>`).join('');
+  } else if (t === 'swap'){
+    label.textContent = 'Swap (old + new)';
+    opts.innerHTML = `
+      <div class="grid grid-cols-2 gap-3">
+        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1.5">Old (deployed)</div>
+          ${deployed.length ? deployed.map(x => `<div class="font-mono text-[12px] bg-ink-50 border border-ink-200 rounded p-2 mb-1">${x.n}</div>`).join('') : '<div class="text-[12px] text-ink-500 italic">None deployed</div>'}
+        </div>
+        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1.5">New (available)</div>
+          ${available.slice(0,2).map(x => `<div class="font-mono text-[12px] bg-ink-50 border border-ink-200 rounded p-2 mb-1">${x.n}</div>`).join('')}
+        </div>
+      </div>
+      <div class="text-[11.5px] text-ink-500 italic mt-2">Driver returns the old unit to the shop and delivers the new one.</div>`;
+  }
+}
+function toggleToilet(name, checked){ if (checked) stopState.selectedToilets.push(name); else stopState.selectedToilets = stopState.selectedToilets.filter(n => n !== name); }
+function submitInlineStop2(driver){
+  if (!stopState.customer){ toast('Pick a customer first.'); return; }
+  const t = stopState.serviceType;
+  if ((t==='clean'||t==='deliver'||t==='pickup') && stopState.selectedToilets.length===0){ toast('Pick at least one toilet.'); return; }
+  const newStop = {
+    id: 's'+Date.now(),
+    cust: stopState.customer.name, addr: stopState.customer.addr,
+    toilet: stopState.selectedToilets.length ? stopState.selectedToilets.join(', ') : '—',
+    type: t, notes: document.getElementById('stop-notes')?.value || '',
+    status: 'pending'
+  };
+  if (stopState.when === 'next') driverData[driver].unshift(newStop); else driverData[driver].push(newStop);
+  closeModal(); renderBoard();
+  const where = stopState.when==='next' ? 'top of queue' : stopState.when==='end' ? 'end of route' : 'auto-placed';
+  toast(`${stopState.customer.name} added to ${driver}'s route (${where}).`);
+  todaysChanges.unshift({ time: nowStr(), text: `${driver}: added ${stopState.customer.name} (${t})`, kind: 'add' });
+  renderTodaysChanges();
+}
+
+/* ============ TODAY'S CHANGES ============ */
+const todaysChanges = [
+  { time:'9:08a', text:'Mike completed Decatur Builders Co.', kind:'add' },
+  { time:'8:42a', text:'Greg added Holler Trucking to Mike (today only)', kind:'add' },
+  { time:'8:21a', text:'Mike completed River Oaks Estates', kind:'add' },
+  { time:'7:42a', text:'Mike completed Absolute Custom Remodeling', kind:'add' },
+  { time:'7:30a', text:'Tony completed Tanner Park Construction', kind:'add' },
+  { time:'7:08a', text:'All drivers started routes', kind:'add' },
+];
+function nowStr(){ const d = new Date(); return d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }); }
+function renderTodaysChanges(){
+  const el = document.getElementById('changes-feed'); if (!el) return;
+  if (!todaysChanges.length){
+    el.innerHTML = `<div class="text-[12px] text-ink-500 italic p-3">No changes yet today.</div>`;
+    return;
+  }
+  el.innerHTML = todaysChanges.slice(0,8).map(c => `
+    <div class="px-3 py-2 border-b border-ink-200/70 last:border-0 flex items-start gap-2">
+      <div class="text-[11px] text-ink-500 w-12 shrink-0 mt-0.5">${c.time}</div>
+      <div class="text-[12px] ${c.kind==='retire'?'text-amber-800 font-semibold':'text-ink-700'}">${c.text}</div>
+    </div>`).join('');
+}
+
+/* ============ DRIVER VIEW ============ */
+const driverActive = { cust:'Hampton Inn Madison', addr:'4870 University Dr., Madison AL', toilet:'NGC-107, NGC-108', type:'clean', notes:'Both units in side parking — gate code 4490', etaMin: 8 };
+const upNext = [
+  { cust:'Madison Park (City)',     addr:'700 Main St., Madison',         type:'clean',   tag:'10:15' },
+  { cust:'Smith Wedding',           addr:'88 Riverside Ln, Athens',       type:'deliver', tag:'11:00' },
+  { cust:'Holler Trucking',         addr:'8845 Hwy 31, Athens',           type:'clean',   tag:'12:30' },
+  { cust:'Greenbrier Methodist',    addr:'2200 Greenbrier Pkwy, Madison', type:'clean',   tag:'1:15' },
+];
+const done = [
+  { cust:'Absolute Custom Remodeling', addr:'1 Stockton St., Huntsville', type:'clean' },
+  { cust:'APEL Machine',               addr:'914 West Elm St., Athens',   type:'clean' },
+  { cust:'Decatur Builders Co.',       addr:'42 Industrial Park, Decatur',type:'clean' },
+];
+
+function renderDriver(){
+  document.getElementById('active-stop').innerHTML = `
+    <div class="border border-ink-200 rounded-lg p-4">
+      <div class="flex items-center justify-between mb-1.5">
+        <div class="text-[10.5px] font-semibold text-ink-500 uppercase tracking-wider">Now serving · stop 4 of 8</div>
+        ${tagFor(driverActive.type)}
+      </div>
+      <div class="text-[15px] font-semibold leading-tight">${driverActive.cust}</div>
+      <div class="text-[12.5px] text-ink-700 mt-0.5">${driverActive.addr}</div>
+      <div class="text-[11.5px] text-ink-500 mt-0.5 font-mono">${driverActive.toilet} · ETA ${driverActive.etaMin} min</div>
+      ${driverActive.notes ? `<div class="text-[12px] bg-amber-50 border border-amber-200 rounded p-2 mt-2.5"><i data-lucide="alert-triangle" class="ico-sm inline-block align-text-bottom mr-1 text-amber-700"></i>${driverActive.notes}</div>` : ''}
+      <button onclick="navigateNow()" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded mt-3 text-[14px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate</button>
+      <div class="grid grid-cols-3 gap-1.5 mt-1.5">
+        <button onclick="markDone('cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded font-semibold text-[12.5px]">Cleaned</button>
+        <button onclick="markDone('delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-2.5 rounded font-semibold text-[12.5px]">Delivered</button>
+        <button onclick="markDone('picked up')" class="bg-amber-700 hover:bg-amber-800 text-white py-2.5 rounded font-semibold text-[12.5px]">Picked up</button>
+      </div>
+      <button onclick="openReportProblem()" class="w-full text-ink-500 text-[12px] py-2 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
+    </div>`;
+  document.getElementById('driver-list').innerHTML = upNext.map((s,i)=>`
+    <div class="border border-ink-200 rounded px-2.5 py-2 flex items-center gap-2.5">
+      <div class="text-[10.5px] font-mono text-ink-500 w-5">${i+5}</div>
+      <div class="flex-1">
+        <div class="text-[13px] font-semibold leading-tight">${s.cust}</div>
+        <div class="text-[11px] text-ink-500">${s.addr}</div>
+      </div>
+      <div class="text-right">${tagFor(s.type)}<div class="text-[10.5px] text-ink-500 mt-0.5">${s.tag}</div></div>
+    </div>`).join('');
+  document.getElementById('driver-done').innerHTML = done.map(s=>`
+    <div class="border border-ink-200 rounded px-2.5 py-2 flex items-start gap-2.5">
+      <div class="text-emerald-700 mt-0.5"><i data-lucide="check" class="ico-sm"></i></div>
+      <div class="flex-1">
+        <div class="text-[13px] font-semibold line-through leading-tight">${s.cust}</div>
+        <div class="text-[11px] text-ink-500">${s.addr}</div>
+        ${s.retired ? '<div class="text-[11px] text-amber-700 font-semibold mt-0.5">Retired from route</div>' : ''}
+      </div>
+      ${tagFor(s.type)}
+    </div>`).join('');
+  refreshIcons();
+}
+function navigateNow(){ toast('Opening Google Maps for ' + driverActive.cust); }
+function markDone(action){
+  if (action === 'picked up') { showPickupConfirm(); return; }
+  toast(`Marked ${action}. Customer text sent. Loading next stop.`);
+  done.unshift({ cust: driverActive.cust, addr: driverActive.addr, type: driverActive.type });
+  advanceToNextStop();
+}
+function advanceToNextStop(){
+  const next = upNext.shift();
+  if (next) { driverActive.cust = next.cust; driverActive.addr = next.addr; driverActive.type = next.type; driverActive.toilet = '—'; driverActive.notes = ''; driverActive.etaMin = 5 + Math.floor(Math.random()*15); }
+  setTimeout(renderDriver, 600);
+}
+function showPickupConfirm(){
+  const cust = driverActive.cust;
+  const units = (driverActive.toilet || 'NGC-107').split(/[,+]/).map(s => s.trim()).filter(Boolean);
+  const unitRows = units.map(u => `
+    <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+      <input type="checkbox" name="pickup-unit" value="${u}" checked />
+      <div class="flex-1">
+        <div class="font-mono text-[12.5px] font-semibold">${u}</div>
+        <div class="text-[11px] text-ink-500">deployed at ${cust}</div>
+      </div>
+      <span class="tag tag-pickup">Picked up</span>
+    </label>`).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 sticky top-0 bg-white">
+      <div class="font-semibold text-[15px]">Confirm pickup</div>
+      <div class="text-[12.5px] text-ink-500">${cust}</div>
+    </div>
+    <div class="px-5 py-4 space-y-4">
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1.5">Which unit(s) did you pick up?</label>
+        <div class="space-y-1.5">${unitRows}</div>
+      </div>
+      <div class="border border-amber-300 bg-amber-50 rounded p-3">
+        <div class="text-[12.5px] font-semibold text-amber-900 mb-1">Was this the last unit at this site?</div>
+        <p class="text-[11.5px] text-amber-800 mb-2.5">If yes, <strong>${cust}</strong> will be retired from the recurring route — no more weekly stops auto-generated. Today's pickup stays on the route history.</p>
+        <div class="space-y-1.5">
+          <label class="flex items-center gap-2 text-[13px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
+            <input type="radio" name="retire" value="yes" checked /><span><strong>Yes</strong> — retire from route, no more scheduled cleanings</span>
+          </label>
+          <label class="flex items-center gap-2 text-[13px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
+            <input type="radio" name="retire" value="partial" /><span><strong>Partial</strong> — they still have other units on site, just remove this one</span>
+          </label>
+          <label class="flex items-center gap-2 text-[13px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
+            <input type="radio" name="retire" value="no" /><span><strong>No</strong> — replacement coming, keep schedule active</span>
+          </label>
+        </div>
+      </div>
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Notes <span class="text-ink-500 font-normal">(optional)</span></label>
+        <input id="pickup-notes" placeholder="e.g. Project finished, Greg said this was the last week" class="input w-full" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button onclick="confirmPickup()" class="btn-primary">Confirm pickup</button>
+      </div>
+    </div>`;
+  document.getElementById('modal').classList.remove('hidden');
+}
+function confirmPickup(){
+  const retire = document.querySelector('input[name="retire"]:checked')?.value || 'yes';
+  closeModal();
+  const cust = driverActive.cust;
+  const retired = retire === 'yes';
+  done.unshift({ cust, addr: driverActive.addr, type: 'pickup', retired });
+  if (retired){
+    toast(`Picked up. ${cust} retired from route.`);
+    todaysChanges.unshift({ time: nowStr(), text: `${cust} — retired from route after pickup. Today's record kept.`, kind:'retire' });
+  } else if (retire === 'partial'){
+    toast('Picked up. Schedule still active (other units on site).');
+    todaysChanges.unshift({ time: nowStr(), text: `${cust} — 1 unit picked up, schedule still active.`, kind:'pickup' });
+  } else {
+    toast('Picked up. Replacement coming — schedule still active.');
+    todaysChanges.unshift({ time: nowStr(), text: `${cust} — picked up, awaiting replacement.`, kind:'pickup' });
+  }
+  renderTodaysChanges();
+  if (retired){
+    const c = customers.find(x => x.name === cust); if (c) c.retired = true;
+    renderCustomers(); renderSchedules();
+  }
+  advanceToNextStop();
+}
+function skipStop(){ openReportProblem(); }
+
+function openReportProblem(){
+  const cust = driverActive.cust;
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">Report a problem</div>
+        <div class="text-[12.5px] text-ink-500">${cust}</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <div class="px-5 py-4 space-y-4">
+      <div>
+        <label class="block text-[12.5px] font-medium mb-2">What happened?</label>
+        <div class="grid grid-cols-2 gap-2" id="problem-types">
+          <button type="button" data-prob="access"   onclick="setProblem('access')"   class="prob-btn ring-1 ring-ink-900 bg-ink-50 border border-ink-200 rounded p-3 text-left text-[12.5px]">
+            <div class="font-semibold mb-0.5">Access blocked</div>
+            <div class="text-[11px] text-ink-500">Gate locked, can't reach unit, no key</div>
+          </button>
+          <button type="button" data-prob="damage"   onclick="setProblem('damage')"   class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+            <div class="font-semibold mb-0.5">Damage found</div>
+            <div class="text-[11px] text-ink-500">Vandalism, tipped over, broken parts</div>
+          </button>
+          <button type="button" data-prob="missing"  onclick="setProblem('missing')"  class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+            <div class="font-semibold mb-0.5">Unit missing</div>
+            <div class="text-[11px] text-ink-500">Stolen, moved, can't find it</div>
+          </button>
+          <button type="button" data-prob="customer" onclick="setProblem('customer')" class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+            <div class="font-semibold mb-0.5">Customer issue</div>
+            <div class="text-[11px] text-ink-500">Refused service, complaint, dispute</div>
+          </button>
+          <button type="button" data-prob="overflow" onclick="setProblem('overflow')" class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+            <div class="font-semibold mb-0.5">Needs pump-out</div>
+            <div class="text-[11px] text-ink-500">Tank overfull, can't clean as-is</div>
+          </button>
+          <button type="button" data-prob="other"    onclick="setProblem('other')"    class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+            <div class="font-semibold mb-0.5">Something else</div>
+            <div class="text-[11px] text-ink-500">Tell Greg in your own words</div>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Photo <span class="text-ink-500 font-normal">(optional but helpful for damage / missing)</span></label>
+        <button type="button" onclick="simulatePhoto()" id="photo-btn" class="w-full border border-dashed border-ink-300 rounded py-3 text-[12.5px] text-ink-500 hover:border-ink-500 hover:text-ink-900 inline-flex items-center justify-center gap-2"><i data-lucide="camera" class="ico-sm"></i>Take a photo</button>
+        <div id="photo-preview" class="hidden mt-2"></div>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Notes for Greg <span class="text-ink-500 font-normal">(optional)</span></label>
+        <textarea id="prob-notes" rows="3" placeholder="Any details that'll help Greg sort this out…" class="input w-full leading-relaxed"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-2">What happens next?</label>
+        <div class="space-y-1.5">
+          <label class="flex items-center gap-3 p-2.5 border border-ink-900 bg-ink-50 rounded cursor-pointer">
+            <input type="radio" name="next" value="skip" checked />
+            <div><div class="font-medium text-[13px]">Skip this stop</div><div class="text-[11.5px] text-ink-500">Mark unserviced and move on. Greg gets notified.</div></div>
+          </label>
+          <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+            <input type="radio" name="next" value="retry" />
+            <div><div class="font-medium text-[13px]">Try again later today</div><div class="text-[11.5px] text-ink-500">Push to end of route — circle back after Greg responds.</div></div>
+          </label>
+          <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+            <input type="radio" name="next" value="continue" />
+            <div><div class="font-medium text-[13px]">Continue cleaning anyway</div><div class="text-[11.5px] text-ink-500">Just logging the issue — service will still be marked complete.</div></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button onclick="submitProblem()" class="btn-danger inline-flex items-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Send to Greg</button>
+      </div>
+    </div>`;
+  document.getElementById('modal').classList.remove('hidden');
+  problemState = { type: 'access', photo: false };
+  refreshIcons();
+}
+let problemState = null;
+function setProblem(type){
+  problemState.type = type;
+  document.querySelectorAll('.prob-btn').forEach(b => b.classList.remove('ring-1','ring-ink-900','bg-ink-50'));
+  document.querySelector(`[data-prob="${type}"]`).classList.add('ring-1','ring-ink-900','bg-ink-50');
+}
+function simulatePhoto(){
+  problemState.photo = true;
+  document.getElementById('photo-btn').classList.add('hidden');
+  const preview = document.getElementById('photo-preview');
+  preview.classList.remove('hidden');
+  preview.innerHTML = `
+    <div class="border border-ink-200 rounded p-2 bg-ink-50 flex items-center gap-3">
+      <div class="w-16 h-16 bg-ink-200 rounded grid place-items-center text-ink-500"><i data-lucide="image"></i></div>
+      <div class="flex-1 text-[12px]"><div class="font-medium">Photo attached</div><div class="text-ink-500">Will be uploaded with the report.</div></div>
+      <button onclick="removePhoto()" class="text-ink-500 hover:text-red-700 text-[11.5px]">Remove</button>
+    </div>`;
+  refreshIcons();
+}
+function removePhoto(){
+  problemState.photo = false;
+  document.getElementById('photo-btn').classList.remove('hidden');
+  document.getElementById('photo-preview').classList.add('hidden');
+}
+function submitProblem(){
+  const next = document.querySelector('input[name="next"]:checked')?.value || 'skip';
+  const notes = (document.getElementById('prob-notes').value || '').trim();
+  const labels = {
+    access:'Access blocked', damage:'Damage found', missing:'Unit missing',
+    customer:'Customer issue', overflow:'Needs pump-out', other:'Issue'
+  };
+  const label = labels[problemState.type] || 'Issue';
+  closeModal();
+  toast(`Sent to Greg. ${problemState.photo?'Photo attached. ':''}${next==='skip'?'Skipping stop.':next==='retry'?'Pushed to end of route.':'Continuing.'}`);
+
+  todaysChanges.unshift({
+    time: nowStr(),
+    text: `Driver: ${label} at ${driverActive.cust}${notes?' — "'+notes+'"':''}`,
+    kind: 'skip'
+  });
+  notifications.unshift({
+    id: 'n'+Date.now(),
+    role: 'greg',
+    type: 'problem',
+    when: nowStr(),
+    title: `${label} — ${driverActive.cust}`,
+    body: notes || 'Driver flagged from the route.',
+    photo: problemState.photo,
+    unread: true
+  });
+  notifications.unshift({
+    id: 'n'+(Date.now()+1),
+    role: 'kim',
+    type: 'problem',
+    when: nowStr(),
+    title: `${label} — ${driverActive.cust}`,
+    body: notes || 'Driver flagged from the route.',
+    photo: problemState.photo,
+    unread: true
+  });
+  renderTodaysChanges();
+  renderNotifBell();
+
+  if (next === 'skip') advanceToNextStop();
+  else if (next === 'retry') {
+    // Push current to end of upNext
+    upNext.push({ cust: driverActive.cust, addr: driverActive.addr, type: driverActive.type, tag:'later' });
+    advanceToNextStop();
+  } else {
+    // continue: do nothing, driver still has to mark cleaned
+  }
+}
+
+/* ============ CUSTOMER PORTAL ============ */
+// "Signed in" customer for the demo
+const portalCustomerId = 4; // Decatur Builders Co.
+const portalInvoices = [
+  { num:'2026-0142', date:'2026-05-01', period:'April 2026',  amount:480.00, status:'paid',    due:'2026-05-15', paidOn:'2026-05-04' },
+  { num:'2026-0118', date:'2026-04-01', period:'March 2026',  amount:480.00, status:'paid',    due:'2026-04-15', paidOn:'2026-04-12' },
+  { num:'2026-0096', date:'2026-03-01', period:'February 2026', amount:360.00, status:'paid',  due:'2026-03-15', paidOn:'2026-03-09' },
+  { num:'2026-0163', date:'2026-05-08', period:'May 2026 (in progress)', amount:407.50, status:'open', due:'2026-05-23', paidOn:null },
+];
+const portalRequests = [
+  { id:'r1', type:'extra_clean', when:'2026-05-06', summary:'Extra cleaning at Industrial Park — VP visit Thursday', status:'completed', resolution:'Tony cleaned 5/7. $90 added to May invoice.' },
+  { id:'r2', type:'add_units',   when:'2026-04-29', summary:'Requested 2 additional standards at Hwy 31 site',       status:'completed', resolution:'Delivered 5/4 (NGC-140, NGC-141)' },
+  { id:'r3', type:'pickup',      when:'2025-12-10', summary:'Pickup request — Westgate Project',                      status:'completed', resolution:'Picked up 12/15. Site retired from route.' },
+];
+
+document.querySelectorAll('[data-view="customer"] .cust-nav').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-view="customer"] .cust-nav').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCustomerPortal(btn.dataset.cpane);
+  });
+});
+
+function renderCustomerPortal(pane){
+  const main = document.getElementById('customer-main');
+  if (!main) return;
+  pane = pane || 'overview';
+  const c = customers.find(x => x.id === portalCustomerId);
+  const d = getCustomerDetail(portalCustomerId);
+  if (pane === 'overview')      main.innerHTML = portalOverview(c, d);
+  else if (pane === 'locations') main.innerHTML = portalLocations(c, d);
+  else if (pane === 'history')   main.innerHTML = portalHistory(c, d);
+  else if (pane === 'request')   main.innerHTML = portalRequest(c, d);
+  else if (pane === 'billing')   main.innerHTML = portalBilling(c, d);
+  else if (pane === 'settings')  main.innerHTML = portalSettings(c, d);
+  refreshIcons();
+}
+
+function portalOverview(c, d){
+  const open = portalInvoices.find(i => i.status === 'open');
+  const totalDue = portalInvoices.filter(i => i.status === 'open').reduce((sum, i) => sum + i.amount, 0);
+  const recent = d.history.slice(0, 4);
+  const nextService = '2026-05-11 (Mon)'; // pretend
+  return `
+    <h1 class="text-xl font-semibold tracking-tight mb-1">Welcome back, ${c.name}</h1>
+    <p class="text-ink-500 text-[13px] mb-5">Customer since ${d.sinceDate} · ${d.locations.filter(l=>l.active).length} active location${d.locations.filter(l=>l.active).length===1?'':'s'}</p>
+
+    <div class="grid grid-cols-3 gap-3 mb-5">
+      <div class="card p-4">
+        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Next service</div>
+        <div class="text-[15px] font-semibold">${nextService}</div>
+        <div class="text-[12px] text-ink-500 mt-0.5">Industrial Park site · Tony</div>
+      </div>
+      <div class="card p-4">
+        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Active units</div>
+        <div class="text-[15px] font-semibold">${d.locations.filter(l=>l.active).reduce((n,l)=>n+l.toilets.length,0)} units</div>
+        <div class="text-[12px] text-ink-500 mt-0.5">Across ${d.locations.filter(l=>l.active).length} site${d.locations.filter(l=>l.active).length===1?'':'s'}</div>
+      </div>
+      <div class="card p-4">
+        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Balance due</div>
+        <div class="text-[15px] font-semibold ${totalDue>0?'text-brand-600':''}">${totalDue>0?'$'+totalDue.toFixed(2):'$0.00'}</div>
+        <div class="text-[12px] text-ink-500 mt-0.5">${open?'Due '+open.due:'Up to date'}</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Recent service</div>
+        <div class="card overflow-hidden">
+          ${recent.map((h,i) => `
+            <div class="px-3 py-2.5 ${i>0?'border-t border-ink-200':''} flex items-center gap-3 text-[12.5px]">
+              <div class="font-mono text-[11.5px] text-ink-500 w-20">${h.date}</div>
+              <div class="flex-1"><div class="font-medium">${h.loc}</div><div class="text-[11px] text-ink-500">${h.toilets} · ${h.driver}</div></div>
+              ${tagFor(h.type)}
+            </div>`).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Quick actions</div>
+        <div class="space-y-2">
+          <button onclick="openOrderUnits()" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="plus" class="text-ink-700"></i><div><div class="font-semibold text-[13px]">Order more toilets</div><div class="text-[11.5px] text-ink-500">Add to existing site or a new site</div></div></button>
+          <button onclick="openExtraCleaning()" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="droplet" class="text-ink-700"></i><div><div class="font-semibold text-[13px]">Request a cleaning</div><div class="text-[11.5px] text-ink-500">Extra, or come sooner than scheduled</div></div></button>
+          <button onclick="customerNav('billing')" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="credit-card" class="text-ink-700"></i><div><div class="font-semibold text-[13px]">View invoices &amp; pay</div><div class="text-[11.5px] text-ink-500">Synced from QuickBooks</div></div></button>
+          <button onclick="openSchedulePickup()" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="calendar" class="text-ink-700"></i><div><div class="font-semibold text-[13px]">Schedule a pickup</div><div class="text-[11.5px] text-ink-500">When the project wraps up</div></div></button>
+        </div>
+      </div>
+    </div>`;
+}
+function customerNav(pane){
+  document.querySelectorAll('[data-view="customer"] .cust-nav').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`[data-cpane="${pane}"]`);
+  if (btn) btn.classList.add('active');
+  renderCustomerPortal(pane);
+}
+
+function portalLocations(c, d){
+  return `
+    <div class="flex items-center justify-between mb-1">
+      <h1 class="text-xl font-semibold tracking-tight">Locations &amp; units</h1>
+      <button onclick="customerNav('request')" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="plus" class="ico-sm"></i>Add location or units</button>
+    </div>
+    <p class="text-ink-500 text-[13px] mb-4">Sites where Valley currently maintains your toilets.</p>
+    <div class="space-y-3">
+      ${d.locations.map(loc => `
+        <div class="card p-4 ${!loc.active?'opacity-60':''}">
+          <div class="flex items-start justify-between mb-2">
+            <div>
+              <div class="font-semibold text-[14px]">${loc.label}${!loc.active?` <span class="text-[10px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1.5 py-0.5 rounded ml-1 font-semibold">Closed ${loc.endedAt||''}</span>`:''}</div>
+              <div class="text-[12.5px] text-ink-500">${loc.address}</div>
+              <div class="text-[11.5px] text-ink-500 mt-0.5">Active since ${loc.started}</div>
+            </div>
+            ${loc.active ? '<button class="btn-secondary text-[12px]">Edit</button>' : ''}
+          </div>
+          ${loc.toilets.length ? `
+            <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mt-2 mb-1">Units deployed</div>
+            <div class="flex flex-wrap gap-1.5">${loc.toilets.map(t => `<span class="font-mono text-[11.5px] bg-ink-50 border border-ink-200 rounded px-2 py-0.5">${t}</span>`).join('')}</div>` : '<div class="text-[12px] text-ink-500 italic mt-2">No units currently deployed</div>'}
+        </div>`).join('')}
+    </div>`;
+}
+
+function portalHistory(c, d){
+  return `
+    <div class="flex items-center justify-between mb-1">
+      <h1 class="text-xl font-semibold tracking-tight">Service history</h1>
+      <button onclick="openCustomerReport(${c.id})" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="file-text" class="ico-sm"></i>Download branded report</button>
+    </div>
+    <p class="text-ink-500 text-[13px] mb-4">Every drop-off, cleaning, and pickup across your locations.</p>
+    <div class="card overflow-hidden">
+      <table class="w-full text-[12.5px]">
+        <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+          <tr>
+            <th class="text-left px-3 py-2 font-semibold w-28">Date</th>
+            <th class="text-left px-3 py-2 font-semibold">Service</th>
+            <th class="text-left px-3 py-2 font-semibold">Location</th>
+            <th class="text-left px-3 py-2 font-semibold">Units</th>
+            <th class="text-left px-3 py-2 font-semibold">Driver</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${d.history.map(h => `
+            <tr class="border-t border-ink-200 hover:bg-ink-50">
+              <td class="px-3 py-2 font-mono text-[11.5px]">${h.date}</td>
+              <td class="px-3 py-2">${tagFor(h.type)}</td>
+              <td class="px-3 py-2">${h.loc}</td>
+              <td class="px-3 py-2 font-mono text-[11.5px]">${h.toilets}</td>
+              <td class="px-3 py-2">${h.driver}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function portalRequest(c, d){
+  return `
+    <h1 class="text-xl font-semibold tracking-tight mb-1">Request service</h1>
+    <p class="text-ink-500 text-[13px] mb-5">Submit a request and Kim will follow up by phone or text within a few business hours.</p>
+
+    <div class="grid grid-cols-2 gap-3 mb-6">
+      <button onclick="openOrderUnits()" class="card card-hover p-4 text-left">
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="plus" class="text-ink-700"></i><span class="font-semibold text-[13.5px]">Order more toilets</span></div>
+        <div class="text-[12.5px] text-ink-500 leading-snug">Add units to an existing location, or set up a new location.</div>
+      </button>
+      <button onclick="openExtraCleaning()" class="card card-hover p-4 text-left">
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="droplet" class="text-ink-700"></i><span class="font-semibold text-[13.5px]">Request a cleaning</span></div>
+        <div class="text-[12.5px] text-ink-500 leading-snug">Extra cleaning, or come sooner than your next scheduled one (event, big crew, inspection).</div>
+      </button>
+      <button onclick="openSchedulePickup()" class="card card-hover p-4 text-left">
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="calendar" class="text-ink-700"></i><span class="font-semibold text-[13.5px]">Schedule a pickup</span></div>
+        <div class="text-[12.5px] text-ink-500 leading-snug">Project wrapping up? Pick a date for Greg to come grab the units.</div>
+      </button>
+      <button onclick="openContact()" class="card card-hover p-4 text-left">
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="message-square" class="text-ink-700"></i><span class="font-semibold text-[13.5px]">Ask a question</span></div>
+        <div class="text-[12.5px] text-ink-500 leading-snug">Need to change something or have a concern? We'll respond same-day.</div>
+      </button>
+    </div>
+
+    <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Recent requests</div>
+    <div class="card overflow-hidden">
+      ${portalRequests.map((r,i) => `
+        <div class="px-3 py-2.5 ${i>0?'border-t border-ink-200':''} flex items-start gap-3 text-[12.5px]">
+          <div class="font-mono text-[11.5px] text-ink-500 w-20 mt-0.5">${r.when}</div>
+          <div class="flex-1">
+            <div class="font-medium">${r.summary}</div>
+            <div class="text-[11.5px] text-ink-500 mt-0.5">${r.resolution}</div>
+          </div>
+          <span class="tag tag-clean">Done</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function openOrderUnits(){
+  const c = customers.find(x => x.id === portalCustomerId);
+  const d = getCustomerDetail(portalCustomerId);
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">Order more toilets</div>
+        <div class="text-[12.5px] text-ink-500">${c.name}</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <form onsubmit="event.preventDefault(); closeModal(); toast('Request sent. Kim will text you to confirm pricing &amp; drop-off date.');" class="px-5 py-4 space-y-4">
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Where?</label>
+        <select class="input w-full">
+          ${d.locations.filter(l=>l.active).map(l => `<option>${l.label} — ${l.address}</option>`).join('')}
+          <option>+ New location (I'll provide the address)</option>
+        </select>
+      </div>
+      <div id="new-loc-fields" class="hidden">
+        <label class="block text-[12.5px] font-medium mb-1">New location address</label>
+        <input class="input w-full" placeholder="Address, city, AL" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">How many?</label><input type="number" min="1" value="2" class="input w-full" /></div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Type</label>
+          <select class="input w-full"><option>Standard</option><option>Handicap</option><option>VIP</option><option>+ Hand-wash sink</option></select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">When do you need them?</label><input type="date" class="input w-full" /></div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Service frequency</label>
+          <select class="input w-full"><option>Add to existing weekly schedule</option><option>One-time / event</option><option>Custom — Kim will set up</option></select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Notes <span class="text-ink-500 font-normal">(optional)</span></label>
+        <textarea rows="3" placeholder="Anything Kim should know? Gate codes, drop-off spot, billing info changes…" class="input w-full leading-relaxed"></textarea>
+      </div>
+      <div class="border border-ink-200 rounded p-3 bg-ink-50/40 text-[12px] text-ink-700">
+        Pricing will be confirmed by Kim before delivery. Standard units $90/service, handicap $115/service.
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">Send request</button>
+      </div>
+    </form>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+function openExtraCleaning(){
+  const d = getCustomerDetail(portalCustomerId);
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">Request a cleaning</div>
+        <div class="text-[12.5px] text-ink-500">Need a cleaning outside your usual schedule, or sooner than the next one?</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <form onsubmit="event.preventDefault(); closeModal(); toast('Request sent. Kim will confirm timing &amp; pricing within a few hours.');" class="px-5 py-4 space-y-4">
+      <div>
+        <label class="block text-[12.5px] font-medium mb-2">What do you need?</label>
+        <div class="space-y-1.5">
+          <label class="flex items-start gap-3 p-2.5 border border-ink-900 bg-ink-50 rounded cursor-pointer">
+            <input type="radio" name="clean-type" value="extra" checked class="mt-0.5" />
+            <div>
+              <div class="font-medium text-[13px]">Extra cleaning</div>
+              <div class="text-[11.5px] text-ink-500">In addition to your regular schedule. Big crew week, event, inspection, etc.</div>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+            <input type="radio" name="clean-type" value="bump" class="mt-0.5" />
+            <div>
+              <div class="font-medium text-[13px]">Come sooner than scheduled</div>
+              <div class="text-[11.5px] text-ink-500">Bump up my next cleaning. We have something tomorrow / this week.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div><label class="block text-[12.5px] font-medium mb-1">Which location?</label>
+        <select class="input w-full">${d.locations.filter(l=>l.active).map(l=>`<option>${l.label} — ${l.address}</option>`).join('')}<option>All my active sites</option></select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">Preferred date</label><input type="date" required class="input w-full" /></div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Flexibility</label>
+          <select class="input w-full">
+            <option>That date specifically</option>
+            <option>Earlier in the day is best</option>
+            <option>That day or the day before</option>
+            <option>That week is fine</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Why? <span class="text-ink-500 font-normal">(helps Greg prioritize)</span></label>
+        <select class="input w-full">
+          <option>Event / big gathering</option>
+          <option>Big crew on site this week</option>
+          <option>Inspector / VIP visit</option>
+          <option>Unit needs attention sooner</option>
+          <option>Other (I'll explain in notes)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Notes for Greg <span class="text-ink-500 font-normal">(optional)</span></label>
+        <textarea rows="3" placeholder="Anything Greg should know — gate codes, time windows, what's going on…" class="input w-full leading-relaxed"></textarea>
+      </div>
+
+      <div class="border border-ink-200 rounded p-3 bg-ink-50/40 text-[12px] text-ink-700">
+        <strong>Pricing:</strong> An extra cleaning is billed at your normal per-service rate. Bumping up a scheduled cleaning is no extra charge — your next regular one just shifts. Kim will confirm before sending Greg out.
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">Send request</button>
+      </div>
+    </form>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+
+function openSchedulePickup(){
+  const d = getCustomerDetail(portalCustomerId);
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">Schedule a pickup</div>
+        <div class="text-[12.5px] text-ink-500">Project finishing up? Tell us when to come grab the units.</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <form onsubmit="event.preventDefault(); closeModal(); toast('Pickup request sent. Kim will confirm a date with Greg within 1–2 business days.');" class="px-5 py-4 space-y-4">
+      <div><label class="block text-[12.5px] font-medium mb-1">Which location?</label>
+        <select class="input w-full">${d.locations.filter(l=>l.active).map(l=>`<option>${l.label}</option>`).join('')}</select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">Preferred pickup date</label><input type="date" class="input w-full" /></div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Flexibility</label>
+          <select class="input w-full"><option>That date specifically</option><option>That week is fine</option><option>Whenever Greg can fit it in</option></select>
+        </div>
+      </div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Notes for Greg</label><textarea rows="3" placeholder="e.g. Project closing, gate unlocked between 7a-5p, no one on site after Friday" class="input w-full leading-relaxed"></textarea></div>
+      <div class="border border-ink-200 rounded p-3 bg-ink-50/40 text-[12px] text-ink-700">
+        Pricing: any remaining cleanings before pickup are billed normally. Pickup itself has no extra charge.
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">Request pickup</button>
+      </div>
+    </form>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+function openContact(){
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div><div class="font-semibold text-[15px]">Send Kim a question</div></div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <form onsubmit="event.preventDefault(); closeModal(); toast('Message sent. Kim or Greg will respond same-day.');" class="px-5 py-4 space-y-4">
+      <div><label class="block text-[12.5px] font-medium mb-1">Subject</label><input class="input w-full" /></div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Message</label><textarea rows="5" class="input w-full leading-relaxed"></textarea></div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">Send</button>
+      </div>
+    </form>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+
+function portalBilling(c, d){
+  const open = portalInvoices.filter(i => i.status === 'open');
+  const totalDue = open.reduce((sum, i) => sum + i.amount, 0);
+  return `
+    <h1 class="text-xl font-semibold tracking-tight mb-1">Billing &amp; invoices</h1>
+    <p class="text-ink-500 text-[13px] mb-5">Invoices are managed in QuickBooks Online and synced here in real time.</p>
+
+    <div class="card p-5 mb-5 bg-ink-900 text-white">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-[10.5px] uppercase tracking-wider opacity-70 font-semibold mb-1">Current balance</div>
+          <div class="text-3xl font-semibold tracking-tight">${totalDue>0?'$'+totalDue.toFixed(2):'$0.00'}</div>
+          <div class="text-[12px] opacity-70 mt-1">${open.length>0?'Due '+open[0].due:'All paid up — thanks!'}</div>
+        </div>
+        ${totalDue>0?`<button onclick="payInQuickBooks()" class="bg-white text-ink-900 px-4 py-2.5 rounded text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-ink-100"><i data-lucide="external-link" class="ico-sm"></i>Pay in QuickBooks</button>`:''}
+      </div>
+      <div class="text-[11.5px] opacity-70 inline-flex items-center gap-1.5"><i data-lucide="link-2" class="ico-sm"></i>Synced from QuickBooks Online · 2 min ago</div>
+    </div>
+
+    <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Invoice history</div>
+    <div class="card overflow-hidden">
+      <table class="w-full text-[12.5px]">
+        <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+          <tr>
+            <th class="text-left px-3 py-2 font-semibold">Invoice</th>
+            <th class="text-left px-3 py-2 font-semibold">Period</th>
+            <th class="text-left px-3 py-2 font-semibold">Amount</th>
+            <th class="text-left px-3 py-2 font-semibold">Due</th>
+            <th class="text-left px-3 py-2 font-semibold">Status</th>
+            <th class="text-left px-3 py-2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${portalInvoices.map(i => `
+            <tr class="border-t border-ink-200 hover:bg-ink-50">
+              <td class="px-3 py-2.5 font-mono text-[11.5px]">${i.num}</td>
+              <td class="px-3 py-2.5">${i.period}</td>
+              <td class="px-3 py-2.5 font-semibold">$${i.amount.toFixed(2)}</td>
+              <td class="px-3 py-2.5 text-ink-500 text-[12px]">${i.due}</td>
+              <td class="px-3 py-2.5">
+                ${i.status==='paid'
+                  ? `<span class="text-[11px] uppercase tracking-wider font-semibold text-emerald-700">Paid · ${i.paidOn}</span>`
+                  : `<span class="text-[11px] uppercase tracking-wider font-semibold text-brand-600">Open · due in 15d</span>`}
+              </td>
+              <td class="px-3 py-2.5 text-right">
+                <button onclick="payInQuickBooks()" class="text-[12px] text-ink-900 font-medium hover:underline inline-flex items-center gap-1">View<i data-lucide="external-link" class="ico-sm"></i></button>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-5 card p-4 flex items-start gap-3 bg-ink-50/40">
+      <i data-lucide="info" class="text-ink-500 mt-0.5"></i>
+      <div class="text-[12.5px] text-ink-700">
+        <div class="font-semibold mb-0.5">How invoicing works</div>
+        Invoices are still managed by Kim in QuickBooks Online — nothing about that workflow changes. This portal pulls your open balance and invoice list from QuickBooks so you always see the latest. Clicking <strong>Pay in QuickBooks</strong> takes you to the QuickBooks-hosted invoice and payment page (ACH, credit card, or mail a check).
+      </div>
+    </div>`;
+}
+function payInQuickBooks(){
+  toast('Opening QuickBooks payment page in a new tab (in production this is the hosted QB pay link)');
+}
+
+function portalSettings(c, d){
+  return `
+    <h1 class="text-xl font-semibold tracking-tight mb-1">Settings</h1>
+    <p class="text-ink-500 text-[13px] mb-5">Update your contact info and notification preferences.</p>
+
+    <div class="card p-5 mb-4">
+      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-3">Contact</div>
+      <div class="grid grid-cols-2 gap-3 text-[13px]">
+        <div><label class="block text-[12px] font-medium mb-1">Phone (for SMS)</label><input value="${c.phone}" class="input w-full" /></div>
+        <div><label class="block text-[12px] font-medium mb-1">Email</label><input value="${d.email}" class="input w-full" /></div>
+        <div class="col-span-2"><label class="block text-[12px] font-medium mb-1">Billing address</label><input value="${d.billingAddr}" class="input w-full" /></div>
+      </div>
+    </div>
+
+    <div class="card p-5 mb-4">
+      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-3">Notifications</div>
+      <div class="space-y-2 text-[13px]">
+        <label class="flex items-center gap-2"><input type="checkbox" checked /> Text after every cleaning</label>
+        <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on delivery and pickup</label>
+        <label class="flex items-center gap-2"><input type="checkbox" checked /> Email monthly service report</label>
+        <label class="flex items-center gap-2"><input type="checkbox" /> Email a Google review request after big jobs</label>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button class="btn-primary">Save changes</button>
+    </div>`;
+}
+
+/* ============ NOTIFICATIONS ============ */
+const notifications = [
+  { id:'n1', role:'greg', type:'problem',  when:'9:14a',  title:'Access blocked — River Festival 2026', body:'"Gate locked, no one on site to let me in. Tried calling, no answer."', unread:true,  photo:false },
+  { id:'n2', role:'kim',  type:'sms',      when:'8:47a',  title:'SMS reply — Hampton Inn Madison',       body:'"Thanks Mike, looks great!" — auto-tagged positive',                  unread:true,  photo:false },
+  { id:'n3', role:'kim',  type:'draft',    when:'8:42a',  title:'New draft from Greg',                   body:'Joe Smith Construction — 2 standards, weekly Mon/Thu',                  unread:true,  photo:false },
+  { id:'n4', role:'greg', type:'sms',      when:'8:33a',  title:'SMS reply — Decatur Builders',          body:'"Can we move next Tue cleaning to Wed? Foundation pour."',              unread:true,  photo:false },
+  { id:'n5', role:'kim',  type:'draft',    when:'Yest 4:15p', title:'New draft from Greg',               body:'Mendoza Wedding — event 6/14 to 6/16',                                   unread:false, photo:false },
+];
+function getCurrentRole(){
+  const active = document.querySelector('.role-btn.active');
+  return active?.dataset.role || 'kim';
+}
+function notifsForCurrent(){
+  const r = getCurrentRole();
+  if (r === 'driver') return [];
+  return notifications.filter(n => n.role === r);
+}
+function renderNotifBell(){
+  const list = notifsForCurrent();
+  const unread = list.filter(n => n.unread).length;
+  const badge = document.getElementById('notif-badge');
+  if (badge){
+    badge.textContent = unread;
+    badge.classList.toggle('hidden', unread === 0);
+  }
+}
+function iconForType(t){
+  return t === 'problem' ? 'alert-triangle' : t === 'sms' ? 'message-square' : t === 'draft' ? 'inbox' : 'bell';
+}
+function colorForType(t){
+  return t === 'problem' ? 'text-amber-700' : t === 'sms' ? 'text-blue-700' : t === 'draft' ? 'text-ink-700' : 'text-ink-500';
+}
+let notifPanel = null;
+function toggleNotifPanel(ev){
+  ev.stopPropagation();
+  if (notifPanel){ notifPanel.remove(); notifPanel = null; return; }
+  const list = notifsForCurrent();
+  const panel = document.createElement('div');
+  panel.id = 'notif-panel';
+  panel.className = 'fixed mt-2 bg-white border border-ink-200 rounded shadow-lg w-[360px] z-50 max-h-[420px] overflow-hidden flex flex-col';
+  const rect = document.getElementById('notif-bell-btn').getBoundingClientRect();
+  panel.style.right = (window.innerWidth - rect.right) + 'px';
+  panel.style.top  = (rect.bottom + 6) + 'px';
+  panel.innerHTML = `
+    <div class="px-3 py-2 border-b border-ink-200 flex items-center justify-between">
+      <div class="text-[12.5px] font-semibold">Notifications</div>
+      <button onclick="markAllRead()" class="text-[11.5px] text-ink-500 hover:text-ink-900">Mark all read</button>
+    </div>
+    <div class="flex-1 overflow-y-auto">
+      ${list.length === 0 ? '<div class="p-6 text-center text-[12px] text-ink-500 italic">No notifications</div>' :
+        list.map(n => `
+          <div onclick="openNotification('${n.id}')" class="px-3 py-2.5 border-b border-ink-200 hover:bg-ink-50 cursor-pointer flex items-start gap-2.5 ${n.unread?'bg-brand-50/40':''}">
+            <div class="${colorForType(n.type)} mt-0.5"><i data-lucide="${iconForType(n.type)}" class="ico-sm"></i></div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <div class="text-[12.5px] font-semibold truncate">${n.title}</div>
+                <div class="text-[10.5px] text-ink-500 shrink-0">${n.when}</div>
+              </div>
+              <div class="text-[11.5px] text-ink-500 leading-snug">${n.body}</div>
+              ${n.photo ? '<div class="text-[10.5px] text-ink-700 mt-1 inline-flex items-center gap-1"><i data-lucide="image" class="ico-sm"></i>Photo attached</div>' : ''}
+            </div>
+            ${n.unread ? '<div class="w-2 h-2 rounded-full bg-brand-500 mt-1.5 shrink-0"></div>' : ''}
+          </div>`).join('')}
+    </div>
+    <div class="px-3 py-2 border-t border-ink-200 bg-ink-50">
+      <div class="text-[11px] text-ink-500">In production: push to ${getCurrentRole()==='greg'?'Greg':'Kim'}'s phone &amp; email.</div>
+    </div>`;
+  document.body.appendChild(panel);
+  notifPanel = panel;
+  refreshIcons();
+  setTimeout(() => document.addEventListener('click', closeNotifPanel, { once: true }), 0);
+}
+function closeNotifPanel(){ if (notifPanel){ notifPanel.remove(); notifPanel = null; } }
+function markAllRead(){
+  const r = getCurrentRole();
+  notifications.forEach(n => { if (n.role === r) n.unread = false; });
+  renderNotifBell();
+  closeNotifPanel();
+  toast('All notifications marked read');
+}
+function openNotification(id){
+  const n = notifications.find(x => x.id === id);
+  if (!n) return;
+  n.unread = false;
+  closeNotifPanel();
+  renderNotifBell();
+  toast(`Opened: ${n.title}`);
+}
+
+/* ============ KIM — PERMANENT DRIVERS PANE ============ */
+const driverRoster = [
+  { name:'Mike',  phone:'256-555-0301', route:'H — Huntsville / Madison',  status:'active',   started:'2019-06-12' },
+  { name:'Tony',  phone:'256-555-0302', route:'B — Decatur / Hartselle',   status:'active',   started:'2021-03-08' },
+  { name:'Jorge', phone:'256-555-0303', route:'G — Athens / Tanner',        status:'active',   started:'2023-09-21' },
+  { name:'Carlos',phone:'256-555-0304', route:'(was H — Huntsville)',       status:'former',   started:'2018-04-02' },
+];
+function renderDriversTable(){
+  const tbody = document.getElementById('drivers-table');
+  if (!tbody) return;
+  tbody.innerHTML = driverRoster.map(d => `
+    <tr class="border-t border-ink-200 hover:bg-ink-50 ${d.status==='former'?'opacity-60':''}">
+      <td class="px-3 py-2.5 font-medium">${d.name}${d.status==='vacation'?' <span class="text-[10px] uppercase tracking-wider bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold ml-1">On vacation</span>':''}</td>
+      <td class="px-3 py-2.5 text-ink-700">${d.phone}</td>
+      <td class="px-3 py-2.5">${d.route}</td>
+      <td class="px-3 py-2.5">
+        <span class="text-[11px] uppercase tracking-wider font-semibold ${d.status==='active'?'text-emerald-700':d.status==='vacation'?'text-amber-700':'text-ink-500'}">${d.status==='active'?'Active':d.status==='vacation'?'Vacation':'Former'}</span>
+      </td>
+      <td class="px-3 py-2.5 text-[12px] text-ink-500">${d.started}</td>
+      <td class="px-3 py-2.5 text-right">
+        ${d.status==='former' ? '<button onclick="rehire(\''+d.name+'\')" class="text-[12px] text-ink-900 font-medium hover:underline">Rehire</button>'
+          : '<button class="text-[12px] text-ink-900 font-medium hover:underline">Edit</button>'}
+      </td>
+    </tr>`).join('');
+}
+function rehire(name){
+  const d = driverRoster.find(x => x.name === name);
+  if (d){ d.status = 'active'; renderDriversTable(); toast(`${name} rehired. Add them back to a route in their profile.`); }
+}
+function openAddPermanentDriver(){
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">Add a new driver</div>
+        <div class="text-[12.5px] text-ink-500">Permanent roster — adds to Greg's dispatch lineup</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <form onsubmit="event.preventDefault(); closeModal(); toast('New driver added to roster.');" class="px-5 py-4 space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[12.5px] font-medium mb-1">First name</label><input required class="input w-full" /></div>
+        <div><label class="block text-[12.5px] font-medium mb-1">Last name</label><input required class="input w-full" /></div>
+      </div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Phone (for SMS login)</label><input required placeholder="256-555-0000" class="input w-full" /></div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Default route</label>
+        <select class="input w-full"><option>G — Athens / Tanner</option><option>B — Decatur / Hartselle</option><option>H — Huntsville / Madison</option><option>(none — assign later)</option></select>
+      </div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Start date</label><input type="date" required class="input w-full" /></div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">Add driver</button>
+      </div>
+    </form>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+
+/* ============ DRIVER AVAILABILITY ============ */
+function renderDriverPills(){
+  const el = document.getElementById('driver-pills');
+  if (!el) return;
+  el.innerHTML = Object.entries(driverMeta).map(([driver, m]) => {
+    const isOut = m.status !== 'active';
+    const dot = isOut ? 'bg-red-500' : 'bg-emerald-500';
+    const ring = isOut ? 'border-ink-300 text-ink-500' : 'border-ink-300';
+    return `
+      <button onclick="toggleDriverMenu('${driver}', event)" class="relative inline-flex items-center gap-1.5 ${ring} border bg-white rounded-full pl-1.5 pr-2.5 py-0.5 text-[12px] font-medium hover:border-ink-500">
+        <span class="w-5 h-5 rounded-full ${m.colorClass} text-white text-[10px] grid place-items-center font-semibold ${isOut?'opacity-40':''}">${driver[0]}</span>
+        <span class="${isOut?'line-through':''}">${driver}</span>
+        <span class="w-1.5 h-1.5 rounded-full ${dot}"></span>
+        ${isOut ? `<span class="text-[10px] uppercase tracking-wider text-red-600 font-semibold">${m.status==='out_today'?'Out today':'Out wk'}</span>` : ''}
+      </button>`;
+  }).join('');
+  refreshIcons();
+}
+
+let openMenu = null;
+function toggleDriverMenu(driver, ev){
+  ev.stopPropagation();
+  if (openMenu) { openMenu.remove(); openMenu = null; }
+  const m = driverMeta[driver];
+  const isOut = m.status !== 'active';
+  const menu = document.createElement('div');
+  menu.className = 'absolute z-50 mt-1 bg-white border border-ink-200 rounded shadow-lg py-1 min-w-[180px] text-[13px]';
+  const rect = ev.currentTarget.getBoundingClientRect();
+  menu.style.left = rect.left + 'px';
+  menu.style.top  = (rect.bottom + window.scrollY) + 'px';
+  menu.style.position = 'absolute';
+  menu.innerHTML = isOut ? `
+    <button onclick="markDriverActive('${driver}')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Bring back today</button>
+    <button onclick="openRedistribute('${driver}')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Reassign their stops</button>
+  ` : `
+    <button onclick="markDriverOut('${driver}','out_today')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Out today (sick / no-show)</button>
+    <button onclick="markDriverOut('${driver}','out_week')"  class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Out this week (vacation)</button>
+    <div class="border-t border-ink-200 my-1"></div>
+    <button onclick="openRedistribute('${driver}')" class="block w-full text-left px-3 py-1.5 hover:bg-ink-50">Reassign all stops…</button>
+  `;
+  document.body.appendChild(menu);
+  openMenu = menu;
+  setTimeout(() => document.addEventListener('click', closeOpenMenu, { once: true }), 0);
+}
+function closeOpenMenu(){ if (openMenu) { openMenu.remove(); openMenu = null; } }
+
+function markDriverOut(driver, kind){
+  closeOpenMenu();
+  driverMeta[driver].status = kind;
+  renderDriverPills();
+  // Open redistribute modal with their pending stops
+  openRedistribute(driver, true);
+}
+function markDriverActive(driver){
+  closeOpenMenu();
+  driverMeta[driver].status = 'active';
+  renderDriverPills();
+  renderBoard();
+  toast(`${driver} is back on the route.`);
+  todaysChanges.unshift({ time: nowStr(), text: `${driver} marked back on duty.`, kind:'add' });
+  renderTodaysChanges();
+}
+
+function openRedistribute(driver, fromCallout){
+  closeOpenMenu();
+  const pending = driverData[driver].filter(s => s.status === 'pending');
+  const otherDrivers = Object.keys(driverMeta).filter(d => d !== driver && driverMeta[d].status === 'active');
+  if (pending.length === 0){
+    toast(`${driver} has no remaining stops to reassign.`);
+    if (fromCallout){ renderBoard(); }
+    return;
+  }
+  const status = driverMeta[driver].status;
+  const banner = fromCallout
+    ? `<div class="bg-amber-50 border border-amber-300 rounded p-3 text-[12px] text-amber-900 mb-1"><strong>${driver} is out ${status==='out_week'?'this week':'today'}.</strong> What about their ${pending.length} remaining stop${pending.length===1?'':'s'}?</div>`
+    : '';
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">Reassign ${driver}'s stops</div>
+        <div class="text-[12.5px] text-ink-500">${pending.length} pending stop${pending.length===1?'':'s'} on today's route</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <div class="px-5 py-4 space-y-4">
+      ${banner}
+      <div class="space-y-2">
+        <label class="flex items-start gap-3 p-3 border border-ink-900 bg-ink-50 rounded cursor-pointer">
+          <input type="radio" name="redistribute" value="auto" checked class="mt-0.5" />
+          <div>
+            <div class="font-semibold text-[13px]">Auto-redistribute by proximity <span class="text-[11px] text-ink-500 font-normal ml-1">(recommended)</span></div>
+            <div class="text-[11.5px] text-ink-500 mt-0.5">Splits the ${pending.length} stops among ${otherDrivers.join(' & ')} based on closest current location.</div>
+          </div>
+        </label>
+        <label class="flex items-start gap-3 p-3 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+          <input type="radio" name="redistribute" value="manual" class="mt-0.5" />
+          <div>
+            <div class="font-semibold text-[13px]">Manually assign each</div>
+            <div class="text-[11.5px] text-ink-500 mt-0.5">You pick a driver for each remaining stop.</div>
+          </div>
+        </label>
+        <label class="flex items-start gap-3 p-3 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+          <input type="radio" name="redistribute" value="keep" class="mt-0.5" />
+          <div>
+            <div class="font-semibold text-[13px]">Keep on ${driver}'s list</div>
+            <div class="text-[11.5px] text-ink-500 mt-0.5">In case ${driver} comes in late or you'll handle it tomorrow.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="border border-ink-200 rounded overflow-hidden">
+        <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[10.5px] font-semibold uppercase tracking-wider text-ink-500">${driver}'s remaining stops</div>
+        <div class="divide-y divide-ink-200 max-h-56 overflow-y-auto">
+          ${pending.map(s => `
+            <div class="px-3 py-2 flex items-center gap-3 text-[12.5px]">
+              <div class="flex-1">
+                <div class="font-medium">${s.cust}</div>
+                <div class="text-[11px] text-ink-500">${s.addr} · ${s.toilet}</div>
+              </div>
+              ${tagFor(s.type)}
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button onclick="applyRedistribute('${driver}')" class="btn-primary">Apply</button>
+      </div>
+    </div>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+
+function applyRedistribute(driver){
+  const choice = document.querySelector('input[name="redistribute"]:checked')?.value || 'auto';
+  if (choice === 'keep'){
+    closeModal();
+    toast(`Stops kept on ${driver}'s list.`);
+    renderBoard();
+    return;
+  }
+  const pending = driverData[driver].filter(s => s.status === 'pending');
+  const otherDrivers = Object.keys(driverMeta).filter(d => d !== driver && driverMeta[d].status === 'active');
+  if (otherDrivers.length === 0){
+    toast('No other active drivers to take stops.');
+    return;
+  }
+  if (choice === 'auto'){
+    // Alternate stops between the active drivers
+    pending.forEach((s, i) => {
+      const target = otherDrivers[i % otherDrivers.length];
+      driverData[driver] = driverData[driver].filter(x => x !== s);
+      driverData[target].push(s);
+    });
+    closeModal();
+    toast(`${pending.length} stops redistributed to ${otherDrivers.join(' & ')}.`);
+    todaysChanges.unshift({ time: nowStr(), text: `${driver} out — ${pending.length} stops auto-redistributed to ${otherDrivers.join(' & ')}.`, kind:'retire' });
+  } else {
+    // Manual: simplest demo move all to first other driver
+    const target = otherDrivers[0];
+    pending.forEach(s => {
+      driverData[driver] = driverData[driver].filter(x => x !== s);
+      driverData[target].push(s);
+    });
+    closeModal();
+    toast(`Manual reassign demo — moved all stops to ${target} (real version lets you pick per stop).`);
+    todaysChanges.unshift({ time: nowStr(), text: `${driver}'s ${pending.length} stops manually moved to ${target}.`, kind:'add' });
+  }
+  renderBoard();
+  renderTodaysChanges();
+}
+
+function openAddTempDriver(){
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
+      <div>
+        <div class="font-semibold text-[15px]">Add a temporary driver for today</div>
+        <div class="text-[12.5px] text-ink-500">Use when Greg pulls in a helper or runs a route himself</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <form onsubmit="event.preventDefault(); closeModal(); toast('Temp driver added — Kim can promote them to permanent later.');" class="px-5 py-4 space-y-3">
+      <div><label class="block text-[12.5px] font-medium mb-1">Name</label><input required placeholder="e.g. Greg, Carlos, Tyler" class="input w-full" /></div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Phone</label><input placeholder="256-555-0000" class="input w-full" /></div>
+      <div><label class="block text-[12.5px] font-medium mb-1">Pull stops from</label>
+        <select class="input w-full">
+          <option>Auto-balance from busiest drivers</option>
+          <option>Mike's queue</option>
+          <option>Tony's queue</option>
+          <option>Jorge's queue</option>
+          <option>None — just add empty</option>
+        </select>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">Add for today</button>
+      </div>
+    </form>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+
+/* ============ ICON HELPER ============ */
+function refreshIcons(){ try { lucide.createIcons(); } catch(e){} }
+
+/* ============ INIT ============ */
+renderRecents();
+renderCustomers();
+renderToilets();
+renderSchedules();
+renderDriversTable();
+renderDriverPills();
+renderNotifBell();
+renderBoard();
+renderDriver();
+renderDrafts();
+renderTodaysChanges();
+document.getElementById('cust-search').addEventListener('input', e => renderCustomers(e.target.value));
+refreshIcons();
+</script>
+</body>
+</html>

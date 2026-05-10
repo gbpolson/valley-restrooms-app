@@ -360,24 +360,18 @@
 <!-- ========================================== GREG / DISPATCH ============================================ -->
 <section data-view="greg" class="role-view hidden">
   <div class="px-6 py-5">
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
       <div>
         <h1 class="text-xl font-semibold tracking-tight">Dispatch</h1>
-        <p class="text-ink-500 text-[12.5px]" id="dispatch-subtitle">Friday, May 8 · drag stops to reorder or reassign</p>
+        <p class="text-ink-500 text-[12.5px]" id="dispatch-subtitle">Friday, May 8 · drag rows to reorder</p>
       </div>
-      <div class="flex items-center gap-1.5">
-        <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
-          <button class="day-btn px-3 py-1 text-[12.5px] font-medium bg-white shadow-sm rounded" data-day="today" onclick="setDispatchDay('today')">Today</button>
-          <button class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">Tomorrow</button>
-          <button id="day-date-btn" class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500 inline-flex items-center gap-1.5" onclick="openDatePicker()">
-            <i data-lucide="calendar" class="ico-sm"></i><span id="day-date-label">Pick a date</span>
-          </button>
-          <input id="dispatch-date-picker" type="date" class="sr-only absolute" onchange="setDispatchDate(this.value)" />
-        </div>
-        <button onclick="autoRoute()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="zap"></i>Auto-route all</button>
-        <button onclick="openInlineStop('Greg')" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="plus"></i>Stop for today</button>
-        <button onclick="openGregRecurring()" class="btn-secondary inline-flex items-center gap-1.5 border-brand-500 text-brand-600 hover:bg-brand-50"><i data-lucide="user-plus"></i>Recurring customer</button>
-        <button onclick="openQuickCapture()" class="btn-danger inline-flex items-center gap-1.5"><i data-lucide="mic"></i>New job</button>
+      <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
+        <button class="day-btn px-3 py-1 text-[12.5px] font-medium bg-white shadow-sm rounded" data-day="today" onclick="setDispatchDay('today')">Today</button>
+        <button class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">Tomorrow</button>
+        <button id="day-date-btn" class="day-btn px-3 py-1 text-[12.5px] font-medium text-ink-500 inline-flex items-center gap-1.5" onclick="openDatePicker()">
+          <i data-lucide="calendar" class="ico-sm"></i><span id="day-date-label">Pick a date</span>
+        </button>
+        <input id="dispatch-date-picker" type="date" class="sr-only absolute" onchange="setDispatchDate(this.value)" />
       </div>
     </div>
 
@@ -387,7 +381,7 @@
       <button onclick="openAddTempDriver()" class="text-[12px] text-ink-500 hover:text-ink-900 font-medium inline-flex items-center gap-1"><i data-lucide="plus" class="ico-sm"></i>Add temp driver</button>
     </div>
 
-    <div class="card mb-4 h-64 relative overflow-hidden bg-ink-50">
+    <div id="dispatch-map-card" class="card mb-4 h-64 relative overflow-hidden bg-ink-50">
       <svg viewBox="0 0 1000 250" preserveAspectRatio="xMidYMid meet" class="absolute inset-0 w-full h-full" id="route-map" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -442,8 +436,33 @@
       <div class="text-[12px] text-ink-500" id="focused-summary"></div>
     </div>
 
-    <div class="grid grid-cols-4 gap-3">
-      <div class="col-span-3" id="dispatch-board"></div>
+    <div id="dispatch-board"></div>
+
+    <!-- Action buttons below the route -->
+    <div class="card mt-4 p-3 flex flex-wrap items-center gap-2">
+      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mr-2">Actions on this route</div>
+      <button onclick="openGregRecurring()" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="user-plus" class="ico-sm"></i>Add recurring customer</button>
+      <button onclick="openInlineStop(focusedDriver)" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="plus" class="ico-sm"></i>One-off stop</button>
+      <button onclick="openQuickCapture()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="mic" class="ico-sm"></i>New job (voice)</button>
+      <button onclick="autoRoute()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="zap" class="ico-sm"></i>Auto-route</button>
+      <div class="flex-1"></div>
+      <div class="text-[11.5px] text-ink-500" id="actions-context">Actions apply to the selected driver + day above</div>
+    </div>
+
+    <!-- Map + Today's changes at the bottom -->
+    <div class="grid grid-cols-3 gap-3 mt-4">
+      <aside class="col-span-2 card overflow-hidden self-start">
+        <div class="px-3 py-2 border-b border-ink-200 flex items-center justify-between">
+          <div>
+            <div class="text-[12.5px] font-semibold">Live map</div>
+            <div class="text-[11px] text-ink-500">Truck positions update with each completion</div>
+          </div>
+          <div class="text-[11px] text-ink-500" id="map-status">Updated 2s ago</div>
+        </div>
+        <div class="h-44 relative overflow-hidden bg-ink-50" id="bottom-map-container">
+          <!-- The route map SVG will be moved here by JS init -->
+        </div>
+      </aside>
       <aside class="card overflow-hidden self-start">
         <div class="px-3 py-2 border-b border-ink-200">
           <div class="text-[12.5px] font-semibold">Today's changes</div>
@@ -598,7 +617,7 @@ document.querySelectorAll('.role-btn').forEach(btn=>{
     btn.classList.add('active');
     document.querySelectorAll('.role-view').forEach(v=>v.classList.add('hidden'));
     document.querySelector(`[data-view="${btn.dataset.role}"]`).classList.remove('hidden');
-    if (btn.dataset.role === 'greg')     { renderDriverPills(); renderBoard(); renderTodaysChanges(); }
+    if (btn.dataset.role === 'greg')     { relocateDispatchMap(); renderDriverPills(); renderBoard(); renderTodaysChanges(); }
     if (btn.dataset.role === 'driver')   renderDriver();
     if (btn.dataset.role === 'customer') renderCustomerPortal('overview');
     renderNotifBell();
@@ -3358,6 +3377,19 @@ function refreshIcons(){ try { lucide.createIcons(); } catch(e){} }
 
 /* ============ INIT ============ */
 // Auto-pick a default role based on screen size. In production, auth would do this.
+// Move dispatch map to bottom container if not already there
+function relocateDispatchMap(){
+  const card = document.getElementById('dispatch-map-card');
+  const dest = document.getElementById('bottom-map-container');
+  if (card && dest && !dest.contains(card)) {
+    // Strip the card's outer chrome (since the bottom container already has its own border/header)
+    card.classList.remove('card','mb-4','h-64');
+    card.style.height = '100%';
+    card.style.position = 'absolute';
+    card.style.inset = '0';
+    dest.appendChild(card);
+  }
+}
 (function autoSelectRole(){
   const w = window.innerWidth;
   let role = 'kim';
@@ -3378,6 +3410,7 @@ renderSchedules();
 renderDriversTable();
 renderDriverPills();
 renderNotifBell();
+relocateDispatchMap();
 renderBoard();
 renderDriver();
 renderDrafts();

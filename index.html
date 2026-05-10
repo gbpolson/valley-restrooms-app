@@ -376,6 +376,7 @@
         </div>
         <button onclick="autoRoute()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="zap"></i>Auto-route all</button>
         <button onclick="openInlineStop('Greg')" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="plus"></i>Stop for today</button>
+        <button onclick="openGregRecurring()" class="btn-secondary inline-flex items-center gap-1.5 border-brand-500 text-brand-600 hover:bg-brand-50"><i data-lucide="user-plus"></i>Recurring customer</button>
         <button onclick="openQuickCapture()" class="btn-danger inline-flex items-center gap-1.5"><i data-lucide="mic"></i>New job</button>
       </div>
     </div>
@@ -1799,6 +1800,167 @@ function sendQuickCapture(){
   closeModal();
   renderDrafts();
   toast(`Sent to Kim — ${drafts.length} drafts pending.`);
+}
+
+/* ============ GREG QUICK RECURRING CUSTOMER ============ */
+function dayLetterForDispatch(){
+  if (dispatchDay === 'today')    return 'F';  // demo: today = Fri May 8
+  if (dispatchDay === 'tomorrow') return 'Sa';
+  try { const d = new Date(dispatchDay + 'T12:00:00'); return ['Su','M','T','W','Th','F','Sa'][d.getDay()]; }
+  catch(e){ return 'M'; }
+}
+function dayLabelForDispatch(){
+  if (dispatchDay === 'today')    return 'today (Fri May 8)';
+  if (dispatchDay === 'tomorrow') return 'tomorrow (Sat May 9)';
+  return formatDispatchLabel();
+}
+function openGregRecurring(){
+  const todayLetter = dayLetterForDispatch();
+  const dayLabel = dayLabelForDispatch();
+  const driverLabel = focusedDriver === 'Greg' ? 'Greg (East)' : 'Bradley (West)';
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white z-10">
+      <div>
+        <div class="font-semibold text-[15px]">+ Recurring customer</div>
+        <div class="text-[12.5px] text-ink-500">Add directly to a route — quick mode for phone calls</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <div class="px-5 py-4 space-y-3.5">
+
+      <div class="bg-brand-50 border border-brand-500/40 rounded p-3 text-[12.5px] text-ink-900">
+        <div class="font-semibold mb-0.5">Adding to <strong>${driverLabel}</strong> · ${dayLabel}</div>
+        <div class="text-[11.5px] text-ink-700">Will also create the master customer record and pre-schedule next service. Adjust days below if it's not weekly on ${todayLetter}.</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[12.5px] font-medium mb-1">Customer name</label>
+          <input id="qr-name" autofocus required placeholder="e.g. Smith Construction" class="input w-full" />
+        </div>
+        <div>
+          <label class="block text-[12.5px] font-medium mb-1">Phone</label>
+          <input id="qr-phone" placeholder="256-555-0000" class="input w-full" />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Service address</label>
+        <input id="qr-addr" required placeholder="Address, city, AL" class="input w-full" />
+      </div>
+
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="block text-[12.5px] font-medium mb-1">How many units?</label>
+          <input id="qr-count" type="number" min="1" value="1" class="input w-full" />
+        </div>
+        <div class="col-span-2">
+          <label class="block text-[12.5px] font-medium mb-1">Type</label>
+          <select id="qr-type" class="input w-full">
+            <option>Standard toilet</option>
+            <option>Handicap toilet</option>
+            <option>VIP toilet</option>
+            <option>Hand-wash station</option>
+            <option>Mixed (note below)</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1.5">Service days</label>
+        <div class="grid grid-cols-6 gap-1.5">
+          ${['M','T','W','Th','F','Sa'].map(d=>`
+            <label class="border border-ink-300 rounded px-2 py-1.5 text-[13px] text-center cursor-pointer hover:bg-ink-50 has-[:checked]:bg-ink-900 has-[:checked]:border-ink-900 has-[:checked]:text-white font-medium">
+              <input type="checkbox" class="hidden qr-day" value="${d}" ${d===todayLetter?'checked':''} /> ${d}
+            </label>`).join('')}
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[12.5px] font-medium mb-1">Price per service</label>
+          <div class="relative"><span class="absolute left-2.5 top-2 text-ink-500">$</span>
+            <input id="qr-price" value="90.00" class="input w-full pl-6" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-[12.5px] font-medium mb-1">Note <span class="text-ink-500 font-normal">(optional)</span></label>
+          <input id="qr-note" placeholder="e.g. Gate code 1234" class="input w-full" />
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
+        <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+        <button onclick="submitGregRecurring()" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="check" class="ico-sm"></i>Save &amp; add to route</button>
+      </div>
+    </div>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+
+function submitGregRecurring(){
+  const name = document.getElementById('qr-name').value.trim();
+  const phone = document.getElementById('qr-phone').value.trim() || '—';
+  const addr = document.getElementById('qr-addr').value.trim();
+  const count = parseInt(document.getElementById('qr-count').value, 10) || 1;
+  const type = document.getElementById('qr-type').value;
+  const days = [...document.querySelectorAll('.qr-day:checked')].map(c => c.value);
+  const price = document.getElementById('qr-price').value;
+  const note = document.getElementById('qr-note').value.trim();
+  if (!name || !addr){ toast('Customer name and service address are required.'); return; }
+  if (days.length === 0){ toast('Pick at least one service day.'); return; }
+
+  // 1. Create master customer record
+  const newId = Math.max(...customers.map(c => c.id)) + 1;
+  const unitDescription = count + ' ' + type.toLowerCase().replace(' toilet','').replace(' station','');
+  const newCustomer = {
+    id: newId, name, phone, addr,
+    toilets: count,
+    route: focusedDriver === 'Greg' ? 'E' : 'W',
+    day: days.join(', '),
+    last: '—',
+    owes: 0,
+    nextDelivery: dispatchDay === 'today' ? '2026-05-08' : (dispatchDay === 'tomorrow' ? '2026-05-09' : dispatchDay),
+    nextPickup: null,
+    retired: false,
+    note: note || 'Just added by Greg from dispatch',
+    nextSvc: dispatchDay === 'today' ? '2026-05-08' : (dispatchDay === 'tomorrow' ? '2026-05-09' : dispatchDay),
+  };
+  customers.push(newCustomer);
+
+  // 2. Create a stop on the current dispatch day
+  const newStop = {
+    id: 'g-rec-'+Date.now(),
+    cust: name,
+    addr,
+    units: unitDescription,
+    type: 'deliver',  // first service is a delivery
+    status: 'pending',
+    isNew: true,
+    notes: note || 'New customer — just added'
+  };
+  driverData[focusedDriver].push(newStop);
+
+  // 3. Log to recents (Kim's home)
+  recents.unshift({
+    when: 'Just now', who: 'Greg',
+    what: `Added recurring: ${name} — ${days.join('/')}, Route ${newCustomer.route}, ${focusedDriver} — $${price}`
+  });
+
+  // 4. Log to today's changes feed
+  todaysChanges.unshift({
+    time: nowStr(),
+    text: `${focusedDriver}: + new recurring customer ${name} (${unitDescription})`,
+    kind: 'add'
+  });
+
+  closeModal();
+  renderBoard();
+  renderRecents();
+  renderCustFilters();
+  renderCustomers(document.getElementById('cust-search')?.value || '');
+  renderTodaysChanges();
+  toast(`${name} added to ${focusedDriver}'s route + master customer list.`);
 }
 
 /* ============ INLINE TODAY-STOP ============ */

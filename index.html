@@ -84,6 +84,15 @@
   .progress-bar { height:4px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
   .progress-bar > div { height:100%; transition: width .3s ease; }
 
+  /* Filter pills above customer table */
+  .filter-pill { background:white; border:1px solid #cbd5e1; border-radius:9999px; padding:7px 14px; font-size:12.5px; font-weight:500; color:#0f172a; cursor:pointer; display:inline-flex; align-items:center; gap:8px; transition: all .12s; }
+  .filter-pill:hover { border-color:#94a3b8; }
+  .filter-pill.active { background:#0f172a; color:white; border-color:#0f172a; }
+  .filter-pill .count { background:#f1f5f9; color:#475569; padding:1px 8px; border-radius:9999px; font-size:11px; font-weight:600; }
+  .filter-pill.active .count { background:rgba(255,255,255,0.18); color:white; }
+  .filter-pill .amount { color:#dc2626; font-weight:600; }
+  .filter-pill.active .amount { color:#fca5a5; }
+
   /* Customer report — looks like a real document */
   .report-toolbar { position:sticky; top:0; z-index:5; background:#0f172a; color:white; padding:10px 24px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
   .report-toolbar .input { background:white; color:#0f172a; }
@@ -278,6 +287,7 @@
             <h1 class="text-xl font-semibold tracking-tight">Customers</h1>
             <input id="cust-search" placeholder="Name, address, phone…" class="input w-72" />
           </div>
+          <div id="cust-filters" class="flex flex-wrap gap-2 mb-4"></div>
           <div class="card overflow-hidden">
             <table class="w-full text-[13px]">
               <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
@@ -288,6 +298,7 @@
                   <th class="text-left px-3 py-2 font-semibold">Schedule</th>
                   <th class="text-left px-3 py-2 font-semibold">Route</th>
                   <th class="text-left px-3 py-2 font-semibold">Last service</th>
+                  <th class="text-left px-3 py-2 font-semibold">Balance</th>
                 </tr>
               </thead>
               <tbody id="cust-table"></tbody>
@@ -504,18 +515,23 @@
 <script>
 /* ============ MOCK DATA ============ */
 const customers = [
-  { id:1, name:'Joe Still / Brent',          phone:'256-555-0118', addr:'446 Jeff Rd., Huntsville, AL',                          toilets:4,  route:'E', day:'Mon, Thu',     last:'2026-05-08' },
-  { id:2, name:'MVP',                        phone:'256-555-0119', addr:'855 Jeff Rd. NW, Huntsville, AL',                       toilets:1,  route:'E', day:'Mon, Tue, Wed',last:'2026-05-08' },
-  { id:3, name:'Turner Construction',        phone:'256-555-0142', addr:'Toyota / 1 Cottonvalley Dr, Huntsville, AL',            toilets:6,  route:'E', day:'Mon, Wed, Thu',last:'2026-05-07' },
-  { id:4, name:'Adams Homes',                phone:'256-555-0177', addr:'Multiple subdivisions across North Alabama',            toilets:14, route:'W', day:'Mon, Tue, Fri',last:'2026-05-08' },
-  { id:5, name:'Hathaway Construction',      phone:'256-555-0199', addr:'Clift Farms, 8140 Hwy 72 W, Madison, AL',               toilets:3,  route:'E', day:'Mon, Thu',     last:'2026-05-08' },
-  { id:6, name:'Stoneridge Homes',           phone:'256-555-0123', addr:'Shields Park, 124 Shields Lake Dr, Huntsville',         toilets:6,  route:'W', day:'Tue, Wed, Thu',last:'2026-05-08' },
-  { id:7, name:'Fite Building',              phone:'256-555-0144', addr:'1030 Old Monrovia Rd., Huntsville, AL',                 toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-08' },
-  { id:8, name:'Webster Homes',              phone:'256-555-0155', addr:'Monroe Manor, 202 Stafford View Ln, Meridianville',     toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-04' },
-  { id:9, name:'Robbins & Morton',           phone:'256-555-0166', addr:'SCI Sanmina, 13000 S. Memorial Pkwy, Huntsville',       toilets:2,  route:'E', day:'Tue, Thu',     last:'2026-05-06' },
-  { id:10,name:'Pearce Construction',        phone:'256-555-0188', addr:'Huntsville Aquatic Center, 2213 Drake Ave',             toilets:2,  route:'E', day:'Tue, Wed',     last:'2026-05-06' },
-  { id:11,name:'Legacy Premier Homes',       phone:'256-555-0211', addr:'Old Stone, 24206 Beacon Circle, Athens',                toilets:1,  route:'W', day:'Tue, Fri',     last:'2026-05-08' },
-  { id:12,name:'Grayson Carter & Sons',      phone:'256-555-0233', addr:'New subdivision across from 4569 Winchester',           toilets:2,  route:'W', day:'Tue, Wed, Fri',last:'2026-05-08' },
+  { id:1, name:'Joe Still / Brent',          phone:'256-555-0118', addr:'446 Jeff Rd., Huntsville, AL',                          toilets:4,  route:'E', day:'Mon, Thu',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:2, name:'MVP',                        phone:'256-555-0119', addr:'855 Jeff Rd. NW, Huntsville, AL',                       toilets:1,  route:'E', day:'Mon, Tue, Wed',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:3, name:'Turner Construction',        phone:'256-555-0142', addr:'Toyota / 1 Cottonvalley Dr, Huntsville, AL',            toilets:6,  route:'E', day:'Mon, Wed, Thu',last:'2026-05-07', owes:180,    nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:4, name:'Adams Homes',                phone:'256-555-0177', addr:'Multiple subdivisions across North Alabama',            toilets:14, route:'W', day:'Mon, Tue, Fri',last:'2026-05-08', owes:0,      nextDelivery:'2026-05-12', nextPickup:null,           retired:false },
+  { id:5, name:'Hathaway Construction',      phone:'256-555-0199', addr:'Clift Farms, 8140 Hwy 72 W, Madison, AL',               toilets:3,  route:'E', day:'Mon, Thu',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:6, name:'Stoneridge Homes',           phone:'256-555-0123', addr:'Shields Park, 124 Shields Lake Dr, Huntsville',         toilets:6,  route:'W', day:'Tue, Wed, Thu',last:'2026-05-08', owes:360,    nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:7, name:'Fite Building',              phone:'256-555-0144', addr:'1030 Old Monrovia Rd., Huntsville, AL',                 toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:8, name:'Webster Homes',              phone:'256-555-0155', addr:'Monroe Manor, 202 Stafford View Ln, Meridianville',     toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-04', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:9, name:'Robbins & Morton',           phone:'256-555-0166', addr:'SCI Sanmina, 13000 S. Memorial Pkwy, Huntsville',       toilets:2,  route:'E', day:'Tue, Thu',     last:'2026-05-06', owes:90,     nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:10,name:'Pearce Construction',        phone:'256-555-0188', addr:'Huntsville Aquatic Center, 2213 Drake Ave',             toilets:2,  route:'E', day:'Tue, Wed',     last:'2026-05-06', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:11,name:'Legacy Premier Homes',       phone:'256-555-0211', addr:'Old Stone, 24206 Beacon Circle, Athens',                toilets:1,  route:'W', day:'Tue, Fri',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:12,name:'Grayson Carter & Sons',      phone:'256-555-0233', addr:'New subdivision across from 4569 Winchester',           toilets:2,  route:'W', day:'Tue, Wed, Fri',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
+  { id:13,name:'Mendoza Wedding (event)',    phone:'256-555-7788', addr:'88 Riverside Ln, Athens, AL',                            toilets:6,  route:'—', day:'EVENT',        last:'—',          owes:0,      nextDelivery:'2026-06-14', nextPickup:'2026-06-16',   retired:false },
+  { id:14,name:'Mark Worley Construction',   phone:'256-555-1188', addr:'104 Kittyhawk Ln, Harvest, AL',                          toilets:2,  route:'E', day:'Mon, Tue',     last:'—',          owes:0,      nextDelivery:'2026-05-15', nextPickup:null,           retired:false },
+  { id:15,name:'Hawkins Groundwork',         phone:'256-555-0411', addr:'Jones Rd. substation, Athens, AL',                       toilets:1,  route:'W', day:'Fri',          last:'2026-05-01', owes:0,      nextDelivery:null,         nextPickup:'2026-05-10',   retired:false },
+  { id:16,name:'Burwell Gardens (Adams)',    phone:'256-555-0177', addr:'135 Brooklawn Dr, Harvest, AL',                          toilets:0,  route:'—', day:'Retired',      last:'2025-12-04', owes:480,    nextDelivery:null,         nextPickup:null,           retired:true },
+  { id:17,name:'Wren Homes (Cason)',         phone:'256-555-0622', addr:'Mid Towne, 1219 Smoothstone Trail, Huntsville',          toilets:0,  route:'—', day:'Retired',      last:'2025-07-01', owes:215,    nextDelivery:null,         nextPickup:null,           retired:true },
 ];
 const driverData = {
   Greg: [
@@ -585,21 +601,72 @@ function renderRecents(){
 }
 
 /* ============ CUSTOMERS / TOILETS / SCHEDULES ============ */
-function renderCustomers(filter=''){
-  const f = filter.toLowerCase();
-  const rows = customers.filter(c => !f || (c.name+c.addr+c.phone).toLowerCase().includes(f));
-  document.getElementById('cust-table').innerHTML = rows.map(c => `
+let currentCustFilter = 'all';
+function getFilteredCustomers(search=''){
+  let rows = customers.slice();
+  if (currentCustFilter === 'toilets-out')  rows = rows.filter(c => c.toilets > 0 && !c.retired);
+  else if (currentCustFilter === 'deliveries') rows = rows.filter(c => c.nextDelivery);
+  else if (currentCustFilter === 'pickups')    rows = rows.filter(c => c.nextPickup);
+  else if (currentCustFilter === 'owes')       rows = rows.filter(c => c.owes > 0);
+  if (search){
+    const f = search.toLowerCase();
+    rows = rows.filter(c => (c.name+c.addr+c.phone).toLowerCase().includes(f));
+  }
+  return rows;
+}
+function setCustFilter(f){
+  currentCustFilter = f;
+  renderCustFilters();
+  renderCustomers(document.getElementById('cust-search')?.value || '');
+}
+function renderCustFilters(){
+  const el = document.getElementById('cust-filters');
+  if (!el) return;
+  const all = customers.length;
+  const out = customers.filter(c => c.toilets > 0 && !c.retired).length;
+  const dels = customers.filter(c => c.nextDelivery).length;
+  const pks  = customers.filter(c => c.nextPickup).length;
+  const oweRows = customers.filter(c => c.owes > 0);
+  const totalOwed = oweRows.reduce((s,c) => s + c.owes, 0);
+  const pill = (key, label, count, extra) => `
+    <button onclick="setCustFilter('${key}')" class="filter-pill ${currentCustFilter===key?'active':''}">
+      <span>${label}</span>
+      <span class="count">${count}</span>
+      ${extra ? `<span class="amount">${extra}</span>` : ''}
+    </button>`;
+  el.innerHTML =
+    pill('all',          'All customers',       all,  '') +
+    pill('toilets-out',  'Toilets out',         out,  '') +
+    pill('deliveries',   'Upcoming deliveries', dels, '') +
+    pill('pickups',      'Upcoming pickups',    pks,  '') +
+    pill('owes',         'Owe money',           oweRows.length, totalOwed>0?('$'+totalOwed.toFixed(0)):'');
+}
+function renderCustomers(search=''){
+  const rows = getFilteredCustomers(search);
+  document.getElementById('cust-table').innerHTML = rows.map(c => {
+    let displayLast = c.last;
+    if (currentCustFilter === 'deliveries' && c.nextDelivery) displayLast = '<span class="text-blue-700 font-semibold">' + c.nextDelivery + '</span> · delivery';
+    else if (currentCustFilter === 'pickups' && c.nextPickup) displayLast = '<span class="text-amber-700 font-semibold">' + c.nextPickup + '</span> · pickup';
+    const balance = c.owes > 0
+      ? '<span class="text-brand-600 font-semibold">$' + c.owes.toFixed(2) + '</span>'
+      : '<span class="text-ink-500">—</span>';
+    return `
     <tr onclick="openCustomerDetail(${c.id})" class="border-t border-ink-200 hover:bg-ink-50 cursor-pointer ${c.retired?'opacity-60':''}">
       <td class="px-3 py-2.5">
-        <div class="font-medium">${c.name}</div>
+        <div class="font-medium">${c.name}${c.retired ? ' <span class="text-[10px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1.5 py-0.5 rounded ml-1 font-semibold">Picked up</span>' : ''}</div>
         <div class="text-[11.5px] text-ink-500">${c.phone}</div>
       </td>
       <td class="px-3 py-2.5 text-ink-700">${c.addr}</td>
       <td class="px-3 py-2.5">${c.toilets}</td>
       <td class="px-3 py-2.5">${c.day === 'EVENT' ? '<span class="tag tag-event">Event</span>' : c.day}</td>
       <td class="px-3 py-2.5">${c.route}</td>
-      <td class="px-3 py-2.5 text-ink-500 text-[12px]">${c.last}</td>
-    </tr>`).join('');
+      <td class="px-3 py-2.5 text-ink-500 text-[12px]">${displayLast}</td>
+      <td class="px-3 py-2.5">${balance}</td>
+    </tr>`;
+  }).join('');
+  if (rows.length === 0){
+    document.getElementById('cust-table').innerHTML = '<tr><td colspan="7" class="px-3 py-6 text-center text-ink-500 italic">No customers match this filter.</td></tr>';
+  }
 }
 function renderToilets(){
   // Toilet inventory pane removed — Greg doesn't track per-unit IDs.
@@ -2963,6 +3030,7 @@ function refreshIcons(){ try { lucide.createIcons(); } catch(e){} }
   }
 })();
 renderRecents();
+renderCustFilters();
 renderCustomers();
 renderToilets();
 renderSchedules();

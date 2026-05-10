@@ -292,13 +292,15 @@
             <table class="w-full text-[13px]">
               <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
                 <tr>
-                  <th class="text-left px-3 py-2 font-semibold">Customer</th>
-                  <th class="text-left px-3 py-2 font-semibold">Location</th>
-                  <th class="text-left px-3 py-2 font-semibold">Toilets</th>
-                  <th class="text-left px-3 py-2 font-semibold">Schedule</th>
-                  <th class="text-left px-3 py-2 font-semibold">Route</th>
-                  <th class="text-left px-3 py-2 font-semibold">Last service</th>
-                  <th class="text-left px-3 py-2 font-semibold">Balance</th>
+                  <th class="text-left px-2 py-1.5 font-semibold">Customer</th>
+                  <th class="text-left px-2 py-1.5 font-semibold">Service Address</th>
+                  <th class="text-left px-2 py-1.5 font-semibold">Units</th>
+                  <th class="text-left px-2 py-1.5 font-semibold">Days</th>
+                  <th class="text-left px-2 py-1.5 font-semibold">Rt</th>
+                  <th class="text-left px-2 py-1.5 font-semibold">Last</th>
+                  <th class="text-left px-2 py-1.5 font-semibold">Next</th>
+                  <th class="text-left px-2 py-1.5 font-semibold">Balance</th>
+                  <th class="text-left px-2 py-1.5 font-semibold">Notes</th>
                 </tr>
               </thead>
               <tbody id="cust-table"></tbody>
@@ -426,8 +428,21 @@
       <div class="absolute bottom-3 left-3 text-[11px] text-ink-500 bg-white border border-ink-200 px-2 py-1 rounded">Updated 2s ago</div>
     </div>
 
-    <div class="grid grid-cols-3 gap-3">
-      <div class="col-span-2 grid grid-cols-2 gap-3" id="dispatch-board"></div>
+    <div class="flex items-center gap-3 mb-3 flex-wrap">
+      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Viewing driver</div>
+      <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
+        <button class="driver-tab-btn px-3 py-1.5 text-[12.5px] font-semibold bg-white shadow-sm rounded" data-driver="Greg" onclick="setFocusedDriver('Greg')">
+          <span class="w-2 h-2 inline-block rounded-full bg-orange-600 mr-1.5 align-[1px]"></span>Greg · East
+        </button>
+        <button class="driver-tab-btn px-3 py-1.5 text-[12.5px] font-medium text-ink-500" data-driver="Bradley" onclick="setFocusedDriver('Bradley')">
+          <span class="w-2 h-2 inline-block rounded-full bg-blue-500 mr-1.5 align-[1px]"></span>Bradley · West
+        </button>
+      </div>
+      <div class="text-[12px] text-ink-500" id="focused-summary"></div>
+    </div>
+
+    <div class="grid grid-cols-4 gap-3">
+      <div class="col-span-3" id="dispatch-board"></div>
       <aside class="card overflow-hidden self-start">
         <div class="px-3 py-2 border-b border-ink-200">
           <div class="text-[12.5px] font-semibold">Today's changes</div>
@@ -441,27 +456,33 @@
 
 <!-- ============================================ DRIVER VIEW =============================================== -->
 <section data-view="driver" class="role-view hidden">
-  <div class="grid place-items-center py-8 bg-ink-50 min-h-[calc(100vh-90px)]">
+  <!-- Device preview toggle (demo only) -->
+  <div class="bg-white border-b border-ink-200 px-5 py-2.5 flex items-center justify-center gap-3">
+    <span class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Preview as</span>
+    <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
+      <button class="device-tab-btn px-3 py-1.5 text-[12.5px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-device="phone" onclick="setDriverDevice('phone')"><i data-lucide="smartphone" class="ico-sm"></i>Phone</button>
+      <button class="device-tab-btn px-3 py-1.5 text-[12.5px] font-medium text-ink-500 inline-flex items-center gap-1.5" data-device="ipad" onclick="setDriverDevice('ipad')"><i data-lucide="tablet" class="ico-sm"></i>iPad</button>
+    </div>
+    <span class="text-[11px] text-ink-500 hidden md:inline">On a real device, this auto-detects from screen size</span>
+  </div>
+
+  <!-- Phone view -->
+  <div id="driver-phone-view" class="grid place-items-center py-8 bg-ink-50 min-h-[calc(100vh-130px)]">
     <div class="phone-frame">
       <div class="phone-screen">
         <div class="bg-black text-white text-[10.5px] px-5 py-1 flex justify-between"><span>9:41</span><span>100%</span></div>
-
         <div class="bg-ink-900 text-white px-5 py-3.5">
           <div class="text-[11px] opacity-70">Friday, May 8</div>
           <div class="text-lg font-semibold">Greg's route — East</div>
           <div class="text-[11.5px] opacity-70 mt-0.5" id="driver-progress">3 of 7 stops complete · est. 1h 45m left</div>
         </div>
-
         <div class="px-4 pt-3" id="active-stop"></div>
-
         <div class="flex-1 overflow-y-auto px-4 pb-4 mt-3">
           <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Up next</div>
           <div id="driver-list" class="space-y-1.5"></div>
-
           <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold mt-5">Completed</div>
           <div id="driver-done" class="space-y-1.5 opacity-70"></div>
         </div>
-
         <div class="border-t border-ink-200 bg-white px-4 py-2 flex justify-around text-[11.5px]">
           <button class="text-ink-900 font-semibold inline-flex items-center gap-1"><i data-lucide="list"></i>Route</button>
           <button class="text-ink-500 inline-flex items-center gap-1"><i data-lucide="map"></i>Map</button>
@@ -469,6 +490,11 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- iPad view -->
+  <div id="driver-ipad-view" class="hidden bg-ink-50 min-h-[calc(100vh-130px)] p-6">
+    <div id="driver-ipad-content" class="max-w-[1000px] mx-auto"></div>
   </div>
 </section>
 
@@ -515,23 +541,23 @@
 <script>
 /* ============ MOCK DATA ============ */
 const customers = [
-  { id:1, name:'Joe Still / Brent',          phone:'256-555-0118', addr:'446 Jeff Rd., Huntsville, AL',                          toilets:4,  route:'E', day:'Mon, Thu',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:2, name:'MVP',                        phone:'256-555-0119', addr:'855 Jeff Rd. NW, Huntsville, AL',                       toilets:1,  route:'E', day:'Mon, Tue, Wed',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:3, name:'Turner Construction',        phone:'256-555-0142', addr:'Toyota / 1 Cottonvalley Dr, Huntsville, AL',            toilets:6,  route:'E', day:'Mon, Wed, Thu',last:'2026-05-07', owes:180,    nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:4, name:'Adams Homes',                phone:'256-555-0177', addr:'Multiple subdivisions across North Alabama',            toilets:14, route:'W', day:'Mon, Tue, Fri',last:'2026-05-08', owes:0,      nextDelivery:'2026-05-12', nextPickup:null,           retired:false },
-  { id:5, name:'Hathaway Construction',      phone:'256-555-0199', addr:'Clift Farms, 8140 Hwy 72 W, Madison, AL',               toilets:3,  route:'E', day:'Mon, Thu',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:6, name:'Stoneridge Homes',           phone:'256-555-0123', addr:'Shields Park, 124 Shields Lake Dr, Huntsville',         toilets:6,  route:'W', day:'Tue, Wed, Thu',last:'2026-05-08', owes:360,    nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:7, name:'Fite Building',              phone:'256-555-0144', addr:'1030 Old Monrovia Rd., Huntsville, AL',                 toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:8, name:'Webster Homes',              phone:'256-555-0155', addr:'Monroe Manor, 202 Stafford View Ln, Meridianville',     toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-04', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:9, name:'Robbins & Morton',           phone:'256-555-0166', addr:'SCI Sanmina, 13000 S. Memorial Pkwy, Huntsville',       toilets:2,  route:'E', day:'Tue, Thu',     last:'2026-05-06', owes:90,     nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:10,name:'Pearce Construction',        phone:'256-555-0188', addr:'Huntsville Aquatic Center, 2213 Drake Ave',             toilets:2,  route:'E', day:'Tue, Wed',     last:'2026-05-06', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:11,name:'Legacy Premier Homes',       phone:'256-555-0211', addr:'Old Stone, 24206 Beacon Circle, Athens',                toilets:1,  route:'W', day:'Tue, Fri',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:12,name:'Grayson Carter & Sons',      phone:'256-555-0233', addr:'New subdivision across from 4569 Winchester',           toilets:2,  route:'W', day:'Tue, Wed, Fri',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false },
-  { id:13,name:'Mendoza Wedding (event)',    phone:'256-555-7788', addr:'88 Riverside Ln, Athens, AL',                            toilets:6,  route:'—', day:'EVENT',        last:'—',          owes:0,      nextDelivery:'2026-06-14', nextPickup:'2026-06-16',   retired:false },
-  { id:14,name:'Mark Worley Construction',   phone:'256-555-1188', addr:'104 Kittyhawk Ln, Harvest, AL',                          toilets:2,  route:'E', day:'Mon, Tue',     last:'—',          owes:0,      nextDelivery:'2026-05-15', nextPickup:null,           retired:false },
-  { id:15,name:'Hawkins Groundwork',         phone:'256-555-0411', addr:'Jones Rd. substation, Athens, AL',                       toilets:1,  route:'W', day:'Fri',          last:'2026-05-01', owes:0,      nextDelivery:null,         nextPickup:'2026-05-10',   retired:false },
-  { id:16,name:'Burwell Gardens (Adams)',    phone:'256-555-0177', addr:'135 Brooklawn Dr, Harvest, AL',                          toilets:0,  route:'—', day:'Retired',      last:'2025-12-04', owes:480,    nextDelivery:null,         nextPickup:null,           retired:true },
-  { id:17,name:'Wren Homes (Cason)',         phone:'256-555-0622', addr:'Mid Towne, 1219 Smoothstone Trail, Huntsville',          toilets:0,  route:'—', day:'Retired',      last:'2025-07-01', owes:215,    nextDelivery:null,         nextPickup:null,           retired:true },
+  { id:1, name:'Joe Still / Brent',          phone:'256-555-0118', addr:'446 Jeff Rd., Huntsville, AL',                          toilets:4,  route:'E', day:'Mon, Thu',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'POC Scott 205-215-4986', nextSvc:'2026-05-12' },
+  { id:2, name:'MVP',                        phone:'256-555-0119', addr:'855 Jeff Rd. NW, Huntsville, AL',                       toilets:1,  route:'E', day:'Mon, Tue, Wed',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Park entrance — east lot', nextSvc:'2026-05-11' },
+  { id:3, name:'Turner Construction',        phone:'256-555-0142', addr:'Toyota / 1 Cottonvalley Dr, Huntsville, AL',            toilets:6,  route:'E', day:'Mon, Wed, Thu',last:'2026-05-07', owes:180,    nextDelivery:null,         nextPickup:null,           retired:false, note:'Job site — forklifts, badge at trailer', nextSvc:'2026-05-11' },
+  { id:4, name:'Adams Homes',                phone:'256-555-0177', addr:'Multiple subdivisions across North Alabama',            toilets:14, route:'W', day:'Mon, Tue, Fri',last:'2026-05-08', owes:0,      nextDelivery:'2026-05-12', nextPickup:null,           retired:false, note:'Multiple subdivisions — schedule by lot', nextSvc:'2026-05-11' },
+  { id:5, name:'Hathaway Construction',      phone:'256-555-0199', addr:'Clift Farms, 8140 Hwy 72 W, Madison, AL',               toilets:3,  route:'E', day:'Mon, Thu',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Clift Farms subdivision', nextSvc:'2026-05-11' },
+  { id:6, name:'Stoneridge Homes',           phone:'256-555-0123', addr:'Shields Park, 124 Shields Lake Dr, Huntsville',         toilets:6,  route:'W', day:'Tue, Wed, Thu',last:'2026-05-08', owes:360,    nextDelivery:null,         nextPickup:null,           retired:false, note:'Shields Park subdivision', nextSvc:'2026-05-12' },
+  { id:7, name:'Fite Building',              phone:'256-555-0144', addr:'1030 Old Monrovia Rd., Huntsville, AL',                 toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Drop pump south side of building', nextSvc:'2026-05-11' },
+  { id:8, name:'Webster Homes',              phone:'256-555-0155', addr:'Monroe Manor, 202 Stafford View Ln, Meridianville',     toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-04', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Monroe Manor subdivision', nextSvc:'2026-05-11' },
+  { id:9, name:'Robbins & Morton',           phone:'256-555-0166', addr:'SCI Sanmina, 13000 S. Memorial Pkwy, Huntsville',       toilets:2,  route:'E', day:'Tue, Thu',     last:'2026-05-06', owes:90,     nextDelivery:null,         nextPickup:null,           retired:false, note:'SCI Sanmina — gate code 4490', nextSvc:'2026-05-12' },
+  { id:10,name:'Pearce Construction',        phone:'256-555-0188', addr:'Huntsville Aquatic Center, 2213 Drake Ave',             toilets:2,  route:'E', day:'Tue, Wed',     last:'2026-05-06', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Park opens at 8 — finish early', nextSvc:'2026-05-12' },
+  { id:11,name:'Legacy Premier Homes',       phone:'256-555-0211', addr:'Old Stone, 24206 Beacon Circle, Athens',                toilets:1,  route:'W', day:'Tue, Fri',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Old Stone subdivision', nextSvc:'2026-05-12' },
+  { id:12,name:'Grayson Carter & Sons',      phone:'256-555-0233', addr:'New subdivision across from 4569 Winchester',           toilets:2,  route:'W', day:'Tue, Wed, Fri',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'New subdivision — see Greg for layout', nextSvc:'2026-05-12' },
+  { id:13,name:'Mendoza Wedding (event)',    phone:'256-555-7788', addr:'88 Riverside Ln, Athens, AL',                            toilets:6,  route:'—', day:'EVENT',        last:'—',          owes:0,      nextDelivery:'2026-06-14', nextPickup:'2026-06-16',   retired:false, note:'Wedding 6/14, pickup 6/16', nextSvc:'2026-06-14' },
+  { id:14,name:'Mark Worley Construction',   phone:'256-555-1188', addr:'104 Kittyhawk Ln, Harvest, AL',                          toilets:2,  route:'E', day:'Mon, Tue',     last:'—',          owes:0,      nextDelivery:'2026-05-15', nextPickup:null,           retired:false, note:'New customer', nextSvc:'2026-05-15' },
+  { id:15,name:'Hawkins Groundwork',         phone:'256-555-0411', addr:'Jones Rd. substation, Athens, AL',                       toilets:1,  route:'W', day:'Fri',          last:'2026-05-01', owes:0,      nextDelivery:null,         nextPickup:'2026-05-10',   retired:false, note:'Project ending — pickup scheduled', nextSvc:'2026-05-10' },
+  { id:16,name:'Burwell Gardens (Adams)',    phone:'256-555-0177', addr:'135 Brooklawn Dr, Harvest, AL',                          toilets:0,  route:'—', day:'Retired',      last:'2025-12-04', owes:480,    nextDelivery:null,         nextPickup:null,           retired:true, note:'Final invoice $480 outstanding', nextSvc:'—' },
+  { id:17,name:'Wren Homes (Cason)',         phone:'256-555-0622', addr:'Mid Towne, 1219 Smoothstone Trail, Huntsville',          toilets:0,  route:'—', day:'Retired',      last:'2025-07-01', owes:215,    nextDelivery:null,         nextPickup:null,           retired:true, note:'Final invoice $215 — Cason POC', nextSvc:'—' },
 ];
 const driverData = {
   Greg: [
@@ -652,20 +678,22 @@ function renderCustomers(search=''){
       : '<span class="text-ink-500">—</span>';
     return `
     <tr onclick="openCustomerDetail(${c.id})" class="border-t border-ink-200 hover:bg-ink-50 cursor-pointer ${c.retired?'opacity-60':''}">
-      <td class="px-3 py-2.5">
-        <div class="font-medium">${c.name}${c.retired ? ' <span class="text-[10px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1.5 py-0.5 rounded ml-1 font-semibold">Picked up</span>' : ''}</div>
-        <div class="text-[11.5px] text-ink-500">${c.phone}</div>
+      <td class="px-2 py-1.5">
+        <div class="font-medium text-[12.5px] leading-tight">${c.name}${c.retired ? ' <span class="text-[9.5px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1 py-0.5 rounded ml-1 font-semibold">Picked up</span>' : ''}</div>
+        <div class="text-[11px] text-ink-500 leading-tight">${c.phone}</div>
       </td>
-      <td class="px-3 py-2.5 text-ink-700">${c.addr}</td>
-      <td class="px-3 py-2.5">${c.toilets}</td>
-      <td class="px-3 py-2.5">${c.day === 'EVENT' ? '<span class="tag tag-event">Event</span>' : c.day}</td>
-      <td class="px-3 py-2.5">${c.route}</td>
-      <td class="px-3 py-2.5 text-ink-500 text-[12px]">${displayLast}</td>
-      <td class="px-3 py-2.5">${balance}</td>
+      <td class="px-2 py-1.5 text-ink-700 text-[12px] leading-tight">${c.addr}</td>
+      <td class="px-2 py-1.5 text-[12px]">${c.toilets}</td>
+      <td class="px-2 py-1.5 text-[12px]">${c.day === 'EVENT' ? '<span class="tag tag-event">Event</span>' : c.day}</td>
+      <td class="px-2 py-1.5 text-[12px] font-mono">${c.route}</td>
+      <td class="px-2 py-1.5 text-ink-500 text-[11.5px]">${displayLast}</td>
+      <td class="px-2 py-1.5 text-ink-700 text-[11.5px]">${c.nextSvc || '—'}</td>
+      <td class="px-2 py-1.5 text-[12px]">${balance}</td>
+      <td class="px-2 py-1.5 text-ink-500 italic text-[11px] leading-tight">${c.note || ''}</td>
     </tr>`;
   }).join('');
   if (rows.length === 0){
-    document.getElementById('cust-table').innerHTML = '<tr><td colspan="7" class="px-3 py-6 text-center text-ink-500 italic">No customers match this filter.</td></tr>';
+    document.getElementById('cust-table').innerHTML = '<tr><td colspan="9" class="px-3 py-6 text-center text-ink-500 italic">No customers match this filter.</td></tr>';
   }
 }
 function renderToilets(){
@@ -1196,7 +1224,7 @@ function submitForm(e, kind){
   setTimeout(() => {
     const gregBtn = document.querySelector('.role-btn[data-role="greg"]');
     if (gregBtn) gregBtn.click();
-    setTimeout(showApprovalBanner, 250);
+    setTimeout(() => { setFocusedDriver('Bradley'); showApprovalBanner(); }, 250);
   }, 800);
 }
 let pendingApproval = null;
@@ -1336,6 +1364,35 @@ function updateDispatchSubtitle(){
 
 /* ============ GREG — DISPATCH BOARD ============ */
 const driverColors = { Greg:'bg-orange-600', Bradley:'bg-blue-500' };
+let focusedDriver = 'Greg';
+function setFocusedDriver(d){
+  focusedDriver = d;
+  document.querySelectorAll('.driver-tab-btn').forEach(b => {
+    b.classList.remove('bg-white','shadow-sm','rounded');
+    b.classList.add('text-ink-500');
+    b.classList.remove('font-semibold');
+    b.classList.add('font-medium');
+  });
+  const btn = document.querySelector(`.driver-tab-btn[data-driver="${d}"]`);
+  if (btn){
+    btn.classList.add('bg-white','shadow-sm','rounded','font-semibold');
+    btn.classList.remove('text-ink-500','font-medium');
+  }
+  renderBoard();
+}
+function reassignStop(fromDriver, stopId){
+  if (!isViewingToday()){ toast('View only — switch to Today to reassign.'); return; }
+  const other = Object.keys(driverMeta).find(d => d !== fromDriver);
+  const arr = driverData[fromDriver];
+  const idx = arr.findIndex(s => s.id === stopId);
+  if (idx === -1) return;
+  const [moved] = arr.splice(idx, 1);
+  driverData[other].push(moved);
+  renderBoard();
+  toast(`Moved ${moved.cust} to ${other}`);
+  todaysChanges.unshift({ time: nowStr(), text: `Reassigned ${moved.cust} from ${fromDriver} to ${other}`, kind:'add' });
+  renderTodaysChanges();
+}
 function tagFor(type){
   if(type==='clean')   return '<span class="tag tag-clean">Clean</span>';
   if(type==='deliver') return '<span class="tag tag-deliver">Deliver</span>';
@@ -1357,56 +1414,94 @@ function progressOf(driver){
 function renderBoard(){
   const board = document.getElementById('dispatch-board');
   const currentData = getCurrentDispatchData();
-  board.innerHTML = Object.entries(currentData).map(([driver, stops])=>{
-    const meta = driverMeta[driver];
-    const p = progressOf(driver);
-    const sorted = [...stops].sort((a,b)=>statusOrder(a)-statusOrder(b));
-    const barColor = meta.colorClass;
-    const isOut = meta.status !== 'active';
-    return `
+  const stops = (currentData[focusedDriver] || []).slice().sort((a,b)=>statusOrder(a)-statusOrder(b));
+  const meta = driverMeta[focusedDriver];
+  const p = progressOf(focusedDriver);
+  const isOut = meta.status !== 'active';
+
+  // Update header summary
+  const sum = document.getElementById('focused-summary');
+  if (sum) sum.textContent = `${p.done} of ${p.total} done · heading to ${meta.headingTo}`;
+
+  // Update tab visual state
+  document.querySelectorAll('.driver-tab-btn').forEach(b => {
+    if (b.dataset.driver === focusedDriver) {
+      b.classList.add('bg-white','shadow-sm','rounded','font-semibold');
+      b.classList.remove('text-ink-500','font-medium');
+    } else {
+      b.classList.remove('bg-white','shadow-sm','rounded','font-semibold');
+      b.classList.add('text-ink-500','font-medium');
+    }
+  });
+
+  const otherDriver = Object.keys(driverMeta).find(d => d !== focusedDriver);
+  const dayLabel = isViewingToday() ? 'Today' : (dispatchDay === 'tomorrow' ? 'Tomorrow' : formatDispatchLabel());
+
+  board.innerHTML = `
     <div class="card overflow-hidden ${isOut?'opacity-75':''}">
-      <div class="px-3 py-2.5 border-b border-ink-200 ${isOut?'bg-red-50':''}">
-        <div class="flex items-center gap-2 mb-1.5">
-          <div class="w-7 h-7 rounded-full ${driverColors[driver]} text-white grid place-items-center text-[12px] font-semibold ${isOut?'opacity-50':''}">${driver[0]}</div>
-          <div class="flex-1">
-            <div class="font-semibold text-[13.5px] flex items-center gap-1.5">${driver}${isOut?` <span class="text-[10px] uppercase tracking-wider bg-red-600 text-white px-1.5 py-0.5 rounded font-semibold">${meta.status==='out_today'?'Out today':'Out this week'}</span>`:''}</div>
-            <div class="text-[11.5px] text-ink-500">${p.done} of ${p.total} done · Route ${meta.routeCode}</div>
+      <div class="px-4 py-3 border-b border-ink-200 flex items-center gap-3 ${isOut?'bg-red-50':''}">
+        <div class="w-9 h-9 rounded-full ${meta.colorClass} text-white grid place-items-center text-[14px] font-semibold ${isOut?'opacity-50':''}">${focusedDriver[0]}</div>
+        <div class="flex-1">
+          <div class="font-semibold text-[14.5px] flex items-center gap-2">
+            ${dayLabel} · ${focusedDriver}'s route — ${focusedDriver==='Greg'?'East':'West'}
+            ${isOut?`<span class="text-[10px] uppercase tracking-wider bg-red-600 text-white px-1.5 py-0.5 rounded font-semibold">${meta.status==='out_today'?'Out today':'Out this week'}</span>`:''}
           </div>
-          <button onclick="toggleDriverMenu('${driver}', event)" class="text-ink-500 hover:text-ink-900"><i data-lucide="more-horizontal"></i></button>
+          <div class="text-[11.5px] text-ink-500">Last updated ${nowStr()}</div>
         </div>
-        <div class="progress-bar"><div class="${barColor}" style="width:${Math.round(p.pct*100)}%"></div></div>
+        <div class="text-right">
+          <div class="text-[11px] text-ink-500 mb-1">${p.done}/${p.total} stops</div>
+          <div class="progress-bar w-40"><div class="${meta.colorClass}" style="width:${Math.round(p.pct*100)}%"></div></div>
+        </div>
+        <button onclick="toggleDriverMenu('${focusedDriver}', event)" class="text-ink-500 hover:text-ink-900"><i data-lucide="more-horizontal"></i></button>
       </div>
-      <div class="p-2 space-y-1.5 min-h-[180px]" data-driver="${driver}" ondragover="columnDragOver(event,'${driver}')" ondragleave="this.classList.remove('col-hover');" ondrop="dropStop(event,'${driver}')">
-        ${sorted.map((s,i)=>{
-          const isCompleted = s.status==='completed';
-          const isActive = s.status==='active';
-          const cardCls = isCompleted ? 'stop-completed' : isActive ? 'stop-active' : '';
-          const seq = stops.indexOf(s)+1;
-          return `
-          <div data-stop-id="${s.id}" ${isCompleted?'':'draggable="true"'} ${isCompleted?'':`ondragstart="dragStart(event,'${driver}','${s.id}')" ondragend="dragEnd(event)"`} class="stop-card border border-ink-200 rounded p-2.5 ${isCompleted?'':'cursor-grab active:cursor-grabbing'} ${cardCls} ${s.isNew?'ring-2 ring-yellow-400 bg-yellow-50':''}">
-            <div class="flex items-center justify-between mb-1">
-              <div class="text-[10.5px] font-mono text-ink-500 flex items-center gap-1.5">
-                ${isCompleted ? '<i data-lucide="check" class="ico-sm text-emerald-700"></i>' : isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-brand-500 pulse"></span>' : ''}
-                #${seq}${isCompleted ? ` · ${s.completedAt||''}` : isActive ? ' · NOW' : ''}
-                ${s.isNew ? '<span class="bg-yellow-400 text-ink-900 text-[9px] font-bold px-1 rounded">NEW</span>' : ''}
-              </div>
-              ${tagFor(s.type)}
-            </div>
-            <div class="text-[13px] font-semibold leading-tight stop-name">${s.cust}</div>
-            <div class="text-[11.5px] text-ink-500 leading-tight">${s.addr}</div>
-            <div class="text-[11.5px] text-ink-700 mt-1">${s.units}</div>
-            ${s.notes ? `<div class="text-[11.5px] italic text-ink-500 mt-1">"${s.notes}"</div>` : ''}
-            ${isCompleted ? '' : `
-              <div class="flex gap-2 mt-1.5">
-                <button class="text-[11.5px] text-ink-900 font-medium hover:underline" onclick="pinNext('${driver}','${s.id}')">Do next</button>
-                <button class="text-[11.5px] text-ink-500 font-medium hover:underline">Reassign</button>
-              </div>`}
-          </div>`;
-        }).join('')}
-        <button onclick="openInlineStop('${driver}')" class="w-full border border-dashed border-ink-300 rounded py-1.5 text-[12px] text-ink-500 hover:border-ink-500 hover:text-ink-900">+ Add to today</button>
+      <div class="overflow-x-auto">
+        <table class="w-full text-[12.5px]" id="dispatch-table">
+          <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+            <tr>
+              <th class="text-left px-3 py-2 w-12">Seq</th>
+              <th class="text-left px-3 py-2">Customer</th>
+              <th class="text-left px-3 py-2">Service Address</th>
+              <th class="text-left px-3 py-2">Units</th>
+              <th class="text-left px-3 py-2">Service</th>
+              <th class="text-left px-3 py-2">Status</th>
+              <th class="text-left px-3 py-2">Notes</th>
+              <th class="text-right px-3 py-2 w-32"></th>
+            </tr>
+          </thead>
+          <tbody data-driver="${focusedDriver}" ondragover="columnDragOver(event,'${focusedDriver}')" ondragleave="this.classList.remove('col-hover');" ondrop="dropStop(event,'${focusedDriver}')">
+            ${stops.length === 0 ? '<tr><td colspan="8" class="px-3 py-6 text-center text-ink-500 italic">No stops on this route.</td></tr>' :
+              stops.map((s,i)=>{
+                const isCompleted = s.status==='completed';
+                const isActive = s.status==='active';
+                const rowCls = isCompleted ? 'opacity-60' : isActive ? 'bg-brand-50' : '';
+                const seq = stops.filter(x => statusOrder(x) <= statusOrder(s)).length;
+                return `
+                <tr data-stop-id="${s.id}" ${isCompleted?'':'draggable="true"'} ${isCompleted?'':`ondragstart="dragStart(event,'${focusedDriver}','${s.id}')" ondragend="dragEnd(event)"`} class="stop-card border-t border-ink-200 hover:bg-ink-50 ${isCompleted?'':'cursor-grab'} ${rowCls} ${s.isNew?'ring-2 ring-yellow-400 ring-inset':''}">
+                  <td class="px-3 py-2 font-mono text-[11.5px] text-ink-500">${seq}</td>
+                  <td class="px-3 py-2 font-medium ${isCompleted?'line-through':''}">${s.cust}${s.isNew?' <span class="bg-yellow-400 text-ink-900 text-[9px] font-bold px-1 rounded ml-1">NEW</span>':''}</td>
+                  <td class="px-3 py-2 text-ink-700">${s.addr}</td>
+                  <td class="px-3 py-2 text-ink-700">${s.units || '—'}</td>
+                  <td class="px-3 py-2">${tagFor(s.type)}</td>
+                  <td class="px-3 py-2">
+                    ${isCompleted ? `<span class="text-emerald-700 font-semibold inline-flex items-center gap-1"><i data-lucide="check" class="ico-sm"></i>${s.completedAt||''}</span>` :
+                      isActive ? '<span class="text-brand-500 font-semibold inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-500 pulse"></span>NOW</span>' :
+                      '<span class="text-ink-400">—</span>'}
+                  </td>
+                  <td class="px-3 py-2 text-ink-500 italic text-[11.5px]">${s.notes || ''}</td>
+                  <td class="px-3 py-2 text-right whitespace-nowrap">
+                    ${isCompleted ? '' : `
+                      <button onclick="event.stopPropagation(); pinNext('${focusedDriver}','${s.id}')" class="text-[11.5px] text-ink-900 font-medium hover:underline">Do next</button>
+                      <button onclick="event.stopPropagation(); reassignStop('${focusedDriver}','${s.id}')" class="text-[11.5px] text-ink-500 font-medium hover:underline ml-2">→ ${otherDriver}</button>
+                    `}
+                  </td>
+                </tr>`;
+              }).join('')
+            }
+          </tbody>
+        </table>
       </div>
+      <button onclick="openInlineStop('${focusedDriver}')" class="w-full border-t border-ink-200 py-2.5 text-[12.5px] text-ink-500 hover:text-ink-900 hover:bg-ink-50 inline-flex items-center justify-center gap-1.5"><i data-lucide="plus" class="ico-sm"></i>Add a stop to ${focusedDriver}'s route</button>
     </div>`;
-  }).join('');
   positionTrucks();
   refreshIcons();
 }
@@ -1959,7 +2054,91 @@ function renderDriver(){
       </div>
       ${tagFor(s.type)}
     </div>`).join('');
+  renderDriverIpad();
   refreshIcons();
+}
+
+let driverDevice = 'phone';
+function setDriverDevice(d){
+  driverDevice = d;
+  document.querySelectorAll('.device-tab-btn').forEach(b => {
+    if (b.dataset.device === d) {
+      b.classList.add('bg-white','shadow-sm','rounded','font-semibold');
+      b.classList.remove('text-ink-500','font-medium');
+    } else {
+      b.classList.remove('bg-white','shadow-sm','rounded','font-semibold');
+      b.classList.add('text-ink-500','font-medium');
+    }
+  });
+  document.getElementById('driver-phone-view').classList.toggle('hidden', d !== 'phone');
+  document.getElementById('driver-ipad-view').classList.toggle('hidden', d !== 'ipad');
+  renderDriver();
+}
+
+function renderDriverIpad(){
+  const el = document.getElementById('driver-ipad-content');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <div class="text-[12.5px] text-ink-500">Friday, May 8 · East route</div>
+        <div class="text-2xl font-semibold tracking-tight">Greg's route</div>
+      </div>
+      <div class="text-right">
+        <div class="text-[16px] font-semibold">3 of 7 done</div>
+        <div class="text-[12.5px] text-ink-500">est. 1h 45m left</div>
+      </div>
+    </div>
+    <div class="grid grid-cols-5 gap-4">
+      <div class="col-span-3">
+        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Now serving · stop 4 of 7</div>
+        <div class="bg-white border border-ink-200 rounded-lg p-5">
+          <div class="flex items-center justify-between mb-1.5">
+            ${tagFor(driverActive.type)}
+            <div class="text-[11px] text-ink-500">ETA ${driverActive.etaMin} min</div>
+          </div>
+          <div class="text-[20px] font-semibold leading-tight">${driverActive.cust}</div>
+          <div class="text-[13.5px] text-ink-700 mt-1">${driverActive.addr}</div>
+          <div class="text-[12.5px] text-ink-500 mt-0.5">${driverActive.units}</div>
+          ${driverActive.notes ? `<div class="text-[12.5px] bg-amber-50 border border-amber-200 rounded p-3 mt-3 inline-flex items-start gap-2"><i data-lucide="alert-triangle" class="ico-sm text-amber-700 mt-0.5"></i><span>${driverActive.notes}</span></div>` : ''}
+          <button onclick="navigateNow()" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-4 rounded-lg mt-4 text-[16px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate to stop</button>
+          <div class="grid grid-cols-3 gap-2 mt-2">
+            <button onclick="markDone('cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-3.5 rounded font-semibold text-[14px]">Cleaned</button>
+            <button onclick="markDone('delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-3.5 rounded font-semibold text-[14px]">Delivered</button>
+            <button onclick="markDone('picked up')" class="bg-amber-700 hover:bg-amber-800 text-white py-3.5 rounded font-semibold text-[14px]">Picked up</button>
+          </div>
+          <button onclick="openReportProblem()" class="w-full text-ink-500 text-[13px] py-2.5 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
+        </div>
+      </div>
+      <div class="col-span-2">
+        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Today's route</div>
+        <div class="bg-white border border-ink-200 rounded-lg overflow-hidden">
+          <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[11px] text-ink-700 font-semibold uppercase tracking-wider">Up next</div>
+          ${upNext.map((s,i) => `
+            <div class="px-3 py-2 border-b border-ink-200 last:border-0 flex items-center gap-2.5">
+              <div class="text-[11px] font-mono text-ink-500 w-6">${i+5}</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[13px] font-semibold leading-tight truncate">${s.cust}</div>
+                <div class="text-[11.5px] text-ink-500 truncate">${s.addr}</div>
+              </div>
+              <div class="text-right shrink-0">
+                ${tagFor(s.type)}
+                <div class="text-[10.5px] text-ink-500 mt-0.5">${s.tag||''}</div>
+              </div>
+            </div>`).join('')}
+          <div class="px-3 py-2 bg-ink-50 border-t border-ink-200 text-[11px] text-ink-700 font-semibold uppercase tracking-wider">Completed</div>
+          ${done.map(s => `
+            <div class="px-3 py-2 border-b border-ink-200 last:border-0 flex items-center gap-2.5 opacity-60">
+              <div class="text-emerald-700"><i data-lucide="check" class="ico-sm"></i></div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[12.5px] font-semibold line-through truncate">${s.cust}</div>
+                <div class="text-[11px] text-ink-500 truncate">${s.addr}</div>
+              </div>
+              ${tagFor(s.type)}
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
 }
 function navigateNow(){ toast('Opening Google Maps for ' + driverActive.cust); }
 function markDone(action){

@@ -1108,7 +1108,64 @@ function eventFormHTML(p){
       </div>
     </form>`;
 }
-function submitForm(e, kind){ e.preventDefault(); closeModal(); toast(kind==='recurring' ? 'Saved. Future stops added to driver routes.' : 'Event booked. Drop-off, cleanings, and pickup scheduled.'); }
+function submitForm(e, kind){
+  e.preventDefault();
+  closeModal();
+  toast(kind==='recurring' ? 'Saved. Opening dispatch so Greg can approve the route order.' : 'Event booked. Opening dispatch so Greg can review.');
+  // Inject a "NEW" stop into the relevant driver's queue for demo
+  const newStop = {
+    id: 'new-'+Date.now(),
+    cust: kind==='event' ? 'Mendoza Wedding (new)' : 'Joe Smith Construction (new)',
+    addr: kind==='event' ? '88 Riverside Ln, Athens AL' : '1247 Oak Street, Decatur AL',
+    units: kind==='event' ? '5 standard, 1 handicap' : '2 standard',
+    type: kind==='event' ? 'deliver' : 'clean',
+    status: 'pending',
+    isNew: true,
+    notes: 'Just added by Kim — please approve route position'
+  };
+  // Add to Bradley's queue (West route) since the demo customer is on a West route
+  driverData.Bradley.push(newStop);
+  pendingApproval = { customer: newStop.cust, kind };
+  setTimeout(() => {
+    const gregBtn = document.querySelector('.role-btn[data-role="greg"]');
+    if (gregBtn) gregBtn.click();
+    setTimeout(showApprovalBanner, 250);
+  }, 800);
+}
+let pendingApproval = null;
+function showApprovalBanner(){
+  const existing = document.getElementById('approval-banner');
+  if (existing) existing.remove();
+  if (!pendingApproval) return;
+  const banner = document.createElement('div');
+  banner.id = 'approval-banner';
+  banner.className = 'border border-yellow-400 bg-yellow-50 rounded-lg p-3 mb-4 flex items-center gap-3';
+  banner.innerHTML = `
+    <div class="text-yellow-700"><i data-lucide="alert-circle"></i></div>
+    <div class="flex-1">
+      <div class="font-semibold text-[13.5px]">Kim just added <strong>${pendingApproval.customer}</strong>.</div>
+      <div class="text-[12px] text-ink-700">Find the yellow-bordered card below, drag it to the right position in the route, then approve.</div>
+    </div>
+    <button onclick="approveNewCustomer()" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="check" class="ico-sm"></i>Approve route order</button>`;
+  // Insert above the dispatch board's map
+  const mapCard = document.querySelector('[data-view="greg"] .card.h-64, [data-view="greg"] .card.mb-4.h-64');
+  if (mapCard) mapCard.parentNode.insertBefore(banner, mapCard);
+  else {
+    const greg = document.querySelector('[data-view="greg"] .px-6.py-5');
+    if (greg) greg.insertBefore(banner, greg.children[1]);
+  }
+  refreshIcons();
+}
+function approveNewCustomer(){
+  // Mark all isNew stops as no longer new
+  Object.values(driverData).forEach(arr => arr.forEach(s => { if (s.isNew) delete s.isNew; }));
+  pendingApproval = null;
+  const b = document.getElementById('approval-banner'); if (b) b.remove();
+  renderBoard();
+  toast('Route order approved. Drivers will see it on their next refresh.');
+  todaysChanges.unshift({ time: nowStr(), text: 'Greg approved route order after new customer added', kind:'add' });
+  renderTodaysChanges();
+}
 function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'), 2800); }
 
 /* ============ DISPATCH DAY STATE ============ */
@@ -1252,18 +1309,19 @@ function renderBoard(){
         </div>
         <div class="progress-bar"><div class="${barColor}" style="width:${Math.round(p.pct*100)}%"></div></div>
       </div>
-      <div class="p-2 space-y-1.5 min-h-[180px]" data-driver="${driver}" ondragover="event.preventDefault(); this.classList.add('col-hover');" ondragleave="this.classList.remove('col-hover');" ondrop="dropStop(event,'${driver}')">
+      <div class="p-2 space-y-1.5 min-h-[180px]" data-driver="${driver}" ondragover="columnDragOver(event,'${driver}')" ondragleave="this.classList.remove('col-hover');" ondrop="dropStop(event,'${driver}')">
         ${sorted.map((s,i)=>{
           const isCompleted = s.status==='completed';
           const isActive = s.status==='active';
           const cardCls = isCompleted ? 'stop-completed' : isActive ? 'stop-active' : '';
           const seq = stops.indexOf(s)+1;
           return `
-          <div ${isCompleted?'':'draggable="true"'} ${isCompleted?'':`ondragstart="dragStart(event,'${driver}','${s.id}')" ondragend="dragEnd(event)"`} class="stop-card border border-ink-200 rounded p-2.5 ${isCompleted?'':'cursor-grab active:cursor-grabbing'} ${cardCls}">
+          <div data-stop-id="${s.id}" ${isCompleted?'':'draggable="true"'} ${isCompleted?'':`ondragstart="dragStart(event,'${driver}','${s.id}')" ondragend="dragEnd(event)"`} class="stop-card border border-ink-200 rounded p-2.5 ${isCompleted?'':'cursor-grab active:cursor-grabbing'} ${cardCls} ${s.isNew?'ring-2 ring-yellow-400 bg-yellow-50':''}">
             <div class="flex items-center justify-between mb-1">
               <div class="text-[10.5px] font-mono text-ink-500 flex items-center gap-1.5">
                 ${isCompleted ? '<i data-lucide="check" class="ico-sm text-emerald-700"></i>' : isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-brand-500 pulse"></span>' : ''}
                 #${seq}${isCompleted ? ` · ${s.completedAt||''}` : isActive ? ' · NOW' : ''}
+                ${s.isNew ? '<span class="bg-yellow-400 text-ink-900 text-[9px] font-bold px-1 rounded">NEW</span>' : ''}
               </div>
               ${tagFor(s.type)}
             </div>
@@ -1345,11 +1403,47 @@ function positionTrucks(){
   });
 }
 let dragSrc = null;
+let dropBeforeId = null;
 function dragStart(e, driver, id){
   if (!isViewingToday()){ e.preventDefault(); toast('View only — switch to Today to make changes.'); return; }
   dragSrc = {driver, id}; e.target.classList.add('dragging');
 }
-function dragEnd(e){ e.target.classList.remove('dragging'); document.querySelectorAll('.col-hover').forEach(el=>el.classList.remove('col-hover')); }
+function dragEnd(e){
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.col-hover').forEach(el=>el.classList.remove('col-hover'));
+  document.querySelectorAll('.drop-line').forEach(el => el.remove());
+  dropBeforeId = null;
+}
+function columnDragOver(e, driver){
+  e.preventDefault();
+  const col = e.currentTarget;
+  col.classList.add('col-hover');
+  // Find which card the cursor is above the top-half of
+  const cards = [...col.querySelectorAll('.stop-card:not(.dragging):not(.stop-completed)')];
+  let beforeId = null;
+  let beforeEl = null;
+  for (const card of cards) {
+    const rect = card.getBoundingClientRect();
+    if (e.clientY < rect.top + rect.height / 2) {
+      beforeId = card.dataset.stopId;
+      beforeEl = card;
+      break;
+    }
+  }
+  dropBeforeId = beforeId;
+  // Visual insertion line
+  document.querySelectorAll('.drop-line').forEach(el => el.remove());
+  const line = document.createElement('div');
+  line.className = 'drop-line';
+  line.style.cssText = 'height:2px;background:#dc2626;border-radius:2px;margin:2px 0;';
+  if (beforeEl) col.insertBefore(line, beforeEl);
+  else {
+    // Insert before the "+ Add to today" button
+    const addBtn = col.querySelector('button[onclick^="openInlineStop"]');
+    if (addBtn) col.insertBefore(line, addBtn);
+    else col.appendChild(line);
+  }
+}
 function dropStop(e, targetDriver){
   e.preventDefault();
   if (!isViewingToday()){ toast('View only — switch to Today to reassign.'); return; }
@@ -1357,11 +1451,20 @@ function dropStop(e, targetDriver){
   const srcList = driverData[dragSrc.driver];
   const idx = srcList.findIndex(s => s.id === dragSrc.id);
   if (idx === -1) return;
-  const [moved] = srcList.splice(idx,1);
-  driverData[targetDriver].push(moved);
-  dragSrc = null;
+  const [moved] = srcList.splice(idx, 1);
+  const targetList = driverData[targetDriver];
+  if (dropBeforeId) {
+    const insertIdx = targetList.findIndex(s => s.id === dropBeforeId);
+    if (insertIdx >= 0) targetList.splice(insertIdx, 0, moved);
+    else targetList.push(moved);
+  } else {
+    targetList.push(moved);
+  }
+  const sameDriver = dragSrc.driver === targetDriver;
+  dragSrc = null; dropBeforeId = null;
+  document.querySelectorAll('.drop-line').forEach(el => el.remove());
   renderBoard();
-  toast(`Moved ${moved.cust} to ${targetDriver}`);
+  toast(sameDriver ? `Reordered ${moved.cust} in ${targetDriver}'s route` : `Moved ${moved.cust} to ${targetDriver}`);
 }
 function pinNext(driver, id){
   if (!isViewingToday()){ toast('View only — switch to Today to pin a stop.'); return; }

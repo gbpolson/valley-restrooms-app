@@ -2754,6 +2754,95 @@ function submitGregRecurring(){
   toast(`${name} added to ${focusedDriver}'s route + master customer list.`);
 }
 
+/* ============ JOB DETAIL MODAL (any stop, any day, any driver) ============ */
+function openJobDetail(driver, dayLetter, stopId){
+  const stops = (weeklyData[driver] && weeklyData[driver][dayLetter]) || [];
+  const stop = stops.find(s => s.id === stopId);
+  if (!stop) { toast('Could not find that stop.'); return; }
+  const tag = tagFor(stop.type || 'clean');
+  const statusLabel = stop.status === 'completed' ? `Completed at ${stop.completedAt||'today'}`
+    : stop.status === 'active' ? 'NOW · in progress' : 'Pending';
+  const dayName = {M:'Monday',T:'Tuesday',W:'Wednesday',Th:'Thursday',F:'Friday',Sa:'Saturday'}[dayLetter] || dayLetter;
+  document.getElementById('modal-content').innerHTML = `
+    <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white z-10">
+      <div>
+        <div class="font-semibold text-[15px]">Stop detail</div>
+        <div class="text-[12.5px] text-ink-500">${driver}'s route · ${dayName}</div>
+      </div>
+      <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
+    </div>
+    <div class="px-5 py-4 space-y-3">
+      <div class="flex items-center justify-between">
+        ${tag}
+        <div class="text-[12px] text-ink-500">${statusLabel}</div>
+      </div>
+      <div class="text-[18px] font-semibold leading-tight">${stop.cust}</div>
+      <div class="text-[13.5px] text-ink-700">${stop.addr}</div>
+      <div class="text-[12.5px] text-ink-500">${stop.units || '1 unit'}</div>
+
+      <div>
+        <label class="block text-[12.5px] font-medium mb-1">Notes</label>
+        <textarea id="job-notes-edit" rows="3" class="input w-full leading-relaxed" placeholder="Gate codes, special instructions, things to watch for...">${stop.notes || ''}</textarea>
+        <div class="text-[11.5px] text-ink-500 mt-1">Notes save automatically when you click an action below.</div>
+      </div>
+
+      <button onclick="jobAction('${driver}','${dayLetter}','${stopId}','navigate')" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-3 rounded-lg text-[15px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate to stop</button>
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="jobAction('${driver}','${dayLetter}','${stopId}','cleaned')" class="bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded font-semibold text-[14px]">Cleaned</button>
+        <button onclick="jobAction('${driver}','${dayLetter}','${stopId}','delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-3 rounded font-semibold text-[14px]">Delivered</button>
+        <button onclick="jobAction('${driver}','${dayLetter}','${stopId}','pickedup')" class="bg-amber-700 hover:bg-amber-800 text-white py-3 rounded font-semibold text-[14px]">Picked up</button>
+      </div>
+      <button onclick="saveJobNotesOnly('${driver}','${dayLetter}','${stopId}')" class="w-full text-ink-700 py-2 text-[13px] hover:text-ink-900 hover:underline">Just save notes (no status change)</button>
+    </div>`;
+  document.getElementById('modal').classList.remove('hidden');
+  refreshIcons();
+}
+function _saveJobNotes(driver, dayLetter, stopId){
+  const newNotes = document.getElementById('job-notes-edit') ? document.getElementById('job-notes-edit').value : '';
+  const stops = (weeklyData[driver] && weeklyData[driver][dayLetter]) || [];
+  const stop = stops.find(s => s.id === stopId);
+  if (stop) stop.notes = newNotes;
+  Object.keys(driverData).forEach(d => {
+    const s2 = driverData[d].find(x => x.id === stopId);
+    if (s2) s2.notes = newNotes;
+  });
+}
+function saveJobNotesOnly(driver, dayLetter, stopId){
+  _saveJobNotes(driver, dayLetter, stopId);
+  closeModal();
+  renderBoard();
+  if (typeof renderDriver === 'function') renderDriver();
+  toast('Notes saved.');
+}
+function jobAction(driver, dayLetter, stopId, action){
+  _saveJobNotes(driver, dayLetter, stopId);
+  const stops = (weeklyData[driver] && weeklyData[driver][dayLetter]) || [];
+  const stop = stops.find(s => s.id === stopId);
+  if (!stop) return;
+  if (action === 'navigate'){
+    toast('Opening Google Maps for ' + stop.cust + '...');
+    return;
+  }
+  if (action === 'cleaned' || action === 'delivered'){
+    stop.status = 'completed';
+    stop.completedAt = nowStr();
+  } else if (action === 'pickedup'){
+    stop.status = 'completed';
+    stop.completedAt = nowStr();
+    stop.type = 'pickup';
+  }
+  Object.keys(driverData).forEach(d => {
+    const s2 = driverData[d].find(x => x.id === stopId);
+    if (s2){ s2.status = stop.status; s2.completedAt = stop.completedAt; if (stop.type) s2.type = stop.type; }
+  });
+  closeModal();
+  renderBoard();
+  if (typeof renderDriver === 'function') renderDriver();
+  todaysChanges.unshift({ time: nowStr(), text: driver + ': ' + action + ' -> ' + stop.cust, kind:'add' });
+  renderTodaysChanges();
+  toast('Marked ' + action + '. Customer text sent.');
+}
+
 /* ============ INLINE TODAY-STOP ============ */
 let stopState = null;
 function openInlineStop(driver){

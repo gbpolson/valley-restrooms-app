@@ -2034,7 +2034,7 @@ function projectedDataFor(dateStr){
   Object.keys(driverData).forEach(driver => {
     proj[driver] = driverData[driver]
       .filter(s => s.status !== 'pickup') // pickups are one-shots, don't repeat
-      .map(s => ({ ...s, id: 'p'+s.id, status: 'scheduled', completedAt: undefined }));
+      .map(s => ({ ...s, status: 'scheduled', completedAt: undefined }));
   });
   return proj;
 }
@@ -2756,23 +2756,26 @@ function submitGregRecurring(){
 
 /* ============ JOB DETAIL MODAL (any stop, any day, any driver) ============ */
 function findStopForJob(driver, dayLetter, stopId){
+  // Strip legacy 'p' prefix from projected IDs
+  const ids = [stopId];
+  if (typeof stopId === 'string' && stopId.startsWith('p')) ids.push(stopId.slice(1));
   // Try weeklyData first
   let arr = (weeklyData[driver] && weeklyData[driver][dayLetter]) || [];
-  let s = arr.find(x => x.id === stopId);
+  let s = arr.find(x => ids.includes(x.id));
   if (s) return s;
   // Then live driverData for the named driver
-  s = (driverData[driver] || []).find(x => x.id === stopId);
+  s = (driverData[driver] || []).find(x => ids.includes(x.id));
   if (s) return s;
   // Then the other driver's live data (in case stop was reassigned)
   for (const d of Object.keys(driverData)){
     if (d === driver) continue;
-    s = driverData[d].find(x => x.id === stopId);
+    s = driverData[d].find(x => ids.includes(x.id));
     if (s) return s;
   }
   // Search any day in weeklyData (in case the stop is on a different day than expected)
   for (const d of Object.keys(weeklyData)){
     for (const day of Object.keys(weeklyData[d])){
-      s = (weeklyData[d][day] || []).find(x => x.id === stopId);
+      s = (weeklyData[d][day] || []).find(x => ids.includes(x.id));
       if (s) return s;
     }
   }

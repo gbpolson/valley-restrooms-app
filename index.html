@@ -360,7 +360,8 @@
 <!-- ========================================== GREG / DISPATCH ============================================ -->
 <section data-view="greg" class="role-view hidden">
   <div class="px-6 py-5">
-    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+    <div class="sticky top-[60px] z-20 bg-white -mx-6 -mt-5 px-6 pt-4 pb-3 border-b border-ink-200 shadow-sm">
+    <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
       <div>
         <h1 class="text-xl font-semibold tracking-tight">Dispatch</h1>
         <p class="text-ink-500 text-[12.5px]" id="dispatch-subtitle">Friday, May 8 · drag rows to reorder</p>
@@ -430,7 +431,7 @@
       <div class="absolute bottom-3 left-3 text-[11px] text-ink-500 bg-white border border-ink-200 px-2 py-1 rounded">Updated 2s ago</div>
     </div>
 
-    <div class="flex items-center gap-3 mb-3 flex-wrap">
+    <div class="flex items-center gap-3 flex-wrap">
       <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Viewing driver</div>
       <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
         <button class="driver-tab-btn px-3 py-1.5 text-[12.5px] font-semibold bg-white shadow-sm rounded" data-driver="Greg" onclick="setFocusedDriver('Greg')">
@@ -443,6 +444,8 @@
       <div class="text-[12px] text-ink-500" id="focused-summary"></div>
     </div>
 
+    </div>
+    <div class="pt-4"></div>
     <div id="dispatch-board"></div>
 
     <!-- Action buttons below the route -->

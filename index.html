@@ -598,6 +598,40 @@ const customers = [
   { id:16,name:'Burwell Gardens (Adams)',    phone:'256-555-0177', addr:'135 Brooklawn Dr, Harvest, AL',                          toilets:0,  route:'—', day:'Retired',      last:'2025-12-04', owes:480,    nextDelivery:null,         nextPickup:null,           retired:true, note:'Final invoice $480 outstanding', nextSvc:'—' },
   { id:17,name:'Wren Homes (Cason)',         phone:'256-555-0622', addr:'Mid Towne, 1219 Smoothstone Trail, Huntsville',          toilets:0,  route:'—', day:'Retired',      last:'2025-07-01', owes:215,    nextDelivery:null,         nextPickup:null,           retired:true, note:'Final invoice $215 — Cason POC', nextSvc:'—' },
 ];
+const deliveryHistory = [
+  // Most recent first
+  { date:'2026-05-08', cust:'Adams Homes',                addr:'Monrovia Manor, 126 Earle Phillips, Madison', units:'1 standard',    driver:'Bradley', notes:'' },
+  { date:'2026-05-07', cust:'Adams Homes',                addr:'Heritage Estates, 16073 Bruton Dr, Harvest',  units:'2 standard',    driver:'Bradley', notes:'New lot opened' },
+  { date:'2026-05-06', cust:'Mark Worley Construction',   addr:'11000 Vivian Dr NW, Huntsville',              units:'1 NGC standard',driver:'Greg',    notes:'' },
+  { date:'2026-05-06', cust:'Wren Homes',                 addr:'Silo Hill / L74/5 / 16 St. Cloud, Huntsville',units:'1 Gray syn',    driver:'Bradley', notes:'' },
+  { date:'2026-05-05', cust:'Wren Homes',                 addr:'Silo Hill / L75/5 / 14 Saint Cloud',          units:'1 standard',    driver:'Bradley', notes:'' },
+  { date:'2026-05-04', cust:'Adams Homes',                addr:'Brookfield Manor, 292 Abercorn Dr, Triana',   units:'1 standard',    driver:'Bradley', notes:'Lot 541' },
+  { date:'2026-05-01', cust:'Stoneridge Homes',           addr:'Shields Park Phase 2, 124 Shields Lake Dr',   units:'3 standard',    driver:'Bradley', notes:'Phase 2 kickoff' },
+  { date:'2026-04-29', cust:'Webster Homes',              addr:'Soland Farms / Lot 71 / 118 Altman',          units:'1 NGC',         driver:'Bradley', notes:'' },
+  { date:'2026-04-28', cust:'Adams Homes',                addr:'Summit Lakes / L44, Athens',                  units:'1 standard',    driver:'Bradley', notes:'' },
+  { date:'2026-04-27', cust:'Hathaway Construction',      addr:'Clift Farms, 8140 Hwy 72 W, Madison',         units:'3 standard',    driver:'Greg',    notes:'Initial drop' },
+  { date:'2026-04-24', cust:'Legacy Premier Homes',       addr:'Old Stone, 24206 Beacon Circle, Athens',      units:'1 standard',    driver:'Bradley', notes:'' },
+  { date:'2026-04-22', cust:'Grayson Carter & Sons',      addr:'New subdivision, 4569 Winchester',            units:'2 standard',    driver:'Bradley', notes:'' },
+  { date:'2026-04-20', cust:'Pearce Construction',        addr:'Huntsville Aquatic Center, 2213 Drake Ave',   units:'2 standard',    driver:'Greg',    notes:'' },
+  { date:'2026-04-18', cust:'Adams Homes',                addr:'Cambridge / L137 / 210 Skehan St, Huntsville',units:'1 Tan Sat',     driver:'Bradley', notes:'' },
+  { date:'2026-04-15', cust:'MVP',                        addr:'855 Jeff Rd. NW, Huntsville',                 units:'1 standard',    driver:'Greg',    notes:'' },
+  { date:'2026-03-04', cust:'Hawkins Groundwork',         addr:'Jones Rd. substation, Athens',                units:'1 standard',    driver:'Bradley', notes:'Project started' },
+];
+
+const pickupHistory = [
+  { date:'2026-05-08', cust:'Hawkins Groundwork',         addr:'Jones Rd. substation, Athens',                units:'1 standard',    driver:'Bradley', notes:'Project complete' },
+  { date:'2026-05-04', cust:'Wren Homes (Cason)',         addr:'Mid Towne, 1219 Smoothstone Trail, Huntsville',units:'1 Tan Sat',    driver:'Greg',    notes:'Final pickup' },
+  { date:'2026-04-29', cust:'Christopher Contractors',    addr:'187 Cain Park / Lando Cain',                  units:'1 NGC',         driver:'Bradley', notes:'PO #187 Cain Park TH Ph 2' },
+  { date:'2026-04-25', cust:'Premier Structures',         addr:'Cast Products Inc., 18676 N. Memorial',       units:'1 NGC',         driver:'Greg',    notes:'Jeff — both toilets going' },
+  { date:'2026-04-22', cust:'Bella Cornelius (Bloom)',    addr:'552 Co. Rd. 53, Rogersville',                 units:'1 SE',          driver:'Greg',    notes:'On Call Service ended' },
+  { date:'2026-04-15', cust:'CC Bluestone',               addr:'12309 Davis Rd, Athens',                      units:'1 NGS',         driver:'Bradley', notes:'' },
+  { date:'2026-04-08', cust:'Adams Homes',                addr:'Bingham Corners / L67 / 103 Sydney, Harvest', units:'1 Gray',        driver:'Bradley', notes:'Lot sold' },
+  { date:'2026-04-05', cust:'Legacy Premier / Darren',    addr:'Walton Creek / L60',                          units:'1 TanSat',      driver:'Greg',    notes:'' },
+  { date:'2026-03-30', cust:'MRC Construction / Reggie',  addr:'3264 Barkley Bridge Rd, Hartselle',           units:'1 TanSat',      driver:'Bradley', notes:'' },
+  { date:'2026-03-28', cust:'Webster Homes',              addr:'Ryland Farms / L37 / 230 Oakland',            units:'1 NGC',         driver:'Bradley', notes:'' },
+  { date:'2025-12-15', cust:'Adams Homes — Burwell Gardens',addr:'135 Brooklawn Dr, Harvest',                 units:'2 standard',    driver:'Greg',    notes:'Subdivision sold out — retired from route' },
+];
+
 const driverData = {
   Greg: [
     {id:'g1', cust:'Joe Still / Brent',         addr:'446 Jeff Rd., Huntsville, AL',                 units:'4 standard',             type:'clean', status:'completed', completedAt:'7:42a'},
@@ -720,7 +754,90 @@ function getFilteredCustomers(search=''){
 function setCustFilter(f){
   currentCustFilter = f;
   renderCustFilters();
-  renderCustomers(document.getElementById('cust-search')?.value || '');
+  if (f === 'delivery-history' || f === 'pickup-history') {
+    renderHistoryView(f === 'delivery-history' ? 'delivery' : 'pickup');
+  } else {
+    // Restore the normal customer table
+    const table = document.querySelector('#customer-list-view .card.overflow-hidden');
+    if (table) table.style.display = '';
+    const histContainer = document.getElementById('history-view-container');
+    if (histContainer) histContainer.remove();
+    renderCustomers(document.getElementById('cust-search')?.value || '');
+  }
+}
+
+function weekOfMonday(dateStr){
+  const d = new Date(dateStr + 'T12:00:00');
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().slice(0, 10);
+}
+function weekLabel(weekStartIso){
+  const d = new Date(weekStartIso + 'T12:00:00');
+  return 'Week of ' + d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+function renderHistoryView(kind){
+  const data = kind === 'delivery' ? deliveryHistory : pickupHistory;
+  const label = kind === 'delivery' ? 'Delivery history' : 'Pickup history';
+  const title = kind === 'delivery' ? 'deliveries' : 'pickups';
+
+  // Hide the regular customer table
+  const table = document.querySelector('#customer-list-view .card.overflow-hidden');
+  if (table) table.style.display = 'none';
+  // Remove any prior history view
+  const prior = document.getElementById('history-view-container');
+  if (prior) prior.remove();
+
+  // Group by week (Monday start)
+  const groups = {};
+  data.forEach(ev => {
+    const wk = weekOfMonday(ev.date);
+    (groups[wk] = groups[wk] || []).push(ev);
+  });
+  // Sort each group by date desc; sort weeks desc
+  const sortedWeeks = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+  sortedWeeks.forEach(wk => groups[wk].sort((a,b) => b.date.localeCompare(a.date)));
+
+  const container = document.createElement('div');
+  container.id = 'history-view-container';
+  container.className = 'mt-2';
+  container.innerHTML = `
+    <div class="text-[12.5px] text-ink-500 mb-3">${data.length} ${title} across ${sortedWeeks.length} weeks. Most recent first.</div>
+    ${sortedWeeks.map(wk => `
+      <div class="mb-5">
+        <div class="sticky top-0 bg-ink-50 border border-ink-200 rounded px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink-700 mb-1.5">
+          ${weekLabel(wk)} <span class="text-ink-500 font-normal ml-1">· ${groups[wk].length} ${title === 'deliveries' ? 'delivered' : 'picked up'}</span>
+        </div>
+        <div class="card overflow-hidden">
+          <table class="w-full text-[12.5px]">
+            <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+              <tr>
+                <th class="text-left px-2 py-1.5 font-semibold w-24">Date</th>
+                <th class="text-left px-2 py-1.5 font-semibold">Customer</th>
+                <th class="text-left px-2 py-1.5 font-semibold">Service Address</th>
+                <th class="text-left px-2 py-1.5 font-semibold">Units</th>
+                <th class="text-left px-2 py-1.5 font-semibold w-20">Driver</th>
+                <th class="text-left px-2 py-1.5 font-semibold">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${groups[wk].map(ev => `
+                <tr class="border-t border-ink-200 hover:bg-ink-50">
+                  <td class="px-2 py-1.5 font-mono text-[11.5px]">${ev.date}</td>
+                  <td class="px-2 py-1.5 font-medium text-[12.5px]">${ev.cust}</td>
+                  <td class="px-2 py-1.5 text-ink-700">${ev.addr}</td>
+                  <td class="px-2 py-1.5">${ev.units}</td>
+                  <td class="px-2 py-1.5"><span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ${ev.driver==='Greg'?'bg-orange-600':'bg-blue-500'}"></span>${ev.driver}</span></td>
+                  <td class="px-2 py-1.5 text-ink-500 italic text-[11.5px]">${ev.notes || ''}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`).join('')}
+  `;
+  document.getElementById('customer-list-view').appendChild(container);
 }
 function renderCustFilters(){
   const el = document.getElementById('cust-filters');
@@ -738,11 +855,13 @@ function renderCustFilters(){
       ${extra ? `<span class="amount">${extra}</span>` : ''}
     </button>`;
   el.innerHTML =
-    pill('all',          'All customers',       all,  '') +
-    pill('toilets-out',  'Toilets out',         out,  '') +
-    pill('deliveries',   'Upcoming deliveries', dels, '') +
-    pill('pickups',      'Upcoming pickups',    pks,  '') +
-    pill('owes',         'Owe money',           oweRows.length, totalOwed>0?('$'+totalOwed.toFixed(0)):'');
+    pill('all',              'All customers',       all,  '') +
+    pill('toilets-out',      'Toilets out',         out,  '') +
+    pill('deliveries',       'Upcoming deliveries', dels, '') +
+    pill('pickups',          'Upcoming pickups',    pks,  '') +
+    pill('owes',             'Owe money',           oweRows.length, totalOwed>0?('$'+totalOwed.toFixed(0)):'') +
+    pill('delivery-history', 'Delivery history',    deliveryHistory.length, '') +
+    pill('pickup-history',   'Pickup history',      pickupHistory.length,   '');
 }
 function renderCustomers(search=''){
   const rows = getFilteredCustomers(search);

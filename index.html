@@ -571,23 +571,33 @@
 <script>
 /* ============ MOCK DATA ============ */
 const customers = [
-  { id:1, name:'Joe Still / Brent',          phone:'256-555-0118', addr:'446 Jeff Rd., Huntsville, AL',                          toilets:4,  route:'E', day:'Mon, Thu',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'POC Scott 205-215-4986', deliveryDate:'2022-09-15' },
-  { id:2, name:'MVP',                        phone:'256-555-0119', addr:'855 Jeff Rd. NW, Huntsville, AL',                       toilets:1,  route:'E', day:'Mon, Tue, Wed',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Park entrance — east lot', deliveryDate:'2020-01-19' },
-  { id:3, name:'Turner Construction',        phone:'256-555-0142', addr:'Toyota / 1 Cottonvalley Dr, Huntsville, AL',            toilets:6,  route:'E', day:'Mon, Wed, Thu',last:'2026-05-07', owes:180,    nextDelivery:null,         nextPickup:null,           retired:false, note:'Job site — forklifts, badge at trailer', deliveryDate:'2019-03-04' },
-  { id:4, name:'Adams Homes',                phone:'256-555-0177', addr:'Multiple subdivisions across North Alabama',            toilets:14, route:'W', day:'Mon, Tue, Fri',last:'2026-05-08', owes:0,      nextDelivery:'2026-05-12', nextPickup:null,           retired:false, note:'Multiple subdivisions — schedule by lot', deliveryDate:'2018-09-22' },
-  { id:5, name:'Hathaway Construction',      phone:'256-555-0199', addr:'Clift Farms, 8140 Hwy 72 W, Madison, AL',               toilets:3,  route:'E', day:'Mon, Thu',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Clift Farms subdivision', deliveryDate:'2026-04-27' },
-  { id:6, name:'Stoneridge Homes',           phone:'256-555-0123', addr:'Shields Park, 124 Shields Lake Dr, Huntsville',         toilets:6,  route:'W', day:'Tue, Wed, Thu',last:'2026-05-08', owes:360,    nextDelivery:null,         nextPickup:null,           retired:false, note:'Shields Park subdivision', deliveryDate:'2024-09-15' },
-  { id:7, name:'Fite Building',              phone:'256-555-0144', addr:'1030 Old Monrovia Rd., Huntsville, AL',                 toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Drop pump south side of building', deliveryDate:'2020-05-18' },
-  { id:8, name:'Webster Homes',              phone:'256-555-0155', addr:'Monroe Manor, 202 Stafford View Ln, Meridianville',     toilets:2,  route:'W', day:'Mon, Wed, Thu',last:'2026-05-04', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Monroe Manor subdivision', deliveryDate:'2023-10-10' },
-  { id:9, name:'Robbins & Morton',           phone:'256-555-0166', addr:'SCI Sanmina, 13000 S. Memorial Pkwy, Huntsville',       toilets:2,  route:'E', day:'Tue, Thu',     last:'2026-05-06', owes:90,     nextDelivery:null,         nextPickup:null,           retired:false, note:'SCI Sanmina — gate code 4490', deliveryDate:'2025-08-12' },
-  { id:10,name:'Pearce Construction',        phone:'256-555-0188', addr:'Huntsville Aquatic Center, 2213 Drake Ave',             toilets:2,  route:'E', day:'Tue, Wed',     last:'2026-05-06', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Park opens at 8 — finish early', deliveryDate:'2024-11-05' },
-  { id:11,name:'Legacy Premier Homes',       phone:'256-555-0211', addr:'Old Stone, 24206 Beacon Circle, Athens',                toilets:1,  route:'W', day:'Tue, Fri',     last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'Old Stone subdivision', deliveryDate:'2024-03-22' },
-  { id:12,name:'Grayson Carter & Sons',      phone:'256-555-0233', addr:'New subdivision across from 4569 Winchester',           toilets:2,  route:'W', day:'Tue, Wed, Fri',last:'2026-05-08', owes:0,      nextDelivery:null,         nextPickup:null,           retired:false, note:'New subdivision — see Greg for layout', deliveryDate:'2025-01-15' },
-  { id:13,name:'Mendoza Wedding (event)',    phone:'256-555-7788', addr:'88 Riverside Ln, Athens, AL',                            toilets:6,  route:'—', day:'EVENT',        last:'—',          owes:0,      nextDelivery:'2026-06-14', nextPickup:'2026-06-16',   retired:false, note:'Wedding 6/14, pickup 6/16', deliveryDate:'2026-06-14' },
-  { id:14,name:'Mark Worley Construction',   phone:'256-555-1188', addr:'104 Kittyhawk Ln, Harvest, AL',                          toilets:2,  route:'E', day:'Mon, Tue',     last:'—',          owes:0,      nextDelivery:'2026-05-15', nextPickup:null,           retired:false, note:'New customer', deliveryDate:'2026-01-06' },
-  { id:15,name:'Hawkins Groundwork',         phone:'256-555-0411', addr:'Jones Rd. substation, Athens, AL',                       toilets:1,  route:'W', day:'Fri',          last:'2026-05-01', owes:0,      nextDelivery:null,         nextPickup:'2026-05-10',   retired:false, note:'Project ending — pickup scheduled', deliveryDate:'2026-03-04' },
-  { id:16,name:'Burwell Gardens (Adams)',    phone:'256-555-0177', addr:'135 Brooklawn Dr, Harvest, AL',                          toilets:0,  route:'—', day:'Retired',      last:'2025-12-04', owes:480,    nextDelivery:null,         nextPickup:null,           retired:true, note:'Final invoice $480 outstanding', deliveryDate:'2023-11-03' },
-  { id:17,name:'Wren Homes (Cason)',         phone:'256-555-0622', addr:'Mid Towne, 1219 Smoothstone Trail, Huntsville',          toilets:0,  route:'—', day:'Retired',      last:'2025-07-01', owes:215,    nextDelivery:null,         nextPickup:null,           retired:true, note:'Final invoice $215 — Cason POC', deliveryDate:'2025-07-01' },
+  { id:1, name:'Lynn Persell', phone:'256-555-1001', addr:'103 James Bowie Athens, AL', toilets:1, route:'E', day:'M, F', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-02-15' },
+  { id:2, name:'Legacy Premier', phone:'256-555-1002', addr:'24008 piney Creek Dr Athens,Al', toilets:1, route:'E', day:'M, T', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-03-15' },
+  { id:3, name:'Noble Homes', phone:'256-555-1003', addr:'13407 Covington Dr Athens,Al', toilets:1, route:'E', day:'M, F', last:'2026-05-04', owes:360, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-04-15' },
+  { id:4, name:'Mark Worley Construction', phone:'256-555-1004', addr:'16452 Timber Lane Dr., Athens, AL 35613', toilets:1, route:'E', day:'T, Th', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-05-15' },
+  { id:5, name:'cc Beasley/Complete Const & Excav', phone:'256-555-1005', addr:'M&J Mini Storage', toilets:1, route:'E', day:'M', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-06-15' },
+  { id:6, name:'CC Chatino\'s Countertops', phone:'256-555-1006', addr:'24497 Hwy 72 East', toilets:1, route:'E', day:'M', last:'2026-05-04', owes:90, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-07-15' },
+  { id:7, name:'Mitch Dudek', phone:'256-555-1007', addr:'25684 US 72 Athens, Al 35613', toilets:1, route:'E', day:'M', last:'2026-05-04', owes:180, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-08-15' },
+  { id:8, name:'DW1 / Bruce', phone:'256-555-1008', addr:'Publix/ #1203/ 22031 US-72 Athens, Al', toilets:1, route:'E', day:'T', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-09-15' },
+  { id:9, name:'Athens Handyman', phone:'256-555-1009', addr:'16270 Cantera Athens,Al', toilets:1, route:'E', day:'T', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-10-15' },
+  { id:10, name:'MCL', phone:'256-555-1010', addr:'17076 Stella St Athens, Al 35613', toilets:1, route:'E', day:'T', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-11-15' },
+  { id:11, name:'Hamlin Homes', phone:'256-555-1011', addr:'Henderson Estates', toilets:1, route:'E', day:'T', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-12-15' },
+  { id:12, name:'Trinity Homes / Bill', phone:'256-555-1012', addr:'23388 Flossie Dr. Athens, Al 35613', toilets:1, route:'E', day:'T', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-01-15' },
+  { id:13, name:'Tom Little Construction', phone:'256-555-1013', addr:'211 S. Beaty St. Athens, AL', toilets:1, route:'E', day:'W', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-02-15' },
+  { id:14, name:'EMW / Cory', phone:'256-555-1014', addr:'Athens City Park', toilets:1, route:'E', day:'W', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-03-15' },
+  { id:15, name:'City of Athens Public Works', phone:'256-555-1015', addr:'Sweet Sue Dr Athens,Al 2026 is combo', toilets:1, route:'E', day:'W', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-04-15' },
+  { id:16, name:'Tom Little Constr', phone:'256-555-1016', addr:'101 Houston St Athens,Al', toilets:1, route:'E', day:'W', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-05-15' },
+  { id:17, name:'cc Apel Machine 256-620-1081 Tyler', phone:'256-555-1017', addr:'914 West Elm St Athens,Al', toilets:1, route:'E', day:'W', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-06-15' },
+  { id:18, name:'cc Cody Swift', phone:'256-555-1018', addr:'21001 Carey Rd Athens, Al 35614', toilets:1, route:'E', day:'W', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-07-15' },
+  { id:19, name:'Dixie Waste/ Hamlin Homes', phone:'256-555-1019', addr:'22775 Hayes Mill Elkmont,Al', toilets:1, route:'E', day:'W', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-08-15' },
+  { id:20, name:'Webster', phone:'256-555-1020', addr:'23088 Hays Mill Rd Elkmont, Al', toilets:1, route:'E', day:'W', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-09-15' },
+  { id:21, name:'Christopher Contracting Jenn', phone:'256-555-1021', addr:'533 Countess Rd Huntsville,Al', toilets:1, route:'E', day:'Th', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-10-15' },
+  { id:22, name:'Wal-Bilt', phone:'256-555-1022', addr:'Brier Fork Crossing', toilets:1, route:'E', day:'Th', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-11-15' },
+  { id:23, name:'Bart Darwin', phone:'256-555-1023', addr:'Brier Fork Crossing', toilets:1, route:'E', day:'Th', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-12-15' },
+  { id:24, name:'cc Madison Co. Executive Airport', phone:'256-555-1024', addr:'Madison County Executive Airport', toilets:1, route:'E', day:'Th', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-01-15' },
+  { id:25, name:'cc Kelly Lee', phone:'256-555-1025', addr:'JL\'s Lawncare', toilets:1, route:'E', day:'F', last:'2026-05-04', owes:0, nextDelivery:null, nextPickup:null, retired:false, note:'', deliveryDate:'2024-02-15' },
+  { id:26, name:'Burwell Gardens (retired)', phone:'256-555-9001', addr:'135 Brooklawn Dr, Harvest', toilets:0, route:'—', day:'Retired', last:'2025-12-04', owes:480, nextDelivery:null, nextPickup:null, retired:true, note:'Final invoice outstanding', deliveryDate:'2023-11-03' },
+  { id:27, name:'Wren Homes (Cason)', phone:'256-555-9002', addr:'Mid Towne, 1219 Smoothstone Trail', toilets:0, route:'—', day:'Retired', last:'2025-07-01', owes:215, nextDelivery:null, nextPickup:null, retired:true, note:'Final invoice — Cason POC', deliveryDate:'2025-07-01' },
 ];
 const deliveryHistory = [
   // Most recent first
@@ -623,27 +633,110 @@ const pickupHistory = [
   { date:'2025-12-15', cust:'Adams Homes — Burwell Gardens',addr:'135 Brooklawn Dr, Harvest',                 units:'2 standard',    driver:'Greg',    notes:'Subdivision sold out — retired from route' },
 ];
 
-const driverData = {
-  Greg: [
-    {id:'g1', cust:'Joe Still / Brent',         addr:'446 Jeff Rd., Huntsville, AL',                 units:'4 standard',             type:'clean', status:'completed', completedAt:'7:42a'},
-    {id:'g2', cust:'MVP',                       addr:'855 Jeff Rd. NW, Huntsville, AL',              units:'1 standard',             type:'clean', status:'completed', completedAt:'8:14a'},
-    {id:'g3', cust:'Hathaway Construction',     addr:'Clift Farms, 8140 Hwy 72 W, Madison, AL',      units:'3 standard',             type:'clean', status:'completed', completedAt:'8:55a'},
-    {id:'g4', cust:'Turner Construction',       addr:'Toyota / 1 Cottonvalley Dr, Huntsville, AL',   units:'5 standard, 1 handicap', type:'clean', status:'active',    notes:'Job site — watch for forklifts, badge in at trailer'},
-    {id:'g5', cust:'Robbins & Morton',          addr:'SCI Sanmina, 13000 S. Memorial Pkwy, Huntsville', units:'2 standard',           type:'clean', status:'pending'},
-    {id:'g6', cust:'Bart Darwin Builders',      addr:'Mullins Bend, 160 Stony Crossing Rd, Meridianville', units:'1 standard',        type:'clean', status:'pending'},
-    {id:'g7', cust:'Pearce Construction',       addr:'Huntsville Aquatic Center, 2213 Drake Ave',    units:'2 standard',             type:'clean', status:'pending', notes:'Park opens at 8 — be done by then'},
-  ],
-  Bradley: [
-    {id:'b1', cust:'Adams Homes',               addr:'Monrovia Manor, 126 Earle Phillips, Madison',  units:'1 standard',             type:'clean', status:'completed', completedAt:'7:30a'},
-    {id:'b2', cust:'Stoneridge Homes',          addr:'Shields Park, 124 Shields Lake Dr',            units:'2 standard',             type:'clean', status:'completed', completedAt:'8:18a'},
-    {id:'b3', cust:'Fite Building',             addr:'1030 Old Monrovia Rd., Huntsville, AL',        units:'2 standard',             type:'clean', status:'active',    notes:'Building entrance — drop pump on south side'},
-    {id:'b4', cust:'Webster Homes',             addr:'Monroe Manor, 202 Stafford View Ln, Meridianville', units:'2 standard',         type:'clean', status:'pending'},
-    {id:'b5', cust:'Grayson Carter',            addr:'New subdivision across from 4569 Winchester',  units:'2 standard',             type:'clean', status:'pending'},
-    {id:'b6', cust:'Legacy Premier Homes',      addr:'Old Stone, 24206 Beacon Circle',               units:'1 standard',             type:'clean', status:'pending'},
-    {id:'b7', cust:'Lynn Persell',              addr:'Ellenwood, 19230 Rachels Loop',                units:'1 standard',             type:'clean', status:'pending'},
-    {id:'b8', cust:'Hawkins Groundwork',        addr:'Jones Rd. substation, Athens, AL',             units:'1 standard',             type:'pickup',status:'pending', notes:'Project finished — pickup'},
-  ]
+const weeklyData = {
+  Greg: {
+    M: [
+    {id:'gm_1', cust:'Lynn Persell', addr:'103 James Bowie Athens, AL', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gm_2', cust:'Lynn Persell', addr:'Piney Creek L18', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gm_3', cust:'Legacy Premier', addr:'24008 piney Creek Dr Athens,Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gm_4', cust:'cc Beasley/Complete Const & Excav', addr:'M&J Mini Storage', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gm_5', cust:'CC Chatino\'s Countertops', addr:'24497 Hwy 72 East', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gm_6', cust:'Mitch Dudek', addr:'25684 US 72 Athens, Al 35613', units:'1 standard', type:'clean', status:'pending'}
+    ],
+    T: [
+    {id:'gt_1', cust:'DW1 / Bruce', addr:'Publix/ #1203/ 22031 US-72 Athens, Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gt_2', cust:'Athens Handyman', addr:'16270 Cantera Athens,Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gt_3', cust:'Mark Worley Construction', addr:'16452 Timber Lane Dr., Athens, AL 35613', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gt_4', cust:'MCL', addr:'17076 Stella St Athens, Al 35613', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gt_5', cust:'Hamlin Homes', addr:'Henderson Estates', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gt_6', cust:'Trinity Homes / Bill', addr:'23388 Flossie Dr. Athens, Al 35613', units:'1 standard', type:'clean', status:'pending'}
+    ],
+    W: [
+    {id:'gw_1', cust:'Tom Little Construction', addr:'211 S. Beaty St. Athens, AL', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gw_2', cust:'EMW / Cory', addr:'Athens City Park', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gw_3', cust:'City of Athens Public Works', addr:'Sweet Sue Dr Athens,Al 2026 is combo', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gw_4', cust:'Tom Little Constr', addr:'101 Houston St Athens,Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gw_5', cust:'cc Apel Machine 256-620-1081 Tyler', addr:'914 West Elm St Athens,Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gw_6', cust:'cc Cody Swift', addr:'21001 Carey Rd Athens, Al 35614', units:'1 standard', type:'clean', status:'pending'}
+    ],
+    Th: [
+    {id:'gth_1', cust:'Mark Worley Construction', addr:'11000 Vivian Dr NW Huntsville, Al 35810', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gth_2', cust:'Christopher Contracting Jenn', addr:'533 Countess Rd Huntsville,Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gth_3', cust:'Christopher Contracting Jenn', addr:'533 Countess Rd Huntsville,Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gth_4', cust:'Wal-Bilt', addr:'Brier Fork Crossing', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gth_5', cust:'Wal-Bilt', addr:'Brier Fork Crossing', units:'1 handicap', type:'clean', status:'pending'},
+    {id:'gth_6', cust:'Wal-Bilt', addr:'Brier Fork Crossing', units:'1 standard', type:'clean', status:'pending'}
+    ],
+    F: [
+    {id:'gf_1', cust:'Noble Homes', addr:'20016  Mary Ella St Tanner,Al', units:'1 standard', type:'clean', status:'completed', completedAt:'7:42a'},
+    {id:'gf_2', cust:'cc Kelly Lee', addr:'JL\'s Lawncare', units:'1 standard', type:'clean', status:'completed', completedAt:'8:14a'},
+    {id:'gf_3', cust:'Lynn Persell', addr:'Cowford Rd Athens,Al', units:'1 standard', type:'clean', status:'completed', completedAt:'8:55a'},
+    {id:'gf_4', cust:'Lynn Persell', addr:'Cowford Rd Athens,Al', units:'1 standard', type:'clean', status:'active'},
+    {id:'gf_5', cust:'Hawkins Groundwork', addr:'12757 Nuclear Plant Rd.Athens, Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'gf_6', cust:'LDR Site Services/ Benjamin / pd', addr:'10835 Shaw Rd Athens, Al', units:'1 standard', type:'clean', status:'pending'}
+    ],
+    Sa: [],
+  },
+  Bradley: {
+    M: [
+    {id:'bm_1', cust:'Bama Group / Reggie', addr:'721 Ferry St. Decatur,Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bm_2', cust:'DW1/ Nishank Nagalla', addr:'101 Old Trinity Lane Decatur, al 35601/ 77 Trinity Lane', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bm_3', cust:'Rocket Waste', addr:'112 Plugs Dr., Decatur, AL 35601', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bm_4', cust:'Rocket Waste', addr:'112 Plugs Dr., Decatur, AL 35601', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bm_5', cust:'Rocket Waste', addr:'112 Plugs Dr., Decatur, AL 35601', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bm_6', cust:'Rocket Waste', addr:'112 Plugs Dr., Decatur, AL 35601', units:'1 hand-wash', type:'clean', status:'pending'}
+    ],
+    T: [
+    {id:'bt_1', cust:'cc Madison Mobile Storage', addr:'Madison Mobile Storage', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bt_2', cust:'Fite Building', addr:'25164 One Aviation Way Madison, Al 35756', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bt_3', cust:'Fite Building', addr:'25164 One Aviation Way Madison, Al 35756', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bt_4', cust:'Fite Building', addr:'25164 One Aviation Way Madison, Al 35756', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bt_5', cust:'CChoice / DRHorton', addr:'Wheeler Lake', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bt_6', cust:'Vanguard', addr:'355 St Louis St Madison, Al', units:'1 standard', type:'clean', status:'pending'}
+    ],
+    W: [
+    {id:'bw_1', cust:'Premier Structure', addr:'278 Shields Rd Huntsville, Al 35811/ Madison Co Insp Office', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bw_2', cust:'Webster', addr:'Ryland Farms/ L?', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bw_3', cust:'Webster', addr:'Ryland Farms/ L 53/ 213 Oakland View Dr Brownsboro, Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bw_4', cust:'Cornerstone Communities LLC I', addr:'Ryland Farms', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bw_5', cust:'Consolidated Ken', addr:'Sharon Johnson Park New Market,Al', units:'1 handicap', type:'clean', status:'pending'},
+    {id:'bw_6', cust:'Consolidated Ken', addr:'Sharon Johnson Park New Market,Al', units:'1 standard', type:'clean', status:'pending'}
+    ],
+    Th: [
+    {id:'bth_1', cust:'Consolidated Kevin', addr:'Calhoun AIDT', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bth_2', cust:'Consolidated Kevin', addr:'Calhoun AIDT', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bth_3', cust:'Consolidated John', addr:'Calhoun AIDT', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bth_4', cust:'Consolidated John', addr:'Calhoun AIDT', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bth_5', cust:'Preston Builders / Chris Preston', addr:'556 Hughes Rd Madison, Al 35758/ code 556.', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bth_6', cust:'Preston Builders / Chris Preston', addr:'556 Hughes Rd Madison, Al 35758/ code 556.', units:'1 standard', type:'clean', status:'pending'}
+    ],
+    F: [
+    {id:'bf_1', cust:'Jennifer Grossman', addr:'303 Bluff St NW Hartselle, Al 35640', units:'1 standard', type:'clean', status:'completed', completedAt:'7:42a'},
+    {id:'bf_2', cust:'Bama group', addr:'4305 Jade Circle SE Decatur, Al', units:'1 standard', type:'clean', status:'completed', completedAt:'8:14a'},
+    {id:'bf_3', cust:'BAMA Group / Reggie', addr:'4214 Ruby Point SE Decatur, Al   (Edward\'s job)', units:'1 standard', type:'clean', status:'completed', completedAt:'8:55a'},
+    {id:'bf_4', cust:'Joshua Jackson Painting', addr:'2318  Emerald Lane SE Decatur, Al', units:'1 standard', type:'clean', status:'active'},
+    {id:'bf_5', cust:'Joshua Jackson Painting', addr:'4301 Emerald Lane SE Decatur, Al', units:'1 standard', type:'clean', status:'pending'},
+    {id:'bf_6', cust:'Peggy Carden', addr:'901 Rice Rd. SW., Hartselle, Al 35640', units:'1 standard', type:'clean', status:'pending'}
+    ],
+    Sa: [],
+  },
 };
+
+// Map dispatch day state to a day letter
+function dayLetterFromDispatch(){
+  if (dispatchDay === 'today') return 'F';
+  if (dispatchDay === 'tomorrow') return 'Sa';
+  try { const d = new Date(dispatchDay + 'T12:00:00'); return ['Su','M','T','W','Th','F','Sa'][d.getDay()]; }
+  catch(e){ return 'M'; }
+}
+
+// driverData = current day's view (mutable for drag/drop demo)
+let driverData = { Greg: [], Bradley: [] };
+function loadDataForCurrentDay(){
+  const letter = dayLetterFromDispatch();
+  driverData.Greg    = (weeklyData.Greg[letter]    || []).map(s => ({...s}));
+  driverData.Bradley = (weeklyData.Bradley[letter] || []).map(s => ({...s}));
+}
 const driverMeta = {
   Greg:    { routeCode: 'E', color: '#ea580c', colorClass:'bg-orange-600', headingTo: 'Turner Construction (Toyota)', status: 'active' },
   Bradley: { routeCode: 'W', color: '#3b82f6', colorClass:'bg-blue-500',   headingTo: 'Fite Building (1030 Old Monrovia)', status: 'active' },
@@ -1507,6 +1600,7 @@ function highlightActiveDayPill(){
 }
 function setDispatchDay(day){
   dispatchDay = day;
+  loadDataForCurrentDay();
   const lbl = document.getElementById('day-date-label');
   if (lbl) lbl.textContent = 'Pick a date';
   highlightActiveDayPill();
@@ -1528,6 +1622,7 @@ function openDatePicker(){
 function setDispatchDate(dateStr){
   if (!dateStr) return;
   dispatchDay = dateStr;
+  loadDataForCurrentDay();
   highlightActiveDayPill();
   // Only update the "Pick a date" label if the date doesn't match a day pill
   const matchedPill = document.querySelector(`.day-btn[data-day="${dateStr}"]`);
@@ -3565,6 +3660,7 @@ function relocateDispatchMap(){
     dest.appendChild(card);
   }
 }
+loadDataForCurrentDay();
 (function autoSelectRole(){
   const w = window.innerWidth;
   let role = 'kim';
@@ -3585,6 +3681,7 @@ renderSchedules();
 renderDriversTable();
 renderDriverPills();
 renderNotifBell();
+loadDataForCurrentDay();
 relocateDispatchMap();
 renderBoard();
 renderDriver();

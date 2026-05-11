@@ -2755,9 +2755,31 @@ function submitGregRecurring(){
 }
 
 /* ============ JOB DETAIL MODAL (any stop, any day, any driver) ============ */
+function findStopForJob(driver, dayLetter, stopId){
+  // Try weeklyData first
+  let arr = (weeklyData[driver] && weeklyData[driver][dayLetter]) || [];
+  let s = arr.find(x => x.id === stopId);
+  if (s) return s;
+  // Then live driverData for the named driver
+  s = (driverData[driver] || []).find(x => x.id === stopId);
+  if (s) return s;
+  // Then the other driver's live data (in case stop was reassigned)
+  for (const d of Object.keys(driverData)){
+    if (d === driver) continue;
+    s = driverData[d].find(x => x.id === stopId);
+    if (s) return s;
+  }
+  // Search any day in weeklyData (in case the stop is on a different day than expected)
+  for (const d of Object.keys(weeklyData)){
+    for (const day of Object.keys(weeklyData[d])){
+      s = (weeklyData[d][day] || []).find(x => x.id === stopId);
+      if (s) return s;
+    }
+  }
+  return null;
+}
 function openJobDetail(driver, dayLetter, stopId){
-  const stops = (weeklyData[driver] && weeklyData[driver][dayLetter]) || [];
-  const stop = stops.find(s => s.id === stopId);
+  const stop = findStopForJob(driver, dayLetter, stopId);
   if (!stop) { toast('Could not find that stop.'); return; }
   const tag = tagFor(stop.type || 'clean');
   const statusLabel = stop.status === 'completed' ? `Completed at ${stop.completedAt||'today'}`
@@ -2798,10 +2820,17 @@ function openJobDetail(driver, dayLetter, stopId){
   refreshIcons();
 }
 function _saveJobNotes(driver, dayLetter, stopId){
-  const newNotes = document.getElementById('job-notes-edit') ? document.getElementById('job-notes-edit').value : '';
-  const stops = (weeklyData[driver] && weeklyData[driver][dayLetter]) || [];
-  const stop = stops.find(s => s.id === stopId);
-  if (stop) stop.notes = newNotes;
+  const el = document.getElementById('job-notes-edit');
+  if (!el) return;
+  const newNotes = el.value;
+  // Update in any weeklyData entry that matches the ID
+  for (const d of Object.keys(weeklyData)){
+    for (const day of Object.keys(weeklyData[d])){
+      const s = (weeklyData[d][day] || []).find(x => x.id === stopId);
+      if (s) s.notes = newNotes;
+    }
+  }
+  // Update any live driverData copies too
   Object.keys(driverData).forEach(d => {
     const s2 = driverData[d].find(x => x.id === stopId);
     if (s2) s2.notes = newNotes;
@@ -2816,24 +2845,42 @@ function saveJobNotesOnly(driver, dayLetter, stopId){
 }
 function jobAction(driver, dayLetter, stopId, action){
   _saveJobNotes(driver, dayLetter, stopId);
-  const stops = (weeklyData[driver] && weeklyData[driver][dayLetter]) || [];
-  const stop = stops.find(s => s.id === stopId);
+  const stop = findStopForJob(driver, dayLetter, stopId);
   if (!stop) return;
   if (action === 'navigate'){
     toast('Opening Google Maps for ' + stop.cust + '...');
     return;
   }
+  let newStatus = null;
+  let newType = null;
+  let newCompletedAt = null;
   if (action === 'cleaned' || action === 'delivered'){
-    stop.status = 'completed';
-    stop.completedAt = nowStr();
+    newStatus = 'completed';
+    newCompletedAt = nowStr();
   } else if (action === 'pickedup'){
-    stop.status = 'completed';
-    stop.completedAt = nowStr();
-    stop.type = 'pickup';
+    newStatus = 'completed';
+    newCompletedAt = nowStr();
+    newType = 'pickup';
   }
+  // Apply to weeklyData wherever this id exists
+  for (const d of Object.keys(weeklyData)){
+    for (const day of Object.keys(weeklyData[d])){
+      const s = (weeklyData[d][day] || []).find(x => x.id === stopId);
+      if (s){
+        if (newStatus) s.status = newStatus;
+        if (newCompletedAt) s.completedAt = newCompletedAt;
+        if (newType) s.type = newType;
+      }
+    }
+  }
+  // And the live driverData
   Object.keys(driverData).forEach(d => {
     const s2 = driverData[d].find(x => x.id === stopId);
-    if (s2){ s2.status = stop.status; s2.completedAt = stop.completedAt; if (stop.type) s2.type = stop.type; }
+    if (s2){
+      if (newStatus) s2.status = newStatus;
+      if (newCompletedAt) s2.completedAt = newCompletedAt;
+      if (newType) s2.type = newType;
+    }
   });
   closeModal();
   renderBoard();

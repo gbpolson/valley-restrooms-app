@@ -20,12 +20,12 @@
   }
 </script>
 <style>
-  body { background: #ffffff; color:#0f172a; font-feature-settings: "ss01","cv11"; }
+  body { background: #ffffff; color:#0f172a; font-feature-settings: "ss01","cv11"; line-height: 1.5; font-size: 16px; }
   .demo-banner { background: #0f172a; }
   /* tighten Lucide icons */
-  [data-lucide] { width:16px; height:16px; stroke-width:2; flex-shrink:0; }
-  .ico-sm [data-lucide] { width:14px; height:14px; }
-  .ico-lg [data-lucide] { width:20px; height:20px; }
+  [data-lucide] { width:18px; height:18px; stroke-width:2; flex-shrink:0; }
+  .ico-sm [data-lucide] { width:16px; height:16px; }
+  .ico-lg [data-lucide] { width:22px; height:22px; }
   .ico-xl [data-lucide] { width:28px; height:28px; stroke-width:1.75; }
 
   .stop-card { transition: background .12s ease, border-color .12s ease; }
@@ -33,8 +33,8 @@
   .stop-card.dragging { opacity:.4; }
   .col-hover { background: #fef2f2 !important; }
 
-  .tag { font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 4px; letter-spacing: .04em; text-transform: uppercase; display:inline-flex; align-items:center; gap:5px; }
-  .tag::before { content:''; width:6px; height:6px; border-radius:50%; }
+  .tag { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 4px; letter-spacing: .04em; text-transform: uppercase; display:inline-flex; align-items:center; gap:5px; }
+  .tag::before { content:''; width:7px; height:7px; border-radius:50%; }
   .tag-clean   { background:#f1f5f9; color:#1e293b; } .tag-clean::before   { background:#16a34a; }
   .tag-deliver { background:#f1f5f9; color:#1e293b; } .tag-deliver::before { background:#2563eb; }
   .tag-pickup  { background:#f1f5f9; color:#1e293b; } .tag-pickup::before  { background:#d97706; }
@@ -58,15 +58,15 @@
   /* avoid heavy AI-y shadows; use sharp 1px borders */
   .card { background:white; border:1px solid #e2e8f0; border-radius:8px; }
   .card-hover { transition: border-color .12s; } .card-hover:hover { border-color:#94a3b8; }
-  .input  { background:white; border:1px solid #cbd5e1; border-radius:6px; padding:8px 10px; font-size:13.5px; line-height:1.4; }
+  .input  { background:white; border:1px solid #cbd5e1; border-radius:6px; padding:9px 12px; font-size:15px; line-height:1.4; }
   .input:focus { outline:none; border-color:#0f172a; box-shadow: 0 0 0 3px rgba(15,23,42,.08); }
-  .btn-primary  { background:#0f172a; color:white; padding:7px 14px; border-radius:6px; font-size:13px; font-weight:600; }
+  .btn-primary  { background:#0f172a; color:white; padding:9px 16px; border-radius:6px; font-size:14.5px; font-weight:600; }
   .btn-primary:hover { background:#1e293b; }
-  .btn-secondary { background:white; color:#0f172a; border:1px solid #cbd5e1; padding:7px 14px; border-radius:6px; font-size:13px; font-weight:500; }
+  .btn-secondary { background:white; color:#0f172a; border:1px solid #cbd5e1; padding:9px 16px; border-radius:6px; font-size:14.5px; font-weight:500; }
   .btn-secondary:hover { background:#f8fafc; }
-  .btn-danger { background:#b91c1c; color:white; padding:7px 14px; border-radius:6px; font-size:13px; font-weight:600; }
+  .btn-danger { background:#b91c1c; color:white; padding:9px 16px; border-radius:6px; font-size:14.5px; font-weight:600; }
   .btn-danger:hover { background:#7f1d1d; }
-  .btn-quiet { color:#64748b; padding:7px 12px; border-radius:6px; font-size:13px; }
+  .btn-quiet { color:#64748b; padding:8px 14px; border-radius:6px; font-size:14.5px; }
   .btn-quiet:hover { color:#0f172a; background:#f1f5f9; }
 
   /* Route map animations */
@@ -185,9 +185,9 @@
   }
 </style>
 </head>
-<body class="text-ink-900 font-sans min-h-screen text-[14px]">
+<body class="text-ink-900 font-sans min-h-screen text-[16px]">
 
-<div class="demo-banner text-white text-[11px] px-4 py-1 text-center tracking-wide">
+<div class="demo-banner text-white text-[12.5px] px-4 py-1 text-center tracking-wide">
   Mockup preview · click around · use the role switch in the top right
 </div>
 
@@ -195,26 +195,26 @@
   <div class="flex items-center gap-3">
     <img id="brand-logo" src="valley_logo.png" alt="Valley Portable Restrooms" class="h-12 w-auto" onerror="this.onerror=null; this.src='https://lirp.cdn-website.com/b7735397/dms3rep/multi/opt/logo+no+number-1920w.png'; this.addEventListener('error', () => { document.getElementById('brand-logo-fallback').classList.remove('hidden'); this.classList.add('hidden'); }, { once: true });" />
     <div id="brand-logo-fallback" class="hidden h-12 px-3 grid place-items-center bg-brand-500 rounded">
-      <div class="text-white font-extrabold tracking-tight leading-none text-[18px]">VALLEY</div>
+      <div class="text-white font-extrabold tracking-tight leading-none text-[20px]">VALLEY</div>
       <div class="text-white/80 font-semibold tracking-widest leading-none text-[8px] mt-0.5">PORTABLE RESTROOMS</div>
     </div>
     <div class="leading-tight border-l border-ink-200 pl-3 ml-1">
-      <div class="font-semibold text-[14px]">Operations</div>
-      <div class="text-[11px] text-ink-500">Tanner, AL · (256) 771-3612</div>
+      <div class="font-semibold text-[16px]">Operations</div>
+      <div class="text-[12.5px] text-ink-500">Tanner, AL · (256) 771-3612</div>
     </div>
   </div>
   <div class="flex items-center gap-3">
     <div class="relative">
       <button onclick="toggleNotifPanel(event)" id="notif-bell-btn" class="relative w-9 h-9 grid place-items-center rounded hover:bg-ink-100 text-ink-700">
         <i data-lucide="bell"></i>
-        <span id="notif-badge" class="hidden absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-brand-500 text-white text-[10px] font-bold grid place-items-center">0</span>
+        <span id="notif-badge" class="hidden absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-brand-500 text-white text-[11px] font-bold grid place-items-center">0</span>
       </button>
     </div>
     <div class="flex items-center gap-1 bg-ink-100 p-1 rounded-md text-ink-700">
-      <button class="role-btn active px-3 py-1.5 rounded text-[12.5px] font-medium" data-role="kim">Kim · Office</button>
-      <button class="role-btn px-3 py-1.5 rounded text-[12.5px] font-medium" data-role="greg">Greg · Dispatch</button>
-      <button class="role-btn px-3 py-1.5 rounded text-[12.5px] font-medium" data-role="driver">Driver</button>
-      <button class="role-btn px-3 py-1.5 rounded text-[12.5px] font-medium" data-role="customer">Customer</button>
+      <button class="role-btn active px-3 py-1.5 rounded text-[14px] font-medium" data-role="kim">Kim · Office</button>
+      <button class="role-btn px-3 py-1.5 rounded text-[14px] font-medium" data-role="greg">Greg · Dispatch</button>
+      <button class="role-btn px-3 py-1.5 rounded text-[14px] font-medium" data-role="driver">Driver</button>
+      <button class="role-btn px-3 py-1.5 rounded text-[14px] font-medium" data-role="customer">Customer</button>
     </div>
   </div>
 </header>
@@ -223,16 +223,16 @@
 <section data-view="kim" class="role-view">
   <div class="flex">
     <aside class="w-52 border-r border-ink-200 min-h-[calc(100vh-90px)] p-3 bg-ink-50/40">
-      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 px-2 font-semibold">Office</div>
+      <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-2 px-2 font-semibold">Office</div>
       <nav class="flex flex-col gap-0.5">
-        <button class="nav-btn active text-left px-3 py-1.5 rounded text-[13px] font-medium" data-pane="home">Actions</button>
-        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100 flex items-center justify-between" data-pane="drafts">
+        <button class="nav-btn active text-left px-3 py-1.5 rounded text-[15px] font-medium" data-pane="home">Actions</button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[15px] hover:bg-ink-100 flex items-center justify-between" data-pane="drafts">
           <span>Drafts from Greg</span>
-          <span id="drafts-badge" class="bg-brand-600 text-white text-[10px] font-semibold px-1.5 rounded">2</span>
+          <span id="drafts-badge" class="bg-brand-600 text-white text-[11px] font-semibold px-1.5 rounded">2</span>
         </button>
-        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="customers">Customers</button>
-        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="schedules">Schedules</button>
-        <button class="nav-btn text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-pane="drivers">Drivers</button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[15px] hover:bg-ink-100" data-pane="customers">Customers</button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[15px] hover:bg-ink-100" data-pane="schedules">Schedules</button>
+        <button class="nav-btn text-left px-3 py-1.5 rounded text-[15px] hover:bg-ink-100" data-pane="drivers">Drivers</button>
       </nav>
     </aside>
 
@@ -241,43 +241,43 @@
       <div data-pane-content="home">
         <div class="flex items-baseline justify-between mb-5">
           <h1 class="text-xl font-semibold tracking-tight">Actions</h1>
-          <div class="text-[12.5px] text-ink-500">Friday, May 8</div>
+          <div class="text-[14px] text-ink-500">Friday, May 8</div>
         </div>
 
         <div id="drafts-banner" class="card flex items-center gap-3 p-3 mb-5">
           <div class="w-8 h-8 grid place-items-center rounded bg-ink-100"><i data-lucide="inbox"></i></div>
           <div class="flex-1">
-            <div class="text-[13.5px] font-medium">Greg sent you <span id="drafts-banner-count">2</span> new jobs to enter</div>
-            <div class="text-[12px] text-ink-500">Captured from voice memos &amp; texts this morning</div>
+            <div class="text-[15px] font-medium">Greg sent you <span id="drafts-banner-count">2</span> new jobs to enter</div>
+            <div class="text-[13.5px] text-ink-500">Captured from voice memos &amp; texts this morning</div>
           </div>
           <button onclick="document.querySelector('[data-pane=drafts]').click()" class="btn-primary">Review</button>
         </div>
 
         <div class="grid grid-cols-3 gap-3 mb-8">
           <button onclick="openForm('recurring')" class="card card-hover text-left p-4">
-            <div class="flex items-center gap-2 mb-1.5"><i data-lucide="plus" class="text-ink-700"></i><span class="text-[13px] font-semibold">New recurring customer</span></div>
-            <div class="text-[12.5px] text-ink-500 leading-snug">Standing weekly service. Days, route, driver, toilets, price.</div>
+            <div class="flex items-center gap-2 mb-1.5"><i data-lucide="plus" class="text-ink-700"></i><span class="text-[15px] font-semibold">New recurring customer</span></div>
+            <div class="text-[14px] text-ink-500 leading-snug">Standing weekly service. Days, route, driver, toilets, price.</div>
           </button>
           <button onclick="openForm('event')" class="card card-hover text-left p-4">
-            <div class="flex items-center gap-2 mb-1.5"><i data-lucide="plus" class="text-ink-700"></i><span class="text-[13px] font-semibold">New event booking</span></div>
-            <div class="text-[12.5px] text-ink-500 leading-snug">One-time job. Drop-off, optional cleanings, pickup.</div>
+            <div class="flex items-center gap-2 mb-1.5"><i data-lucide="plus" class="text-ink-700"></i><span class="text-[15px] font-semibold">New event booking</span></div>
+            <div class="text-[14px] text-ink-500 leading-snug">One-time job. Drop-off, optional cleanings, pickup.</div>
           </button>
           <button onclick="document.querySelector('[data-pane=customers]').click()" class="card card-hover text-left p-4">
-            <div class="flex items-center gap-2 mb-1.5"><i data-lucide="search" class="text-ink-700"></i><span class="text-[13px] font-semibold">Find a customer</span></div>
-            <div class="text-[12.5px] text-ink-500 leading-snug">Edit details, change schedule, cancel a job.</div>
+            <div class="flex items-center gap-2 mb-1.5"><i data-lucide="search" class="text-ink-700"></i><span class="text-[15px] font-semibold">Find a customer</span></div>
+            <div class="text-[14px] text-ink-500 leading-snug">Edit details, change schedule, cancel a job.</div>
           </button>
         </div>
 
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Recently added</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Recently added</div>
         <div class="card divide-y divide-ink-200" id="recent-list"></div>
       </div>
 
       <div data-pane-content="drafts" class="hidden">
         <div class="flex items-baseline justify-between mb-1">
           <h1 class="text-xl font-semibold tracking-tight">Drafts from Greg</h1>
-          <span class="text-[11.5px] text-ink-500">Auto-parsed from voice memos &amp; texts</span>
+          <span class="text-[13px] text-ink-500">Auto-parsed from voice memos &amp; texts</span>
         </div>
-        <p class="text-ink-500 text-[13px] mb-5">Click a draft to confirm details and add to a route.</p>
+        <p class="text-ink-500 text-[15px] mb-5">Click a draft to confirm details and add to a route.</p>
         <div class="space-y-3" id="drafts-list"></div>
       </div>
 
@@ -289,18 +289,18 @@
           </div>
           <div id="cust-filters" class="flex flex-wrap gap-2 mb-4"></div>
           <div class="card overflow-hidden">
-            <table class="w-full text-[13px]">
-              <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+            <table class="w-full text-[15px]">
+              <thead class="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider">
                 <tr>
-                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('name')">Customer <span class="sort-arrow" data-sort="name"></span></th>
-                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('addr')">Service Address <span class="sort-arrow" data-sort="addr"></span></th>
-                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('toilets')">Units <span class="sort-arrow" data-sort="toilets"></span></th>
-                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('day')">Days <span class="sort-arrow" data-sort="day"></span></th>
-                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('route')">Route <span class="sort-arrow" data-sort="route"></span></th>
-                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('last')">Last service <span class="sort-arrow" data-sort="last"></span></th>
-                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('deliveryDate')">Delivery date <span class="sort-arrow" data-sort="deliveryDate"></span></th>
-                  <th class="text-left px-2 py-1.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('owes')">Balance <span class="sort-arrow" data-sort="owes"></span></th>
-                  <th class="text-left px-2 py-1.5 font-semibold">Notes</th>
+                  <th class="text-left px-3 py-2.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('name')">Customer <span class="sort-arrow" data-sort="name"></span></th>
+                  <th class="text-left px-3 py-2.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('addr')">Service Address <span class="sort-arrow" data-sort="addr"></span></th>
+                  <th class="text-left px-3 py-2.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('toilets')">Units <span class="sort-arrow" data-sort="toilets"></span></th>
+                  <th class="text-left px-3 py-2.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('day')">Days <span class="sort-arrow" data-sort="day"></span></th>
+                  <th class="text-left px-3 py-2.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('route')">Route <span class="sort-arrow" data-sort="route"></span></th>
+                  <th class="text-left px-3 py-2.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('last')">Last service <span class="sort-arrow" data-sort="last"></span></th>
+                  <th class="text-left px-3 py-2.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('deliveryDate')">Delivery date <span class="sort-arrow" data-sort="deliveryDate"></span></th>
+                  <th class="text-left px-3 py-2.5 font-semibold cursor-pointer hover:bg-ink-100 select-none" onclick="sortCustomers('owes')">Balance <span class="sort-arrow" data-sort="owes"></span></th>
+                  <th class="text-left px-3 py-2.5 font-semibold">Notes</th>
                 </tr>
               </thead>
               <tbody id="cust-table"></tbody>
@@ -315,10 +315,10 @@
           <h1 class="text-xl font-semibold tracking-tight">Drivers</h1>
           <button onclick="openAddPermanentDriver()" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="plus" class="ico-sm"></i>Add driver</button>
         </div>
-        <p class="text-ink-500 text-[13px] mb-4">Permanent roster. For someone calling out today, use the Drivers pill row on Greg's dispatch view instead.</p>
+        <p class="text-ink-500 text-[15px] mb-4">Permanent roster. For someone calling out today, use the Drivers pill row on Greg's dispatch view instead.</p>
         <div class="card overflow-hidden">
-          <table class="w-full text-[13px]">
-            <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+          <table class="w-full text-[15px]">
+            <thead class="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider">
               <tr>
                 <th class="text-left px-3 py-2 font-semibold">Driver</th>
                 <th class="text-left px-3 py-2 font-semibold">Phone</th>
@@ -335,10 +335,10 @@
 
       <div data-pane-content="schedules" class="hidden">
         <h1 class="text-xl font-semibold tracking-tight mb-1">Recurring schedules</h1>
-        <p class="text-ink-500 text-[13px] mb-4">Active weekly customers. Greg can move days or routes here permanently.</p>
+        <p class="text-ink-500 text-[15px] mb-4">Active weekly customers. Greg can move days or routes here permanently.</p>
         <div class="card overflow-hidden">
-          <table class="w-full text-[13px]">
-            <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+          <table class="w-full text-[15px]">
+            <thead class="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider">
               <tr>
                 <th class="text-left px-3 py-2 font-semibold">Customer</th>
                 <th class="text-left px-3 py-2 font-semibold">Days</th>
@@ -364,17 +364,17 @@
     <div class="flex items-center justify-between mb-3 flex-wrap gap-3">
       <div>
         <h1 class="text-xl font-semibold tracking-tight">Dispatch</h1>
-        <p class="text-ink-500 text-[12.5px]" id="dispatch-subtitle">Friday, May 8 · drag rows to reorder</p>
+        <p class="text-ink-500 text-[14px]" id="dispatch-subtitle">Friday, May 8 · drag rows to reorder</p>
       </div>
       <div class="flex items-center gap-1 bg-ink-100 rounded-md p-1">
-        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="2026-05-11" onclick="setDispatchDate('2026-05-11')">Mon</button>
-        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="2026-05-12" onclick="setDispatchDate('2026-05-12')">Tue</button>
-        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="2026-05-13" onclick="setDispatchDate('2026-05-13')">Wed</button>
-        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="2026-05-14" onclick="setDispatchDate('2026-05-14')">Thu</button>
-        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-day="today" onclick="setDispatchDay('today')">Fri<span class="text-[9.5px] text-emerald-600 font-bold tracking-wide">TODAY</span></button>
-        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">Sat</button>
+        <button class="day-btn px-3.5 py-1.5 text-[15px] font-semibold text-ink-500 rounded" data-day="2026-05-11" onclick="setDispatchDate('2026-05-11')">Mon</button>
+        <button class="day-btn px-3.5 py-1.5 text-[15px] font-semibold text-ink-500 rounded" data-day="2026-05-12" onclick="setDispatchDate('2026-05-12')">Tue</button>
+        <button class="day-btn px-3.5 py-1.5 text-[15px] font-semibold text-ink-500 rounded" data-day="2026-05-13" onclick="setDispatchDate('2026-05-13')">Wed</button>
+        <button class="day-btn px-3.5 py-1.5 text-[15px] font-semibold text-ink-500 rounded" data-day="2026-05-14" onclick="setDispatchDate('2026-05-14')">Thu</button>
+        <button class="day-btn px-3.5 py-1.5 text-[15px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-day="today" onclick="setDispatchDay('today')">Fri<span class="text-[10.5px] text-emerald-600 font-bold tracking-wide">TODAY</span></button>
+        <button class="day-btn px-3.5 py-1.5 text-[15px] font-semibold text-ink-500 rounded" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">Sat</button>
         <div class="w-px h-6 bg-ink-300 mx-1"></div>
-        <button id="day-date-btn" class="day-btn px-3 py-1.5 text-[12px] font-medium text-ink-500 rounded inline-flex items-center gap-1.5" onclick="openDatePicker()">
+        <button id="day-date-btn" class="day-btn px-3 py-1.5 text-[13.5px] font-medium text-ink-500 rounded inline-flex items-center gap-1.5" onclick="openDatePicker()">
           <i data-lucide="calendar" class="ico-sm"></i><span id="day-date-label">Pick a date</span>
         </button>
         <input id="dispatch-date-picker" type="date" class="sr-only absolute" onchange="setDispatchDate(this.value)" />
@@ -383,10 +383,10 @@
 
     <!-- Drivers Today bar — hidden by default (Greg can see same info via per-column kebab menu) -->
     <div id="drivers-today-bar" class="card mb-3 px-3 py-2 flex items-center gap-3 hidden">
-      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Drivers today</div>
+      <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold">Drivers today</div>
       <div id="driver-pills" class="flex items-center gap-1.5 flex-1"></div>
-      <button onclick="openAddTempDriver()" class="text-[12px] text-ink-500 hover:text-ink-900 font-medium inline-flex items-center gap-1"><i data-lucide="plus" class="ico-sm"></i>Add temp driver</button>
-      <button onclick="document.getElementById('drivers-today-bar').classList.add('hidden')" class="text-[12px] text-ink-500 hover:text-ink-900">×</button>
+      <button onclick="openAddTempDriver()" class="text-[13.5px] text-ink-500 hover:text-ink-900 font-medium inline-flex items-center gap-1"><i data-lucide="plus" class="ico-sm"></i>Add temp driver</button>
+      <button onclick="document.getElementById('drivers-today-bar').classList.add('hidden')" class="text-[13.5px] text-ink-500 hover:text-ink-900">×</button>
     </div>
 
     <div id="dispatch-map-card" class="card mb-4 h-64 relative overflow-hidden bg-ink-50">
@@ -424,24 +424,24 @@
       </svg>
 
       <!-- Legend overlay -->
-      <div class="absolute top-3 right-3 bg-white border border-ink-200 rounded p-2.5 text-[11px] space-y-1.5">
+      <div class="absolute top-3 right-3 bg-white border border-ink-200 rounded p-2.5 text-[12.5px] space-y-1.5">
         <div id="legend-greg"    class="flex items-center gap-2"><span class="w-3 h-0.5 bg-orange-600"></span><span class="font-semibold">Greg · East</span><span class="text-ink-500" id="legend-greg-progress">—</span></div>
         <div id="legend-bradley" class="flex items-center gap-2"><span class="w-3 h-0.5 bg-blue-500"></span><span class="font-semibold">Bradley · West</span><span class="text-ink-500" id="legend-bradley-progress">—</span></div>
       </div>
-      <div class="absolute bottom-3 left-3 text-[11px] text-ink-500 bg-white border border-ink-200 px-2 py-1 rounded">Updated 2s ago</div>
+      <div class="absolute bottom-3 left-3 text-[12.5px] text-ink-500 bg-white border border-ink-200 px-2 py-1 rounded">Updated 2s ago</div>
     </div>
 
     <div class="flex items-center gap-3 flex-wrap">
-      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Viewing driver</div>
+      <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold">Viewing driver</div>
       <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
-        <button class="driver-tab-btn px-3 py-1.5 text-[12.5px] font-semibold bg-white shadow-sm rounded" data-driver="Greg" onclick="setFocusedDriver('Greg')">
+        <button class="driver-tab-btn px-3 py-1.5 text-[14px] font-semibold bg-white shadow-sm rounded" data-driver="Greg" onclick="setFocusedDriver('Greg')">
           <span class="w-2 h-2 inline-block rounded-full bg-orange-600 mr-1.5 align-[1px]"></span>Greg · East
         </button>
-        <button class="driver-tab-btn px-3 py-1.5 text-[12.5px] font-medium text-ink-500" data-driver="Bradley" onclick="setFocusedDriver('Bradley')">
+        <button class="driver-tab-btn px-3 py-1.5 text-[14px] font-medium text-ink-500" data-driver="Bradley" onclick="setFocusedDriver('Bradley')">
           <span class="w-2 h-2 inline-block rounded-full bg-blue-500 mr-1.5 align-[1px]"></span>Bradley · West
         </button>
       </div>
-      <div class="text-[12px] text-ink-500" id="focused-summary"></div>
+      <div class="text-[13.5px] text-ink-500" id="focused-summary"></div>
     </div>
 
     </div>
@@ -450,13 +450,13 @@
 
     <!-- Action buttons below the route -->
     <div class="card mt-4 p-3 flex flex-wrap items-center gap-2">
-      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mr-2">Actions on this route</div>
+      <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mr-2">Actions on this route</div>
       <button onclick="openGregRecurring()" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="user-plus" class="ico-sm"></i>Add recurring customer</button>
       <button onclick="openInlineStop(focusedDriver)" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="plus" class="ico-sm"></i>One-off stop</button>
       <button onclick="openQuickCapture()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="mic" class="ico-sm"></i>New job (voice)</button>
       <button onclick="autoRoute()" class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="zap" class="ico-sm"></i>Auto-route</button>
       <div class="flex-1"></div>
-      <div class="text-[11.5px] text-ink-500" id="actions-context">Actions apply to the selected driver + day above</div>
+      <div class="text-[13px] text-ink-500" id="actions-context">Actions apply to the selected driver + day above</div>
     </div>
 
     <!-- Map + Today's changes at the bottom -->
@@ -464,10 +464,10 @@
       <aside class="col-span-2 card overflow-hidden self-start">
         <div class="px-3 py-2 border-b border-ink-200 flex items-center justify-between">
           <div>
-            <div class="text-[12.5px] font-semibold">Live map</div>
-            <div class="text-[11px] text-ink-500">Truck positions update with each completion</div>
+            <div class="text-[14px] font-semibold">Live map</div>
+            <div class="text-[12.5px] text-ink-500">Truck positions update with each completion</div>
           </div>
-          <div class="text-[11px] text-ink-500" id="map-status">Updated 2s ago</div>
+          <div class="text-[12.5px] text-ink-500" id="map-status">Updated 2s ago</div>
         </div>
         <div class="h-44 relative overflow-hidden bg-ink-50" id="bottom-map-container">
           <!-- The route map SVG will be moved here by JS init -->
@@ -475,8 +475,8 @@
       </aside>
       <aside class="card overflow-hidden self-start">
         <div class="px-3 py-2 border-b border-ink-200">
-          <div class="text-[12.5px] font-semibold">Today's changes</div>
-          <div class="text-[11px] text-ink-500">Adds, retirements, skips</div>
+          <div class="text-[14px] font-semibold">Today's changes</div>
+          <div class="text-[12.5px] text-ink-500">Adds, retirements, skips</div>
         </div>
         <div id="changes-feed"></div>
       </aside>
@@ -488,32 +488,32 @@
 <section data-view="driver" class="role-view hidden">
   <!-- Device preview toggle (demo only) -->
   <div class="bg-white border-b border-ink-200 px-5 py-2.5 flex items-center justify-center gap-3">
-    <span class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Preview as</span>
+    <span class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold">Preview as</span>
     <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
-      <button class="device-tab-btn px-3 py-1.5 text-[12.5px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-device="phone" onclick="setDriverDevice('phone')"><i data-lucide="smartphone" class="ico-sm"></i>Phone</button>
-      <button class="device-tab-btn px-3 py-1.5 text-[12.5px] font-medium text-ink-500 inline-flex items-center gap-1.5" data-device="ipad" onclick="setDriverDevice('ipad')"><i data-lucide="tablet" class="ico-sm"></i>iPad</button>
+      <button class="device-tab-btn px-3 py-1.5 text-[14px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-device="phone" onclick="setDriverDevice('phone')"><i data-lucide="smartphone" class="ico-sm"></i>Phone</button>
+      <button class="device-tab-btn px-3 py-1.5 text-[14px] font-medium text-ink-500 inline-flex items-center gap-1.5" data-device="ipad" onclick="setDriverDevice('ipad')"><i data-lucide="tablet" class="ico-sm"></i>iPad</button>
     </div>
-    <span class="text-[11px] text-ink-500 hidden md:inline">On a real device, this auto-detects from screen size</span>
+    <span class="text-[12.5px] text-ink-500 hidden md:inline">On a real device, this auto-detects from screen size</span>
   </div>
 
   <!-- Phone view -->
   <div id="driver-phone-view" class="grid place-items-center py-8 bg-ink-50 min-h-[calc(100vh-130px)]">
     <div class="phone-frame">
       <div class="phone-screen">
-        <div class="bg-black text-white text-[10.5px] px-5 py-1 flex justify-between"><span>9:41</span><span>100%</span></div>
+        <div class="bg-black text-white text-[11.5px] px-5 py-1 flex justify-between"><span>9:41</span><span>100%</span></div>
         <div class="bg-ink-900 text-white px-5 py-3.5">
-          <div class="text-[11px] opacity-70">Friday, May 8</div>
+          <div class="text-[12.5px] opacity-70">Friday, May 8</div>
           <div class="text-lg font-semibold">Greg's route — East</div>
-          <div class="text-[11.5px] opacity-70 mt-0.5" id="driver-progress">3 of 7 stops complete · est. 1h 45m left</div>
+          <div class="text-[13px] opacity-70 mt-0.5" id="driver-progress">3 of 7 stops complete · est. 1h 45m left</div>
         </div>
         <div class="px-4 pt-3" id="active-stop"></div>
         <div class="flex-1 overflow-y-auto px-4 pb-4 mt-3">
-          <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Up next</div>
+          <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Up next</div>
           <div id="driver-list" class="space-y-1.5"></div>
-          <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold mt-5">Completed</div>
+          <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold mt-5">Completed</div>
           <div id="driver-done" class="space-y-1.5 opacity-70"></div>
         </div>
-        <div class="border-t border-ink-200 bg-white px-4 py-2 flex justify-around text-[11.5px]">
+        <div class="border-t border-ink-200 bg-white px-4 py-2 flex justify-around text-[13px]">
           <button class="text-ink-900 font-semibold inline-flex items-center gap-1"><i data-lucide="list"></i>Route</button>
           <button class="text-ink-500 inline-flex items-center gap-1"><i data-lucide="map"></i>Map</button>
           <button class="text-ink-500 inline-flex items-center gap-1"><i data-lucide="user"></i>Me</button>
@@ -530,22 +530,22 @@
 
 <!-- ============================================ CUSTOMER PORTAL ========================================== -->
 <section data-view="customer" class="role-view hidden">
-  <div class="bg-ink-900 text-white px-6 py-2.5 flex items-center justify-between text-[12px]">
+  <div class="bg-ink-900 text-white px-6 py-2.5 flex items-center justify-between text-[13.5px]">
     <div class="flex items-center gap-2"><i data-lucide="user-circle" class="ico-sm"></i>Signed in as <strong>Decatur Builders Co.</strong> · office@decaturbuilders.com</div>
     <button class="opacity-70 hover:opacity-100 underline">Sign out</button>
   </div>
   <div class="flex">
     <aside class="w-52 border-r border-ink-200 min-h-[calc(100vh-130px)] p-3 bg-ink-50/40">
-      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 px-2 font-semibold">Your account</div>
+      <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-2 px-2 font-semibold">Your account</div>
       <nav class="flex flex-col gap-0.5">
-        <button class="cust-nav active text-left px-3 py-1.5 rounded text-[13px] font-medium" data-cpane="overview">Overview</button>
-        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="locations">Locations &amp; units</button>
-        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="history">Service history</button>
-        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="request">Request service</button>
-        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="billing">Billing &amp; invoices</button>
-        <button class="cust-nav text-left px-3 py-1.5 rounded text-[13px] hover:bg-ink-100" data-cpane="settings">Settings</button>
+        <button class="cust-nav active text-left px-3 py-1.5 rounded text-[15px] font-medium" data-cpane="overview">Overview</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[15px] hover:bg-ink-100" data-cpane="locations">Locations &amp; units</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[15px] hover:bg-ink-100" data-cpane="history">Service history</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[15px] hover:bg-ink-100" data-cpane="request">Request service</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[15px] hover:bg-ink-100" data-cpane="billing">Billing &amp; invoices</button>
+        <button class="cust-nav text-left px-3 py-1.5 rounded text-[15px] hover:bg-ink-100" data-cpane="settings">Settings</button>
       </nav>
-      <div class="mt-6 px-3 py-2.5 bg-white border border-ink-200 rounded text-[11.5px]">
+      <div class="mt-6 px-3 py-2.5 bg-white border border-ink-200 rounded text-[13px]">
         <div class="text-ink-500 mb-1">Need help?</div>
         <div class="font-semibold mb-0.5">Greg Polson</div>
         <div class="text-ink-700">(256) 771-3612</div>
@@ -566,7 +566,7 @@
   <div id="report-content"></div>
 </div>
 
-<div id="toast" class="fixed bottom-5 right-5 bg-ink-900 text-white px-4 py-2 rounded text-[12.5px] z-50 hidden border border-ink-700"></div>
+<div id="toast" class="fixed bottom-5 right-5 bg-ink-900 text-white px-4 py-2 rounded text-[14px] z-50 hidden border border-ink-700"></div>
 
 <script>
 /* ============ MOCK DATA ============ */
@@ -776,10 +776,10 @@ function renderRecents(){
   document.getElementById('recent-list').innerHTML = recents.map(r => `
     <div class="px-3 py-2.5 flex items-center justify-between hover:bg-ink-50">
       <div>
-        <div class="text-[13px]">${r.what}</div>
-        <div class="text-[11.5px] text-ink-500">${r.when} · by ${r.who}</div>
+        <div class="text-[15px]">${r.what}</div>
+        <div class="text-[13px] text-ink-500">${r.when} · by ${r.who}</div>
       </div>
-      <button class="text-[12px] text-ink-700 hover:text-ink-900 hover:underline">View</button>
+      <button class="text-[13.5px] text-ink-700 hover:text-ink-900 hover:underline">View</button>
     </div>`).join('');
 }
 
@@ -888,33 +888,33 @@ function renderHistoryView(kind){
   container.id = 'history-view-container';
   container.className = 'mt-2';
   container.innerHTML = `
-    <div class="text-[12.5px] text-ink-500 mb-3">${data.length} ${title} across ${sortedWeeks.length} weeks. Most recent first.</div>
+    <div class="text-[14px] text-ink-500 mb-3">${data.length} ${title} across ${sortedWeeks.length} weeks. Most recent first.</div>
     ${sortedWeeks.map(wk => `
       <div class="mb-5">
-        <div class="sticky top-0 bg-ink-50 border border-ink-200 rounded px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink-700 mb-1.5">
+        <div class="sticky top-0 bg-ink-50 border border-ink-200 rounded px-3 py-1.5 text-[12.5px] font-semibold uppercase tracking-wider text-ink-700 mb-1.5">
           ${weekLabel(wk)} <span class="text-ink-500 font-normal ml-1">· ${groups[wk].length} ${title === 'deliveries' ? 'delivered' : 'picked up'}</span>
         </div>
         <div class="card overflow-hidden">
-          <table class="w-full text-[12.5px]">
-            <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+          <table class="w-full text-[14px]">
+            <thead class="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider">
               <tr>
                 <th class="text-left px-2 py-1.5 font-semibold w-24">Date</th>
-                <th class="text-left px-2 py-1.5 font-semibold">Customer</th>
-                <th class="text-left px-2 py-1.5 font-semibold">Service Address</th>
-                <th class="text-left px-2 py-1.5 font-semibold">Units</th>
+                <th class="text-left px-3 py-2.5 font-semibold">Customer</th>
+                <th class="text-left px-3 py-2.5 font-semibold">Service Address</th>
+                <th class="text-left px-3 py-2.5 font-semibold">Units</th>
                 <th class="text-left px-2 py-1.5 font-semibold w-20">Driver</th>
-                <th class="text-left px-2 py-1.5 font-semibold">Notes</th>
+                <th class="text-left px-3 py-2.5 font-semibold">Notes</th>
               </tr>
             </thead>
             <tbody>
               ${groups[wk].map(ev => `
                 <tr class="border-t border-ink-200 hover:bg-ink-50">
-                  <td class="px-2 py-1.5 font-mono text-[11.5px]">${ev.date}</td>
-                  <td class="px-2 py-1.5 font-medium text-[12.5px]">${ev.cust}</td>
+                  <td class="px-2 py-1.5 font-mono text-[13px]">${ev.date}</td>
+                  <td class="px-2 py-1.5 font-medium text-[14px]">${ev.cust}</td>
                   <td class="px-2 py-1.5 text-ink-700">${ev.addr}</td>
                   <td class="px-2 py-1.5">${ev.units}</td>
                   <td class="px-2 py-1.5"><span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ${ev.driver==='Greg'?'bg-orange-600':'bg-blue-500'}"></span>${ev.driver}</span></td>
-                  <td class="px-2 py-1.5 text-ink-500 italic text-[11.5px]">${ev.notes || ''}</td>
+                  <td class="px-2 py-1.5 text-ink-500 italic text-[13px]">${ev.notes || ''}</td>
                 </tr>`).join('')}
             </tbody>
           </table>
@@ -959,17 +959,17 @@ function renderCustomers(search=''){
     return `
     <tr onclick="openCustomerDetail(${c.id})" class="border-t border-ink-200 hover:bg-ink-50 cursor-pointer ${c.retired?'opacity-60':''}">
       <td class="px-2 py-1.5">
-        <div class="font-medium text-[12.5px] leading-tight">${c.name}${c.retired ? ' <span class="text-[9.5px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1 py-0.5 rounded ml-1 font-semibold">Picked up</span>' : ''}</div>
-        <div class="text-[11px] text-ink-500 leading-tight">${c.phone}</div>
+        <div class="font-medium text-[14px] leading-tight">${c.name}${c.retired ? ' <span class="text-[10.5px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1 py-0.5 rounded ml-1 font-semibold">Picked up</span>' : ''}</div>
+        <div class="text-[12.5px] text-ink-500 leading-tight">${c.phone}</div>
       </td>
-      <td class="px-2 py-1.5 text-ink-700 text-[12px] leading-tight">${c.addr}</td>
-      <td class="px-2 py-1.5 text-[12px]">${c.toilets}</td>
-      <td class="px-2 py-1.5 text-[12px]">${c.day === 'EVENT' ? '<span class="tag tag-event">Event</span>' : c.day}</td>
-      <td class="px-2 py-1.5 text-[12px] font-mono">${c.route}</td>
-      <td class="px-2 py-1.5 text-ink-500 text-[11.5px]">${displayLast}</td>
-      <td class="px-2 py-1.5 text-ink-700 text-[11.5px]">${c.deliveryDate || '—'}</td>
-      <td class="px-2 py-1.5 text-[12px]">${balance}</td>
-      <td class="px-2 py-1.5 text-ink-500 italic text-[11px] leading-tight">${c.note || ''}</td>
+      <td class="px-2 py-1.5 text-ink-700 text-[13.5px] leading-tight">${c.addr}</td>
+      <td class="px-2 py-1.5 text-[13.5px]">${c.toilets}</td>
+      <td class="px-2 py-1.5 text-[13.5px]">${c.day === 'EVENT' ? '<span class="tag tag-event">Event</span>' : c.day}</td>
+      <td class="px-2 py-1.5 text-[13.5px] font-mono">${c.route}</td>
+      <td class="px-2 py-1.5 text-ink-500 text-[13px]">${displayLast}</td>
+      <td class="px-2 py-1.5 text-ink-700 text-[13px]">${c.deliveryDate || '—'}</td>
+      <td class="px-2 py-1.5 text-[13.5px]">${balance}</td>
+      <td class="px-2 py-1.5 text-ink-500 italic text-[12.5px] leading-tight">${c.note || ''}</td>
     </tr>`;
   }).join('');
   if (rows.length === 0){
@@ -982,11 +982,11 @@ function renderToilets(){
   /* legacy template:
     return `<div class="card p-3">
       <div class="flex items-center justify-between mb-1">
-        <div class="font-mono text-[12.5px] font-semibold">UNIT</div>
-        <span class="text-[10px] uppercase tracking-wider font-semibold text-ink-500">Out</span>
+        <div class="font-mono text-[14px] font-semibold">UNIT</div>
+        <span class="text-[11px] uppercase tracking-wider font-semibold text-ink-500">Out</span>
       </div>
-      <div class="text-[11.5px] text-ink-500">type</div>
-      <div class="text-[12.5px] mt-0.5">loc</div>
+      <div class="text-[13px] text-ink-500">type</div>
+      <div class="text-[14px] mt-0.5">loc</div>
     </div>`;
   */
 }
@@ -996,7 +996,7 @@ function renderSchedules(){
     <tr class="border-t border-ink-200 hover:bg-ink-50 ${c.retired?'opacity-60':''}">
       <td class="px-3 py-2.5 font-medium">
         ${c.name}
-        ${c.retired ? '<div class="text-[11px] text-amber-700 font-semibold mt-0.5">Retired from route</div>' : ''}
+        ${c.retired ? '<div class="text-[12.5px] text-amber-700 font-semibold mt-0.5">Retired from route</div>' : ''}
       </td>
       <td class="px-3 py-2.5 ${c.retired?'line-through text-ink-500':''}">${c.day}</td>
       <td class="px-3 py-2.5"><span class="tag ${c.retired?'tag-skip':'tag-deliver'}">Route ${c.route}</span></td>
@@ -1004,8 +1004,8 @@ function renderSchedules(){
       <td class="px-3 py-2.5 ${c.retired?'line-through text-ink-500':''}">$90.00</td>
       <td class="px-3 py-2.5 text-right">
         ${c.retired
-          ? '<button onclick="reactivate(this)" class="text-[12px] text-ink-900 font-medium hover:underline">Reactivate</button>'
-          : '<button class="text-[12px] text-ink-900 font-medium hover:underline">Edit</button>'}
+          ? '<button onclick="reactivate(this)" class="text-[13.5px] text-ink-900 font-medium hover:underline">Reactivate</button>'
+          : '<button class="text-[13.5px] text-ink-900 font-medium hover:underline">Edit</button>'}
       </td>
     </tr>`).join('');
 }
@@ -1114,7 +1114,7 @@ function openCustomerDetail(customerId){
 
   view.innerHTML = `
     <div class="flex items-center justify-between mb-4">
-      <button onclick="closeCustomerDetail()" class="text-[12.5px] text-ink-700 hover:text-ink-900 font-medium inline-flex items-center gap-1"><i data-lucide="arrow-left" class="ico-sm"></i>All customers</button>
+      <button onclick="closeCustomerDetail()" class="text-[14px] text-ink-700 hover:text-ink-900 font-medium inline-flex items-center gap-1"><i data-lucide="arrow-left" class="ico-sm"></i>All customers</button>
       <div class="flex gap-2">
         <button class="btn-secondary inline-flex items-center gap-1.5"><i data-lucide="pencil" class="ico-sm"></i>Edit</button>
         <button onclick="openCustomerReport(${customerId})" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="file-text" class="ico-sm"></i>Generate report</button>
@@ -1125,49 +1125,49 @@ function openCustomerDetail(customerId){
       <div class="flex items-start justify-between mb-3">
         <div>
           <h1 class="text-xl font-semibold tracking-tight">${c.name}</h1>
-          <div class="text-[12.5px] text-ink-500 mt-0.5">Customer since ${d.sinceDate}</div>
+          <div class="text-[14px] text-ink-500 mt-0.5">Customer since ${d.sinceDate}</div>
         </div>
         ${c.retired ? '<span class="tag tag-skip">Retired</span>' : `<span class="tag tag-clean">Active · Route ${c.route}</span>`}
       </div>
-      <div class="grid grid-cols-3 gap-4 text-[13px]">
-        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-0.5">Phone</div><div>${c.phone}</div></div>
-        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-0.5">Email</div><div>${d.email}</div></div>
-        <div><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-0.5">Billing address</div><div>${d.billingAddr}</div></div>
+      <div class="grid grid-cols-3 gap-4 text-[15px]">
+        <div><div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-0.5">Phone</div><div>${c.phone}</div></div>
+        <div><div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-0.5">Email</div><div>${d.email}</div></div>
+        <div><div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-0.5">Billing address</div><div>${d.billingAddr}</div></div>
       </div>
     </div>
 
     <div class="grid grid-cols-4 gap-3 mb-4">
-      <div class="card p-3"><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Active locations</div><div class="text-2xl font-semibold tracking-tight">${activeLocations}</div></div>
-      <div class="card p-3"><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Total services</div><div class="text-2xl font-semibold tracking-tight">${totalServices}</div></div>
-      <div class="card p-3"><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Cleanings</div><div class="text-2xl font-semibold tracking-tight">${totalCleans}</div></div>
-      <div class="card p-3"><div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Last service</div><div class="text-[14px] font-semibold mt-1">${lastService?lastService.date:'—'}</div><div class="text-[11.5px] text-ink-500">${lastService?lastService.type+' · '+lastService.driver:''}</div></div>
+      <div class="card p-3"><div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Active locations</div><div class="text-2xl font-semibold tracking-tight">${activeLocations}</div></div>
+      <div class="card p-3"><div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Total services</div><div class="text-2xl font-semibold tracking-tight">${totalServices}</div></div>
+      <div class="card p-3"><div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Cleanings</div><div class="text-2xl font-semibold tracking-tight">${totalCleans}</div></div>
+      <div class="card p-3"><div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Last service</div><div class="text-[16px] font-semibold mt-1">${lastService?lastService.date:'—'}</div><div class="text-[13px] text-ink-500">${lastService?lastService.type+' · '+lastService.driver:''}</div></div>
     </div>
 
-    <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Locations</div>
+    <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Locations</div>
     <div class="space-y-2 mb-5">
       ${d.locations.map(loc => `
         <div class="card p-3 ${!loc.active?'opacity-60':''}">
           <div class="flex items-start justify-between mb-1.5">
             <div>
-              <div class="font-semibold text-[13.5px]">${loc.label}${!loc.active?` <span class="text-[10px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1.5 py-0.5 rounded ml-1 font-semibold">Ended ${loc.endedAt||''}</span>`:''}</div>
-              <div class="text-[12px] text-ink-500">${loc.address}</div>
+              <div class="font-semibold text-[15px]">${loc.label}${!loc.active?` <span class="text-[11px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1.5 py-0.5 rounded ml-1 font-semibold">Ended ${loc.endedAt||''}</span>`:''}</div>
+              <div class="text-[13.5px] text-ink-500">${loc.address}</div>
             </div>
-            <div class="text-[11.5px] text-ink-500">Since ${loc.started}</div>
+            <div class="text-[13px] text-ink-500">Since ${loc.started}</div>
           </div>
-          ${loc.units ? `<div class="text-[12px] mt-2 text-ink-700"><span class="text-ink-500">Units on site: </span>${loc.units}</div>` : '<div class="text-[11.5px] text-ink-500 italic mt-1">No units currently deployed</div>'}
+          ${loc.units ? `<div class="text-[13.5px] mt-2 text-ink-700"><span class="text-ink-500">Units on site: </span>${loc.units}</div>` : '<div class="text-[13px] text-ink-500 italic mt-1">No units currently deployed</div>'}
         </div>`).join('')}
     </div>
 
     <div class="flex items-end justify-between mb-2">
-      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Service history</div>
-      <select id="history-filter" onchange="filterHistory(${customerId})" class="input text-[12px] py-1 px-2">
+      <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold">Service history</div>
+      <select id="history-filter" onchange="filterHistory(${customerId})" class="input text-[13.5px] py-1 px-2">
         <option value="all">All locations</option>
         ${d.locations.map(loc => `<option value="${loc.label}">${loc.label}</option>`).join('')}
       </select>
     </div>
     <div class="card overflow-hidden">
-      <table class="w-full text-[12.5px]">
-        <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+      <table class="w-full text-[14px]">
+        <thead class="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider">
           <tr>
             <th class="text-left px-3 py-2 font-semibold w-28">Date</th>
             <th class="text-left px-3 py-2 font-semibold">Service</th>
@@ -1186,10 +1186,10 @@ function historyRows(hist){
   if (!hist.length) return `<tr><td colspan="6" class="px-3 py-4 text-center text-ink-500 italic">No service history yet.</td></tr>`;
   return hist.map(h => `
     <tr class="border-t border-ink-200 hover:bg-ink-50">
-      <td class="px-3 py-2 font-mono text-[11.5px]">${h.date}</td>
+      <td class="px-3 py-2 font-mono text-[13px]">${h.date}</td>
       <td class="px-3 py-2">${tagFor(h.type)}</td>
       <td class="px-3 py-2">${h.loc}</td>
-      <td class="px-3 py-2 text-[12px]">${h.units}</td>
+      <td class="px-3 py-2 text-[13.5px]">${h.units}</td>
       <td class="px-3 py-2">${h.driver}</td>
       <td class="px-3 py-2 text-ink-500 italic">${h.notes||''}</td>
     </tr>`).join('');
@@ -1225,10 +1225,10 @@ function buildReportHTML(c, d, fromDate, toDate){
   return `
     <div class="report-toolbar">
       <div class="flex items-center gap-2">
-        <label class="text-[12.5px] text-ink-500">From</label>
-        <input type="date" id="report-from" value="${fromDate}" class="input text-[12px] py-1 px-2" />
-        <label class="text-[12.5px] text-ink-500 ml-2">To</label>
-        <input type="date" id="report-to" value="${toDate}" class="input text-[12px] py-1 px-2" />
+        <label class="text-[14px] text-ink-500">From</label>
+        <input type="date" id="report-from" value="${fromDate}" class="input text-[13.5px] py-1 px-2" />
+        <label class="text-[14px] text-ink-500 ml-2">To</label>
+        <input type="date" id="report-to" value="${toDate}" class="input text-[13.5px] py-1 px-2" />
         <button onclick="rebuildReport(${c.id})" class="btn-secondary ml-2">Update</button>
       </div>
       <div class="flex items-center gap-2">
@@ -1244,7 +1244,7 @@ function buildReportHTML(c, d, fromDate, toDate){
           <div class="report-company-sub">Tanner, AL · (256) 771-3612 · Greg@ValleyRestrooms.com</div>
         </div>
         <div class="report-meta">
-          <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold">Generated</div>
+          <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold">Generated</div>
           <div>${generated}</div>
         </div>
       </div>
@@ -1340,74 +1340,74 @@ function recurringFormHTML(p){
   const routeMatch = (d.route || '').match(/^([EW])/);
   const routeCode = routeMatch ? routeMatch[1] : 'E';
   const banner = p ? `
-    <div class="bg-amber-50 border border-amber-300 rounded p-3 text-[12px] text-amber-900 mb-1">
+    <div class="bg-amber-50 border border-amber-300 rounded p-3 text-[13.5px] text-amber-900 mb-1">
       <strong>Pre-filled from Greg's note.</strong> Double-check anything that looks off, then save.
     </div>` : '';
   return `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">${p ? 'Confirm recurring customer' : 'New recurring customer'}</div>
-        <div class="text-[12.5px] text-ink-500">Standing weekly service</div>
+        <div class="font-semibold text-[17px]">${p ? 'Confirm recurring customer' : 'New recurring customer'}</div>
+        <div class="text-[14px] text-ink-500">Standing weekly service</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <form onsubmit="submitForm(event,'recurring')" class="px-5 py-4 space-y-4">
       ${banner}
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Customer name</label>
+        <label class="block text-[14px] font-medium mb-1">Customer name</label>
         <input required value="${d.customer || ''}" placeholder="Start typing — existing customers autocomplete" class="input w-full" />
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">Phone</label><input value="${d.phone || ''}" placeholder="256-555-0100" class="input w-full" /></div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Email <span class="text-ink-500 font-normal">(optional)</span></label><input type="email" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Phone</label><input value="${d.phone || ''}" placeholder="256-555-0100" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Email <span class="text-ink-500 font-normal">(optional)</span></label><input type="email" class="input w-full" /></div>
       </div>
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Service address</label>
+        <label class="block text-[14px] font-medium mb-1">Service address</label>
         <input required value="${d.address || ''}" placeholder="123 Main St, Huntsville AL" class="input w-full" />
-        <div class="text-[11.5px] text-ink-500 mt-1">Geocoded so the driver gets navigation automatically.</div>
+        <div class="text-[13px] text-ink-500 mt-1">Geocoded so the driver gets navigation automatically.</div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">Number of toilets</label>
+        <div><label class="block text-[14px] font-medium mb-1">Number of toilets</label>
           <select class="input w-full">
             ${[1,2,3,4,'5+'].map(n => `<option ${String(toiletCount)===String(n)?'selected':''}>${n}</option>`).join('')}
           </select>
         </div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Toilet type</label>
+        <div><label class="block text-[14px] font-medium mb-1">Toilet type</label>
           <select class="input w-full">
             ${['Standard','Handicap','VIP','+ Hand-wash sink'].map(t => `<option ${(d.type||'')===t?'selected':''}>${t}</option>`).join('')}
           </select>
         </div>
       </div>
       <div>
-        <label class="block text-[12.5px] font-medium mb-2">Service days</label>
+        <label class="block text-[14px] font-medium mb-2">Service days</label>
         <div class="grid grid-cols-6 gap-1.5">
           ${['M','T','W','Th','F','Sa'].map(dd=>`
-            <label class="border border-ink-300 rounded px-2 py-1.5 text-[13px] text-center cursor-pointer hover:bg-ink-50 has-[:checked]:bg-ink-900 has-[:checked]:border-ink-900 has-[:checked]:text-white font-medium">
+            <label class="border border-ink-300 rounded px-2 py-1.5 text-[15px] text-center cursor-pointer hover:bg-ink-50 has-[:checked]:bg-ink-900 has-[:checked]:border-ink-900 has-[:checked]:text-white font-medium">
               <input type="checkbox" class="hidden" ${days.includes(dd)?'checked':''} /> ${dd}
             </label>`).join('')}
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">Route</label>
+        <div><label class="block text-[14px] font-medium mb-1">Route</label>
           <select class="input w-full">
             ${routeOpts.map(r => `<option ${r.code===routeCode?'selected':''}>${r.label}</option>`).join('')}
           </select>
         </div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Override driver <span class="text-ink-500 font-normal">(optional)</span></label>
+        <div><label class="block text-[14px] font-medium mb-1">Override driver <span class="text-ink-500 font-normal">(optional)</span></label>
           <select class="input w-full"><option>Use route default</option><option>Greg</option><option>Bradley</option></select>
         </div>
       </div>
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Price per service</label>
+        <label class="block text-[14px] font-medium mb-1">Price per service</label>
         <div class="relative w-36"><span class="absolute left-2.5 top-2 text-ink-500">$</span><input value="${d.price ? d.price.toFixed ? d.price.toFixed(2) : d.price : '90.00'}" class="input w-full pl-6" /></div>
       </div>
       <div class="border border-ink-200 rounded p-3 bg-ink-50/40">
-        <div class="text-[12.5px] font-semibold mb-2">Customer notifications</div>
-        <div class="space-y-1.5 text-[13px]">
+        <div class="text-[14px] font-semibold mb-2">Customer notifications</div>
+        <div class="space-y-1.5 text-[15px]">
           <label class="flex items-center gap-2"><input type="checkbox" checked /> Text after every cleaning</label>
           <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on delivery</label>
           <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on pickup</label>
-          <label class="flex items-center gap-2"><input type="checkbox" /> Include Google review request <span class="text-ink-500 text-[11.5px]">(skip for regulars)</span></label>
+          <label class="flex items-center gap-2"><input type="checkbox" /> Include Google review request <span class="text-ink-500 text-[13px]">(skip for regulars)</span></label>
         </div>
       </div>
       <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
@@ -1422,41 +1422,41 @@ function eventFormHTML(p){
   const dailyClean = (d.cleanings || '').toLowerCase().includes('daily');
   const specificClean = !noClean && !dailyClean && d.cleanings && d.cleanings !== 'None';
   const banner = p ? `
-    <div class="bg-amber-50 border border-amber-300 rounded p-3 text-[12px] text-amber-900 mb-1">
+    <div class="bg-amber-50 border border-amber-300 rounded p-3 text-[13.5px] text-amber-900 mb-1">
       <strong>Pre-filled from Greg's note.</strong> Double-check anything that looks off, then save.
     </div>` : '';
   return `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">${p ? 'Confirm event booking' : 'New event booking'}</div>
-        <div class="text-[12.5px] text-ink-500">One-time job — drop off, pickup, optional cleanings</div>
+        <div class="font-semibold text-[17px]">${p ? 'Confirm event booking' : 'New event booking'}</div>
+        <div class="text-[14px] text-ink-500">One-time job — drop off, pickup, optional cleanings</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <form onsubmit="submitForm(event,'event')" class="px-5 py-4 space-y-4">
       ${banner}
-      <div><label class="block text-[12.5px] font-medium mb-1">Customer / event name</label><input required value="${d.customer || ''}" placeholder="e.g. Smith Wedding, River Festival 2026" class="input w-full" /></div>
+      <div><label class="block text-[14px] font-medium mb-1">Customer / event name</label><input required value="${d.customer || ''}" placeholder="e.g. Smith Wedding, River Festival 2026" class="input w-full" /></div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">Phone</label><input value="${d.phone || ''}" placeholder="256-555-0100" class="input w-full" /></div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Email <span class="text-ink-500 font-normal">(optional)</span></label><input type="email" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Phone</label><input value="${d.phone || ''}" placeholder="256-555-0100" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Email <span class="text-ink-500 font-normal">(optional)</span></label><input type="email" class="input w-full" /></div>
       </div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Event location</label><input required value="${d.address || ''}" placeholder="88 Riverside Ln, Athens AL" class="input w-full" /></div>
+      <div><label class="block text-[14px] font-medium mb-1">Event location</label><input required value="${d.address || ''}" placeholder="88 Riverside Ln, Athens AL" class="input w-full" /></div>
       <div class="grid grid-cols-3 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">Drop-off date</label><input type="date" required value="${d.dropoff || ''}" class="input w-full" /></div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Pickup date</label><input type="date" required value="${d.pickup || ''}" class="input w-full" /></div>
-        <div><label class="block text-[12.5px] font-medium mb-1"># of toilets</label><input type="number" min="1" value="${d.toilets || 3}" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Drop-off date</label><input type="date" required value="${d.dropoff || ''}" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Pickup date</label><input type="date" required value="${d.pickup || ''}" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1"># of toilets</label><input type="number" min="1" value="${d.toilets || 3}" class="input w-full" /></div>
       </div>
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Cleanings during the event <span class="text-ink-500 font-normal">(optional)</span></label>
-        <div class="text-[11.5px] text-ink-500 mb-2">Most weddings need none. Festivals usually want one per day.</div>
+        <label class="block text-[14px] font-medium mb-1">Cleanings during the event <span class="text-ink-500 font-normal">(optional)</span></label>
+        <div class="text-[13px] text-ink-500 mb-2">Most weddings need none. Festivals usually want one per day.</div>
         <div class="space-y-1.5">
-          <label class="flex items-center gap-2 text-[13px]"><input type="checkbox" ${noClean?'checked':''} /> No cleanings</label>
-          <label class="flex items-center gap-2 text-[13px]"><input type="checkbox" ${dailyClean?'checked':''} /> Daily during event</label>
-          <label class="flex items-center gap-2 text-[13px]"><input type="checkbox" ${specificClean?'checked':''} /> Specific dates: <input type="text" value="${specificClean ? d.cleanings : ''}" placeholder="5/15, 5/16" class="input w-40 ml-1" /></label>
+          <label class="flex items-center gap-2 text-[15px]"><input type="checkbox" ${noClean?'checked':''} /> No cleanings</label>
+          <label class="flex items-center gap-2 text-[15px]"><input type="checkbox" ${dailyClean?'checked':''} /> Daily during event</label>
+          <label class="flex items-center gap-2 text-[15px]"><input type="checkbox" ${specificClean?'checked':''} /> Specific dates: <input type="text" value="${specificClean ? d.cleanings : ''}" placeholder="5/15, 5/16" class="input w-40 ml-1" /></label>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">Driver</label>
+        <div><label class="block text-[14px] font-medium mb-1">Driver</label>
           <select class="input w-full">
             ${['Auto-assign by closest route','Greg','Bradley'].map(opt => {
               const sel = (d.driver === opt || (d.driver === 'Auto-assign' && opt.startsWith('Auto-assign'))) ? 'selected' : '';
@@ -1464,13 +1464,13 @@ function eventFormHTML(p){
             }).join('')}
           </select>
         </div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Total price</label>
+        <div><label class="block text-[14px] font-medium mb-1">Total price</label>
           <div class="relative"><span class="absolute left-2.5 top-2 text-ink-500">$</span><input value="${d.price ? d.price.toFixed ? d.price.toFixed(2) : d.price : '450.00'}" class="input w-full pl-6" /></div>
         </div>
       </div>
       <div class="border border-ink-200 rounded p-3 bg-ink-50/40">
-        <div class="text-[12.5px] font-semibold mb-2">Customer notifications</div>
-        <div class="space-y-1.5 text-[13px]">
+        <div class="text-[14px] font-semibold mb-2">Customer notifications</div>
+        <div class="space-y-1.5 text-[15px]">
           <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on delivery</label>
           <label class="flex items-center gap-2"><input type="checkbox" checked /> Text after each cleaning</label>
           <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on pickup</label>
@@ -1518,8 +1518,8 @@ function showApprovalBanner(){
   banner.innerHTML = `
     <div class="text-yellow-700"><i data-lucide="alert-circle"></i></div>
     <div class="flex-1">
-      <div class="font-semibold text-[13.5px]">Kim just added <strong>${pendingApproval.customer}</strong>.</div>
-      <div class="text-[12px] text-ink-700">Find the yellow-bordered card below, drag it to the right position in the route, then approve.</div>
+      <div class="font-semibold text-[15px]">Kim just added <strong>${pendingApproval.customer}</strong>.</div>
+      <div class="text-[13.5px] text-ink-700">Find the yellow-bordered card below, drag it to the right position in the route, then approve.</div>
     </div>
     <button onclick="approveNewCustomer()" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="check" class="ico-sm"></i>Approve route order</button>`;
   // Insert above the dispatch board's map
@@ -1730,23 +1730,23 @@ function renderBoard(){
   board.innerHTML = `
     <div class="card overflow-hidden ${isOut?'opacity-75':''}">
       <div class="px-4 py-3 border-b border-ink-200 flex items-center gap-3 ${isOut?'bg-red-50':''}">
-        <div class="w-9 h-9 rounded-full ${meta.colorClass} text-white grid place-items-center text-[14px] font-semibold ${isOut?'opacity-50':''}">${focusedDriver[0]}</div>
+        <div class="w-9 h-9 rounded-full ${meta.colorClass} text-white grid place-items-center text-[16px] font-semibold ${isOut?'opacity-50':''}">${focusedDriver[0]}</div>
         <div class="flex-1">
-          <div class="font-semibold text-[14.5px] flex items-center gap-2">
+          <div class="font-semibold text-[16px] flex items-center gap-2">
             ${dayLabel} · ${focusedDriver}'s route — ${focusedDriver==='Greg'?'East':'West'}
-            ${isOut?`<span class="text-[10px] uppercase tracking-wider bg-red-600 text-white px-1.5 py-0.5 rounded font-semibold">${meta.status==='out_today'?'Out today':'Out this week'}</span>`:''}
+            ${isOut?`<span class="text-[11px] uppercase tracking-wider bg-red-600 text-white px-1.5 py-0.5 rounded font-semibold">${meta.status==='out_today'?'Out today':'Out this week'}</span>`:''}
           </div>
-          <div class="text-[11.5px] text-ink-500">Last updated ${nowStr()}</div>
+          <div class="text-[13px] text-ink-500">Last updated ${nowStr()}</div>
         </div>
         <div class="text-right">
-          <div class="text-[11px] text-ink-500 mb-1">${p.done}/${p.total} stops</div>
+          <div class="text-[12.5px] text-ink-500 mb-1">${p.done}/${p.total} stops</div>
           <div class="progress-bar w-40"><div class="${meta.colorClass}" style="width:${Math.round(p.pct*100)}%"></div></div>
         </div>
         <button onclick="toggleDriverMenu('${focusedDriver}', event)" class="text-ink-500 hover:text-ink-900"><i data-lucide="more-horizontal"></i></button>
       </div>
       <div class="overflow-x-auto">
-        <table class="w-full text-[12.5px]" id="dispatch-table">
-          <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+        <table class="w-full text-[14px]" id="dispatch-table">
+          <thead class="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider">
             <tr>
               <th class="text-left px-3 py-2 w-12">Seq</th>
               <th class="text-left px-3 py-2">Customer</th>
@@ -1767,8 +1767,8 @@ function renderBoard(){
                 const seq = stops.filter(x => statusOrder(x) <= statusOrder(s)).length;
                 return `
                 <tr data-stop-id="${s.id}" ${isCompleted?'':'draggable="true"'} ${isCompleted?'':`ondragstart="dragStart(event,'${focusedDriver}','${s.id}')" ondragend="dragEnd(event)"`} class="stop-card border-t border-ink-200 hover:bg-ink-50 ${isCompleted?'':'cursor-grab'} ${rowCls} ${s.isNew?'ring-2 ring-yellow-400 ring-inset':''}">
-                  <td class="px-3 py-2 font-mono text-[11.5px] text-ink-500">${seq}</td>
-                  <td class="px-3 py-2 font-medium ${isCompleted?'line-through':''}">${s.cust}${s.isNew?' <span class="bg-yellow-400 text-ink-900 text-[9px] font-bold px-1 rounded ml-1">NEW</span>':''}</td>
+                  <td class="px-3 py-2 font-mono text-[13px] text-ink-500">${seq}</td>
+                  <td class="px-3 py-2 font-medium ${isCompleted?'line-through':''}">${s.cust}${s.isNew?' <span class="bg-yellow-400 text-ink-900 text-[10px] font-bold px-1 rounded ml-1">NEW</span>':''}</td>
                   <td class="px-3 py-2 text-ink-700">${s.addr}</td>
                   <td class="px-3 py-2 text-ink-700">${s.units || '—'}</td>
                   <td class="px-3 py-2">${tagFor(s.type)}</td>
@@ -1777,11 +1777,11 @@ function renderBoard(){
                       isActive ? '<span class="text-brand-500 font-semibold inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-500 pulse"></span>NOW</span>' :
                       '<span class="text-ink-400">—</span>'}
                   </td>
-                  <td class="px-3 py-2 text-ink-500 italic text-[11.5px]">${s.notes || ''}</td>
+                  <td class="px-3 py-2 text-ink-500 italic text-[13px]">${s.notes || ''}</td>
                   <td class="px-3 py-2 text-right whitespace-nowrap">
                     ${isCompleted ? '' : `
-                      <button onclick="event.stopPropagation(); pinNext('${focusedDriver}','${s.id}')" class="text-[11.5px] text-ink-900 font-medium hover:underline">Do next</button>
-                      <button onclick="event.stopPropagation(); reassignStop('${focusedDriver}','${s.id}')" class="text-[11.5px] text-ink-500 font-medium hover:underline ml-2">→ ${otherDriver}</button>
+                      <button onclick="event.stopPropagation(); pinNext('${focusedDriver}','${s.id}')" class="text-[13px] text-ink-900 font-medium hover:underline">Do next</button>
+                      <button onclick="event.stopPropagation(); reassignStop('${focusedDriver}','${s.id}')" class="text-[13px] text-ink-500 font-medium hover:underline ml-2">→ ${otherDriver}</button>
                     `}
                   </td>
                 </tr>`;
@@ -1790,7 +1790,7 @@ function renderBoard(){
           </tbody>
         </table>
       </div>
-      <button onclick="openInlineStop('${focusedDriver}')" class="w-full border-t border-ink-200 py-2.5 text-[12.5px] text-ink-500 hover:text-ink-900 hover:bg-ink-50 inline-flex items-center justify-center gap-1.5"><i data-lucide="plus" class="ico-sm"></i>Add a stop to ${focusedDriver}'s route</button>
+      <button onclick="openInlineStop('${focusedDriver}')" class="w-full border-t border-ink-200 py-2.5 text-[14px] text-ink-500 hover:text-ink-900 hover:bg-ink-50 inline-flex items-center justify-center gap-1.5"><i data-lucide="plus" class="ico-sm"></i>Add a stop to ${focusedDriver}'s route</button>
     </div>`;
   positionTrucks();
   refreshIcons();
@@ -1949,7 +1949,7 @@ function renderDrafts(){
   const container = document.getElementById('drafts-list');
   if (!container) return;
   if (drafts.length === 0) {
-    container.innerHTML = `<div class="card p-8 text-center text-ink-500"><div class="mx-auto mb-2"><i data-lucide="inbox" class="ico-xl"></i></div><div class="text-[13px]">Inbox zero. No drafts from Greg.</div></div>`;
+    container.innerHTML = `<div class="card p-8 text-center text-ink-500"><div class="mx-auto mb-2"><i data-lucide="inbox" class="ico-xl"></i></div><div class="text-[15px]">Inbox zero. No drafts from Greg.</div></div>`;
   } else {
     container.innerHTML = drafts.map(d => {
       const p = d.parsed;
@@ -1967,14 +1967,14 @@ function renderDrafts(){
       return `
         <div class="card overflow-hidden">
           <div class="px-4 py-2.5 bg-ink-50 border-b border-ink-200 flex items-center justify-between">
-            <div class="flex items-center gap-2">${kindTag}<div class="text-[13.5px] font-semibold">${p.customer}</div></div>
-            <div class="text-[11.5px] text-ink-500">${d.captured} · ${d.via}</div>
+            <div class="flex items-center gap-2">${kindTag}<div class="text-[15px] font-semibold">${p.customer}</div></div>
+            <div class="text-[13px] text-ink-500">${d.captured} · ${d.via}</div>
           </div>
           <div class="px-4 py-3.5">
-            <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-1.5 font-semibold">Greg's note</div>
-            <div class="text-[13px] italic text-ink-700 mb-3">"${d.raw}"</div>
-            <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-1.5 font-semibold">Auto-extracted</div>
-            <div class="grid grid-cols-2 gap-y-1 text-[13px] mb-3">
+            <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-1.5 font-semibold">Greg's note</div>
+            <div class="text-[15px] italic text-ink-700 mb-3">"${d.raw}"</div>
+            <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-1.5 font-semibold">Auto-extracted</div>
+            <div class="grid grid-cols-2 gap-y-1 text-[15px] mb-3">
               <div><span class="text-ink-500">Customer:</span> ${p.customer}</div>
               <div><span class="text-ink-500">Phone:</span> ${p.phone}</div>
               <div class="col-span-2"><span class="text-ink-500">Address:</span> ${p.address}</div>
@@ -2018,8 +2018,8 @@ function openQuickCapture(){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">New job — quick capture</div>
-        <div class="text-[12.5px] text-ink-500">Just dump the info. We'll parse it and send a draft to Kim.</div>
+        <div class="font-semibold text-[17px]">New job — quick capture</div>
+        <div class="text-[14px] text-ink-500">Just dump the info. We'll parse it and send a draft to Kim.</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
@@ -2027,20 +2027,20 @@ function openQuickCapture(){
       <div class="border border-ink-200 rounded p-3 flex items-center gap-3 bg-ink-50/40">
         <button onclick="simulateRecord()" id="record-btn" class="w-12 h-12 rounded-full bg-brand-600 hover:bg-brand-700 text-white grid place-items-center"><i data-lucide="mic" class="ico-lg"></i></button>
         <div class="flex-1">
-          <div class="font-semibold text-[12.5px]">Record a voice memo</div>
-          <div class="text-[11.5px] text-ink-500" id="record-status">Tap and start talking — say customer name, address, toilets, days, price.</div>
+          <div class="font-semibold text-[14px]">Record a voice memo</div>
+          <div class="text-[13px] text-ink-500" id="record-status">Tap and start talking — say customer name, address, toilets, days, price.</div>
         </div>
-        <div class="text-[11.5px] text-ink-500 hidden" id="record-time">0:00</div>
+        <div class="text-[13px] text-ink-500 hidden" id="record-time">0:00</div>
       </div>
 
-      <div class="text-center text-[11px] text-ink-500 uppercase tracking-wider">or type / paste</div>
+      <div class="text-center text-[12.5px] text-ink-500 uppercase tracking-wider">or type / paste</div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Just write it like a text to Kim</label>
+        <label class="block text-[14px] font-medium mb-1">Just write it like a text to Kim</label>
         <textarea id="qc-text" rows="5" placeholder="e.g. Joe Smith Construction at 1247 Oak Street Decatur, two standards, weekly Mondays and Thursdays, $90 each, his cell is 256-555-1234" class="input w-full leading-relaxed"></textarea>
       </div>
 
-      <div class="border border-ink-200 rounded p-3 text-[12px] text-ink-700 bg-ink-50/40">
+      <div class="border border-ink-200 rounded p-3 text-[13.5px] text-ink-700 bg-ink-50/40">
         No need for a perfect format. The parser pulls customer, phone, address, days, price, and toilet count. Kim sees a draft and can fix anything before drivers see the job.
       </div>
 
@@ -2110,41 +2110,41 @@ function openGregRecurring(){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white z-10">
       <div>
-        <div class="font-semibold text-[15px]">+ Recurring customer</div>
-        <div class="text-[12.5px] text-ink-500">Add directly to a route — quick mode for phone calls</div>
+        <div class="font-semibold text-[17px]">+ Recurring customer</div>
+        <div class="text-[14px] text-ink-500">Add directly to a route — quick mode for phone calls</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <div class="px-5 py-4 space-y-3.5">
 
-      <div class="bg-brand-50 border border-brand-500/40 rounded p-3 text-[12.5px] text-ink-900">
+      <div class="bg-brand-50 border border-brand-500/40 rounded p-3 text-[14px] text-ink-900">
         <div class="font-semibold mb-0.5">Adding to <strong>${driverLabel}</strong> · ${dayLabel}</div>
-        <div class="text-[11.5px] text-ink-700">Will also create the master customer record and pre-schedule next service. Adjust days below if it's not weekly on ${todayLetter}.</div>
+        <div class="text-[13px] text-ink-700">Will also create the master customer record and pre-schedule next service. Adjust days below if it's not weekly on ${todayLetter}.</div>
       </div>
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-[12.5px] font-medium mb-1">Customer name</label>
+          <label class="block text-[14px] font-medium mb-1">Customer name</label>
           <input id="qr-name" autofocus required placeholder="e.g. Smith Construction" class="input w-full" />
         </div>
         <div>
-          <label class="block text-[12.5px] font-medium mb-1">Phone</label>
+          <label class="block text-[14px] font-medium mb-1">Phone</label>
           <input id="qr-phone" placeholder="256-555-0000" class="input w-full" />
         </div>
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Service address</label>
+        <label class="block text-[14px] font-medium mb-1">Service address</label>
         <input id="qr-addr" required placeholder="Address, city, AL" class="input w-full" />
       </div>
 
       <div class="grid grid-cols-3 gap-3">
         <div>
-          <label class="block text-[12.5px] font-medium mb-1">How many units?</label>
+          <label class="block text-[14px] font-medium mb-1">How many units?</label>
           <input id="qr-count" type="number" min="1" value="1" class="input w-full" />
         </div>
         <div class="col-span-2">
-          <label class="block text-[12.5px] font-medium mb-1">Type</label>
+          <label class="block text-[14px] font-medium mb-1">Type</label>
           <select id="qr-type" class="input w-full">
             <option>Standard toilet</option>
             <option>Handicap toilet</option>
@@ -2156,10 +2156,10 @@ function openGregRecurring(){
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1.5">Service days</label>
+        <label class="block text-[14px] font-medium mb-1.5">Service days</label>
         <div class="grid grid-cols-6 gap-1.5">
           ${['M','T','W','Th','F','Sa'].map(d=>`
-            <label class="border border-ink-300 rounded px-2 py-1.5 text-[13px] text-center cursor-pointer hover:bg-ink-50 has-[:checked]:bg-ink-900 has-[:checked]:border-ink-900 has-[:checked]:text-white font-medium">
+            <label class="border border-ink-300 rounded px-2 py-1.5 text-[15px] text-center cursor-pointer hover:bg-ink-50 has-[:checked]:bg-ink-900 has-[:checked]:border-ink-900 has-[:checked]:text-white font-medium">
               <input type="checkbox" class="hidden qr-day" value="${d}" ${d===todayLetter?'checked':''} /> ${d}
             </label>`).join('')}
         </div>
@@ -2167,13 +2167,13 @@ function openGregRecurring(){
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-[12.5px] font-medium mb-1">Price per service</label>
+          <label class="block text-[14px] font-medium mb-1">Price per service</label>
           <div class="relative"><span class="absolute left-2.5 top-2 text-ink-500">$</span>
             <input id="qr-price" value="90.00" class="input w-full pl-6" />
           </div>
         </div>
         <div>
-          <label class="block text-[12.5px] font-medium mb-1">Note <span class="text-ink-500 font-normal">(optional)</span></label>
+          <label class="block text-[14px] font-medium mb-1">Note <span class="text-ink-500 font-normal">(optional)</span></label>
           <input id="qr-note" placeholder="e.g. Gate code 1234" class="input w-full" />
         </div>
       </div>
@@ -2260,56 +2260,56 @@ function openInlineStop(driver){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white z-10">
       <div>
-        <div class="font-semibold text-[15px]">Add stop to ${driver}'s route today</div>
-        <div class="text-[12.5px] text-ink-500">One-off jobs that don't need a recurring schedule.</div>
+        <div class="font-semibold text-[17px]">Add stop to ${driver}'s route today</div>
+        <div class="text-[14px] text-ink-500">One-off jobs that don't need a recurring schedule.</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <div class="px-5 py-4 space-y-5">
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Customer</label>
+        <label class="block text-[14px] font-medium mb-1">Customer</label>
         <input id="stop-cust-input" oninput="filterCustList(this.value)" autocomplete="off" placeholder="Type to search existing customers" class="input w-full" />
         <div id="cust-list" class="border border-t-0 border-ink-300 rounded-b max-h-48 overflow-y-auto bg-white hidden"></div>
-        <button type="button" onclick="newCustomerInline()" id="new-cust-btn" class="hidden text-[12px] text-ink-900 mt-2 hover:underline"></button>
-        <div id="cust-selected" class="mt-2 hidden text-[12.5px] text-ink-700 bg-ink-50 border border-ink-200 rounded p-2"></div>
+        <button type="button" onclick="newCustomerInline()" id="new-cust-btn" class="hidden text-[13.5px] text-ink-900 mt-2 hover:underline"></button>
+        <div id="cust-selected" class="mt-2 hidden text-[14px] text-ink-700 bg-ink-50 border border-ink-200 rounded p-2"></div>
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-2">Service type</label>
+        <label class="block text-[14px] font-medium mb-2">Service type</label>
         <div class="grid grid-cols-4 gap-2">
-          <button type="button" data-svc-btn="clean"   onclick="setServiceType('clean')"   class="svc-btn ring-1 ring-ink-900 bg-ink-50 border border-ink-200 rounded px-2 py-2.5 text-[12.5px] font-semibold hover:bg-ink-100">Clean</button>
-          <button type="button" data-svc-btn="deliver" onclick="setServiceType('deliver')" class="svc-btn border border-ink-200 rounded px-2 py-2.5 text-[12.5px] font-semibold hover:bg-ink-50">Deliver</button>
-          <button type="button" data-svc-btn="pickup"  onclick="setServiceType('pickup')"  class="svc-btn border border-ink-200 rounded px-2 py-2.5 text-[12.5px] font-semibold hover:bg-ink-50">Pickup</button>
-          <button type="button" data-svc-btn="swap"    onclick="setServiceType('swap')"    class="svc-btn border border-ink-200 rounded px-2 py-2.5 text-[12.5px] font-semibold hover:bg-ink-50">Swap</button>
+          <button type="button" data-svc-btn="clean"   onclick="setServiceType('clean')"   class="svc-btn ring-1 ring-ink-900 bg-ink-50 border border-ink-200 rounded px-2 py-2.5 text-[14px] font-semibold hover:bg-ink-100">Clean</button>
+          <button type="button" data-svc-btn="deliver" onclick="setServiceType('deliver')" class="svc-btn border border-ink-200 rounded px-2 py-2.5 text-[14px] font-semibold hover:bg-ink-50">Deliver</button>
+          <button type="button" data-svc-btn="pickup"  onclick="setServiceType('pickup')"  class="svc-btn border border-ink-200 rounded px-2 py-2.5 text-[14px] font-semibold hover:bg-ink-50">Pickup</button>
+          <button type="button" data-svc-btn="swap"    onclick="setServiceType('swap')"    class="svc-btn border border-ink-200 rounded px-2 py-2.5 text-[14px] font-semibold hover:bg-ink-50">Swap</button>
         </div>
       </div>
 
       <div id="toilet-block">
-        <label class="block text-[12.5px] font-medium mb-1" id="toilet-label">Which toilet?</label>
+        <label class="block text-[14px] font-medium mb-1" id="toilet-label">Which toilet?</label>
         <div id="toilet-options" class="space-y-1.5"></div>
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-2">Where in ${driver}'s route?</label>
+        <label class="block text-[14px] font-medium mb-2">Where in ${driver}'s route?</label>
         <div class="space-y-1.5">
           <label class="flex items-center gap-3 p-2.5 border border-ink-900 bg-ink-50 rounded cursor-pointer">
             <input type="radio" name="when" value="next" checked onchange="stopState.when='next'" />
-            <div><div class="font-medium text-[13px]">Do next</div><div class="text-[11.5px] text-ink-500">Pushed to top of driver's queue</div></div>
+            <div><div class="font-medium text-[15px]">Do next</div><div class="text-[13px] text-ink-500">Pushed to top of driver's queue</div></div>
           </label>
           <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
             <input type="radio" name="when" value="end" onchange="stopState.when='end'" />
-            <div><div class="font-medium text-[13px]">End of route</div><div class="text-[11.5px] text-ink-500">After all currently scheduled stops</div></div>
+            <div><div class="font-medium text-[15px]">End of route</div><div class="text-[13px] text-ink-500">After all currently scheduled stops</div></div>
           </label>
           <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
             <input type="radio" name="when" value="auto" onchange="stopState.when='auto'" />
-            <div><div class="font-medium text-[13px]">Smart-place by location</div><div class="text-[11.5px] text-ink-500">Auto-router slots it where it minimizes drive time</div></div>
+            <div><div class="font-medium text-[15px]">Smart-place by location</div><div class="text-[13px] text-ink-500">Auto-router slots it where it minimizes drive time</div></div>
           </label>
         </div>
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Notes for driver <span class="text-ink-500 font-normal">(optional)</span></label>
+        <label class="block text-[14px] font-medium mb-1">Notes for driver <span class="text-ink-500 font-normal">(optional)</span></label>
         <input id="stop-notes" placeholder="e.g. Gate code 4490, call when arriving" class="input w-full" />
       </div>
 
@@ -2330,8 +2330,8 @@ function filterCustList(val){
   if (matches.length){
     list.innerHTML = matches.slice(0,6).map(c => `
       <div onclick="selectCustomer(${c.id})" class="px-3 py-2 hover:bg-ink-50 cursor-pointer border-b border-ink-200/60 last:border-0">
-        <div class="text-[13px] font-medium">${c.name}</div>
-        <div class="text-[11.5px] text-ink-500">${c.addr} · ${c.phone}</div>
+        <div class="text-[15px] font-medium">${c.name}</div>
+        <div class="text-[13px] text-ink-500">${c.addr} · ${c.phone}</div>
       </div>`).join('');
     list.classList.remove('hidden'); newBtn.classList.add('hidden');
   } else {
@@ -2369,7 +2369,7 @@ function renderToiletPicker(){
   const block = document.getElementById('toilet-block'); const label = document.getElementById('toilet-label'); const opts = document.getElementById('toilet-options');
   if (!block) return;
   if (!stopState.customer){
-    opts.innerHTML = `<div class="text-[12.5px] text-ink-500 italic p-3 bg-ink-50 border border-ink-200 rounded">Pick a customer first.</div>`;
+    opts.innerHTML = `<div class="text-[14px] text-ink-500 italic p-3 bg-ink-50 border border-ink-200 rounded">Pick a customer first.</div>`;
     return;
   }
   const t = stopState.serviceType;
@@ -2404,7 +2404,7 @@ function renderToiletPicker(){
         <option>Mixed (specify in notes)</option>
       </select>
     </div>
-    <div class="text-[11.5px] text-ink-500 mt-1.5">${helperText}</div>`;
+    <div class="text-[13px] text-ink-500 mt-1.5">${helperText}</div>`;
   if (!stopState.unitType) stopState.unitType = 'Standard toilet';
 }
 function submitInlineStop2(driver){
@@ -2440,17 +2440,17 @@ function nowStr(){ const d = new Date(); return d.toLocaleTimeString([], { hour:
 function renderTodaysChanges(){
   const el = document.getElementById('changes-feed'); if (!el) return;
   if (typeof isViewingToday === 'function' && !isViewingToday()){
-    el.innerHTML = `<div class="text-[12px] text-ink-500 italic p-3 leading-relaxed">Showing planned route for ${formatDispatchLabel()}.<br><br>Drivers won't see this until 6am that day. Greg can preview and adjust here.</div>`;
+    el.innerHTML = `<div class="text-[13.5px] text-ink-500 italic p-3 leading-relaxed">Showing planned route for ${formatDispatchLabel()}.<br><br>Drivers won't see this until 6am that day. Greg can preview and adjust here.</div>`;
     return;
   }
   if (!todaysChanges.length){
-    el.innerHTML = `<div class="text-[12px] text-ink-500 italic p-3">No changes yet today.</div>`;
+    el.innerHTML = `<div class="text-[13.5px] text-ink-500 italic p-3">No changes yet today.</div>`;
     return;
   }
   el.innerHTML = todaysChanges.slice(0,8).map(c => `
     <div class="px-3 py-2 border-b border-ink-200/70 last:border-0 flex items-start gap-2">
-      <div class="text-[11px] text-ink-500 w-12 shrink-0 mt-0.5">${c.time}</div>
-      <div class="text-[12px] ${c.kind==='retire'?'text-amber-800 font-semibold':'text-ink-700'}">${c.text}</div>
+      <div class="text-[12.5px] text-ink-500 w-12 shrink-0 mt-0.5">${c.time}</div>
+      <div class="text-[13.5px] ${c.kind==='retire'?'text-amber-800 font-semibold':'text-ink-700'}">${c.text}</div>
     </div>`).join('');
 }
 
@@ -2471,37 +2471,37 @@ function renderDriver(){
   document.getElementById('active-stop').innerHTML = `
     <div class="border border-ink-200 rounded-lg p-4">
       <div class="flex items-center justify-between mb-1.5">
-        <div class="text-[10.5px] font-semibold text-ink-500 uppercase tracking-wider">Now serving · stop 4 of 8</div>
+        <div class="text-[11.5px] font-semibold text-ink-500 uppercase tracking-wider">Now serving · stop 4 of 8</div>
         ${tagFor(driverActive.type)}
       </div>
-      <div class="text-[15px] font-semibold leading-tight">${driverActive.cust}</div>
-      <div class="text-[12.5px] text-ink-700 mt-0.5">${driverActive.addr}</div>
-      <div class="text-[11.5px] text-ink-500 mt-0.5">${driverActive.units} · ETA ${driverActive.etaMin} min</div>
-      ${driverActive.notes ? `<div class="text-[12px] bg-amber-50 border border-amber-200 rounded p-2 mt-2.5"><i data-lucide="alert-triangle" class="ico-sm inline-block align-text-bottom mr-1 text-amber-700"></i>${driverActive.notes}</div>` : ''}
-      <button onclick="navigateNow()" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded mt-3 text-[14px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate</button>
+      <div class="text-[17px] font-semibold leading-tight">${driverActive.cust}</div>
+      <div class="text-[14px] text-ink-700 mt-0.5">${driverActive.addr}</div>
+      <div class="text-[13px] text-ink-500 mt-0.5">${driverActive.units} · ETA ${driverActive.etaMin} min</div>
+      ${driverActive.notes ? `<div class="text-[13.5px] bg-amber-50 border border-amber-200 rounded p-2 mt-2.5"><i data-lucide="alert-triangle" class="ico-sm inline-block align-text-bottom mr-1 text-amber-700"></i>${driverActive.notes}</div>` : ''}
+      <button onclick="navigateNow()" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded mt-3 text-[16px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate</button>
       <div class="grid grid-cols-3 gap-1.5 mt-1.5">
-        <button onclick="markDone('cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded font-semibold text-[12.5px]">Cleaned</button>
-        <button onclick="markDone('delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-2.5 rounded font-semibold text-[12.5px]">Delivered</button>
-        <button onclick="markDone('picked up')" class="bg-amber-700 hover:bg-amber-800 text-white py-2.5 rounded font-semibold text-[12.5px]">Picked up</button>
+        <button onclick="markDone('cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded font-semibold text-[14px]">Cleaned</button>
+        <button onclick="markDone('delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-2.5 rounded font-semibold text-[14px]">Delivered</button>
+        <button onclick="markDone('picked up')" class="bg-amber-700 hover:bg-amber-800 text-white py-2.5 rounded font-semibold text-[14px]">Picked up</button>
       </div>
-      <button onclick="openReportProblem()" class="w-full text-ink-500 text-[12px] py-2 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
+      <button onclick="openReportProblem()" class="w-full text-ink-500 text-[13.5px] py-2 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
     </div>`;
   document.getElementById('driver-list').innerHTML = upNext.map((s,i)=>`
     <div class="border border-ink-200 rounded px-2.5 py-2 flex items-center gap-2.5">
-      <div class="text-[10.5px] font-mono text-ink-500 w-5">${i+5}</div>
+      <div class="text-[11.5px] font-mono text-ink-500 w-5">${i+5}</div>
       <div class="flex-1">
-        <div class="text-[13px] font-semibold leading-tight">${s.cust}</div>
-        <div class="text-[11px] text-ink-500">${s.addr}</div>
+        <div class="text-[15px] font-semibold leading-tight">${s.cust}</div>
+        <div class="text-[12.5px] text-ink-500">${s.addr}</div>
       </div>
-      <div class="text-right">${tagFor(s.type)}<div class="text-[10.5px] text-ink-500 mt-0.5">${s.tag}</div></div>
+      <div class="text-right">${tagFor(s.type)}<div class="text-[11.5px] text-ink-500 mt-0.5">${s.tag}</div></div>
     </div>`).join('');
   document.getElementById('driver-done').innerHTML = done.map(s=>`
     <div class="border border-ink-200 rounded px-2.5 py-2 flex items-start gap-2.5">
       <div class="text-emerald-700 mt-0.5"><i data-lucide="check" class="ico-sm"></i></div>
       <div class="flex-1">
-        <div class="text-[13px] font-semibold line-through leading-tight">${s.cust}</div>
-        <div class="text-[11px] text-ink-500">${s.addr}</div>
-        ${s.retired ? '<div class="text-[11px] text-amber-700 font-semibold mt-0.5">Retired from route</div>' : ''}
+        <div class="text-[15px] font-semibold line-through leading-tight">${s.cust}</div>
+        <div class="text-[12.5px] text-ink-500">${s.addr}</div>
+        ${s.retired ? '<div class="text-[12.5px] text-amber-700 font-semibold mt-0.5">Retired from route</div>' : ''}
       </div>
       ${tagFor(s.type)}
     </div>`).join('');
@@ -2532,58 +2532,58 @@ function renderDriverIpad(){
   el.innerHTML = `
     <div class="flex items-center justify-between mb-5">
       <div>
-        <div class="text-[12.5px] text-ink-500">Friday, May 8 · East route</div>
+        <div class="text-[14px] text-ink-500">Friday, May 8 · East route</div>
         <div class="text-2xl font-semibold tracking-tight">Greg's route</div>
       </div>
       <div class="text-right">
-        <div class="text-[16px] font-semibold">3 of 7 done</div>
-        <div class="text-[12.5px] text-ink-500">est. 1h 45m left</div>
+        <div class="text-[18px] font-semibold">3 of 7 done</div>
+        <div class="text-[14px] text-ink-500">est. 1h 45m left</div>
       </div>
     </div>
     <div class="grid grid-cols-5 gap-4">
       <div class="col-span-3">
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Now serving · stop 4 of 7</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Now serving · stop 4 of 7</div>
         <div class="bg-white border border-ink-200 rounded-lg p-5">
           <div class="flex items-center justify-between mb-1.5">
             ${tagFor(driverActive.type)}
-            <div class="text-[11px] text-ink-500">ETA ${driverActive.etaMin} min</div>
+            <div class="text-[12.5px] text-ink-500">ETA ${driverActive.etaMin} min</div>
           </div>
-          <div class="text-[20px] font-semibold leading-tight">${driverActive.cust}</div>
-          <div class="text-[13.5px] text-ink-700 mt-1">${driverActive.addr}</div>
-          <div class="text-[12.5px] text-ink-500 mt-0.5">${driverActive.units}</div>
-          ${driverActive.notes ? `<div class="text-[12.5px] bg-amber-50 border border-amber-200 rounded p-3 mt-3 inline-flex items-start gap-2"><i data-lucide="alert-triangle" class="ico-sm text-amber-700 mt-0.5"></i><span>${driverActive.notes}</span></div>` : ''}
-          <button onclick="navigateNow()" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-4 rounded-lg mt-4 text-[16px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate to stop</button>
+          <div class="text-[22px] font-semibold leading-tight">${driverActive.cust}</div>
+          <div class="text-[15px] text-ink-700 mt-1">${driverActive.addr}</div>
+          <div class="text-[14px] text-ink-500 mt-0.5">${driverActive.units}</div>
+          ${driverActive.notes ? `<div class="text-[14px] bg-amber-50 border border-amber-200 rounded p-3 mt-3 inline-flex items-start gap-2"><i data-lucide="alert-triangle" class="ico-sm text-amber-700 mt-0.5"></i><span>${driverActive.notes}</span></div>` : ''}
+          <button onclick="navigateNow()" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-4 rounded-lg mt-4 text-[18px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate to stop</button>
           <div class="grid grid-cols-3 gap-2 mt-2">
-            <button onclick="markDone('cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-3.5 rounded font-semibold text-[14px]">Cleaned</button>
-            <button onclick="markDone('delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-3.5 rounded font-semibold text-[14px]">Delivered</button>
-            <button onclick="markDone('picked up')" class="bg-amber-700 hover:bg-amber-800 text-white py-3.5 rounded font-semibold text-[14px]">Picked up</button>
+            <button onclick="markDone('cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-3.5 rounded font-semibold text-[16px]">Cleaned</button>
+            <button onclick="markDone('delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-3.5 rounded font-semibold text-[16px]">Delivered</button>
+            <button onclick="markDone('picked up')" class="bg-amber-700 hover:bg-amber-800 text-white py-3.5 rounded font-semibold text-[16px]">Picked up</button>
           </div>
-          <button onclick="openReportProblem()" class="w-full text-ink-500 text-[13px] py-2.5 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
+          <button onclick="openReportProblem()" class="w-full text-ink-500 text-[15px] py-2.5 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
         </div>
       </div>
       <div class="col-span-2">
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Today's route</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Today's route</div>
         <div class="bg-white border border-ink-200 rounded-lg overflow-hidden">
-          <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[11px] text-ink-700 font-semibold uppercase tracking-wider">Up next</div>
+          <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[12.5px] text-ink-700 font-semibold uppercase tracking-wider">Up next</div>
           ${upNext.map((s,i) => `
             <div class="px-3 py-2 border-b border-ink-200 last:border-0 flex items-center gap-2.5">
-              <div class="text-[11px] font-mono text-ink-500 w-6">${i+5}</div>
+              <div class="text-[12.5px] font-mono text-ink-500 w-6">${i+5}</div>
               <div class="flex-1 min-w-0">
-                <div class="text-[13px] font-semibold leading-tight truncate">${s.cust}</div>
-                <div class="text-[11.5px] text-ink-500 truncate">${s.addr}</div>
+                <div class="text-[15px] font-semibold leading-tight truncate">${s.cust}</div>
+                <div class="text-[13px] text-ink-500 truncate">${s.addr}</div>
               </div>
               <div class="text-right shrink-0">
                 ${tagFor(s.type)}
-                <div class="text-[10.5px] text-ink-500 mt-0.5">${s.tag||''}</div>
+                <div class="text-[11.5px] text-ink-500 mt-0.5">${s.tag||''}</div>
               </div>
             </div>`).join('')}
-          <div class="px-3 py-2 bg-ink-50 border-t border-ink-200 text-[11px] text-ink-700 font-semibold uppercase tracking-wider">Completed</div>
+          <div class="px-3 py-2 bg-ink-50 border-t border-ink-200 text-[12.5px] text-ink-700 font-semibold uppercase tracking-wider">Completed</div>
           ${done.map(s => `
             <div class="px-3 py-2 border-b border-ink-200 last:border-0 flex items-center gap-2.5 opacity-60">
               <div class="text-emerald-700"><i data-lucide="check" class="ico-sm"></i></div>
               <div class="flex-1 min-w-0">
-                <div class="text-[12.5px] font-semibold line-through truncate">${s.cust}</div>
-                <div class="text-[11px] text-ink-500 truncate">${s.addr}</div>
+                <div class="text-[14px] font-semibold line-through truncate">${s.cust}</div>
+                <div class="text-[12.5px] text-ink-500 truncate">${s.addr}</div>
               </div>
               ${tagFor(s.type)}
             </div>`).join('')}
@@ -2608,24 +2608,24 @@ function showPickupConfirm(){
   const units = driverActive.units || '';
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 sticky top-0 bg-white">
-      <div class="font-semibold text-[15px]">Confirm pickup</div>
-      <div class="text-[12.5px] text-ink-500">${cust}</div>
+      <div class="font-semibold text-[17px]">Confirm pickup</div>
+      <div class="text-[14px] text-ink-500">${cust}</div>
     </div>
     <div class="px-5 py-4 space-y-4">
       <div class="border border-ink-200 rounded p-3 bg-ink-50/40">
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Picking up</div>
-        <div class="text-[14px] font-semibold">${units || 'All units at this site'}</div>
-        <div class="text-[11.5px] text-ink-500 mt-0.5">at ${cust}</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Picking up</div>
+        <div class="text-[16px] font-semibold">${units || 'All units at this site'}</div>
+        <div class="text-[13px] text-ink-500 mt-0.5">at ${cust}</div>
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Did you pick up everything that was deployed here?</label>
+        <label class="block text-[14px] font-medium mb-1">Did you pick up everything that was deployed here?</label>
         <div class="space-y-1.5 mt-2">
-          <label class="flex items-center gap-2 text-[13px] p-2.5 border border-ink-900 bg-ink-50 rounded cursor-pointer">
+          <label class="flex items-center gap-2 text-[15px] p-2.5 border border-ink-900 bg-ink-50 rounded cursor-pointer">
             <input type="radio" name="full" value="all" checked />
             <span><strong>Yes</strong> — picked up everything (${units || 'all units'})</span>
           </label>
-          <label class="flex items-center gap-2 text-[13px] p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
+          <label class="flex items-center gap-2 text-[15px] p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
             <input type="radio" name="full" value="partial" />
             <span><strong>Partial</strong> — only some units, others stayed on site</span>
           </label>
@@ -2633,23 +2633,23 @@ function showPickupConfirm(){
       </div>
 
       <div class="border border-amber-300 bg-amber-50 rounded p-3">
-        <div class="text-[12.5px] font-semibold text-amber-900 mb-1">Is the site empty now?</div>
-        <p class="text-[11.5px] text-amber-800 mb-2.5">If yes, <strong>${cust}</strong> will be retired from the recurring route — no more weekly stops auto-generated. Today's pickup stays on the route history.</p>
+        <div class="text-[14px] font-semibold text-amber-900 mb-1">Is the site empty now?</div>
+        <p class="text-[13px] text-amber-800 mb-2.5">If yes, <strong>${cust}</strong> will be retired from the recurring route — no more weekly stops auto-generated. Today's pickup stays on the route history.</p>
         <div class="space-y-1.5">
-          <label class="flex items-center gap-2 text-[13px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
+          <label class="flex items-center gap-2 text-[15px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
             <input type="radio" name="retire" value="yes" checked /><span><strong>Yes</strong> — site is empty, retire from route</span>
           </label>
-          <label class="flex items-center gap-2 text-[13px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
+          <label class="flex items-center gap-2 text-[15px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
             <input type="radio" name="retire" value="partial" /><span><strong>Some units still here</strong> — keep schedule active</span>
           </label>
-          <label class="flex items-center gap-2 text-[13px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
+          <label class="flex items-center gap-2 text-[15px] bg-white p-2.5 rounded border border-amber-200 cursor-pointer">
             <input type="radio" name="retire" value="no" /><span><strong>Replacement coming</strong> — keep schedule active</span>
           </label>
         </div>
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Notes <span class="text-ink-500 font-normal">(optional)</span></label>
+        <label class="block text-[14px] font-medium mb-1">Notes <span class="text-ink-500 font-normal">(optional)</span></label>
         <input id="pickup-notes" placeholder="e.g. Project finished, Greg said this was the last week" class="input w-full" />
       </div>
       <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
@@ -2689,67 +2689,67 @@ function openReportProblem(){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">Report a problem</div>
-        <div class="text-[12.5px] text-ink-500">${cust}</div>
+        <div class="font-semibold text-[17px]">Report a problem</div>
+        <div class="text-[14px] text-ink-500">${cust}</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <div class="px-5 py-4 space-y-4">
       <div>
-        <label class="block text-[12.5px] font-medium mb-2">What happened?</label>
+        <label class="block text-[14px] font-medium mb-2">What happened?</label>
         <div class="grid grid-cols-2 gap-2" id="problem-types">
-          <button type="button" data-prob="access"   onclick="setProblem('access')"   class="prob-btn ring-1 ring-ink-900 bg-ink-50 border border-ink-200 rounded p-3 text-left text-[12.5px]">
+          <button type="button" data-prob="access"   onclick="setProblem('access')"   class="prob-btn ring-1 ring-ink-900 bg-ink-50 border border-ink-200 rounded p-3 text-left text-[14px]">
             <div class="font-semibold mb-0.5">Access blocked</div>
-            <div class="text-[11px] text-ink-500">Gate locked, can't reach unit, no key</div>
+            <div class="text-[12.5px] text-ink-500">Gate locked, can't reach unit, no key</div>
           </button>
-          <button type="button" data-prob="damage"   onclick="setProblem('damage')"   class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+          <button type="button" data-prob="damage"   onclick="setProblem('damage')"   class="prob-btn border border-ink-200 rounded p-3 text-left text-[14px] hover:bg-ink-50">
             <div class="font-semibold mb-0.5">Damage found</div>
-            <div class="text-[11px] text-ink-500">Vandalism, tipped over, broken parts</div>
+            <div class="text-[12.5px] text-ink-500">Vandalism, tipped over, broken parts</div>
           </button>
-          <button type="button" data-prob="missing"  onclick="setProblem('missing')"  class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+          <button type="button" data-prob="missing"  onclick="setProblem('missing')"  class="prob-btn border border-ink-200 rounded p-3 text-left text-[14px] hover:bg-ink-50">
             <div class="font-semibold mb-0.5">Unit missing</div>
-            <div class="text-[11px] text-ink-500">Stolen, moved, can't find it</div>
+            <div class="text-[12.5px] text-ink-500">Stolen, moved, can't find it</div>
           </button>
-          <button type="button" data-prob="customer" onclick="setProblem('customer')" class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+          <button type="button" data-prob="customer" onclick="setProblem('customer')" class="prob-btn border border-ink-200 rounded p-3 text-left text-[14px] hover:bg-ink-50">
             <div class="font-semibold mb-0.5">Customer issue</div>
-            <div class="text-[11px] text-ink-500">Refused service, complaint, dispute</div>
+            <div class="text-[12.5px] text-ink-500">Refused service, complaint, dispute</div>
           </button>
-          <button type="button" data-prob="overflow" onclick="setProblem('overflow')" class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+          <button type="button" data-prob="overflow" onclick="setProblem('overflow')" class="prob-btn border border-ink-200 rounded p-3 text-left text-[14px] hover:bg-ink-50">
             <div class="font-semibold mb-0.5">Needs pump-out</div>
-            <div class="text-[11px] text-ink-500">Tank overfull, can't clean as-is</div>
+            <div class="text-[12.5px] text-ink-500">Tank overfull, can't clean as-is</div>
           </button>
-          <button type="button" data-prob="other"    onclick="setProblem('other')"    class="prob-btn border border-ink-200 rounded p-3 text-left text-[12.5px] hover:bg-ink-50">
+          <button type="button" data-prob="other"    onclick="setProblem('other')"    class="prob-btn border border-ink-200 rounded p-3 text-left text-[14px] hover:bg-ink-50">
             <div class="font-semibold mb-0.5">Something else</div>
-            <div class="text-[11px] text-ink-500">Tell Greg in your own words</div>
+            <div class="text-[12.5px] text-ink-500">Tell Greg in your own words</div>
           </button>
         </div>
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Photo <span class="text-ink-500 font-normal">(optional but helpful for damage / missing)</span></label>
-        <button type="button" onclick="simulatePhoto()" id="photo-btn" class="w-full border border-dashed border-ink-300 rounded py-3 text-[12.5px] text-ink-500 hover:border-ink-500 hover:text-ink-900 inline-flex items-center justify-center gap-2"><i data-lucide="camera" class="ico-sm"></i>Take a photo</button>
+        <label class="block text-[14px] font-medium mb-1">Photo <span class="text-ink-500 font-normal">(optional but helpful for damage / missing)</span></label>
+        <button type="button" onclick="simulatePhoto()" id="photo-btn" class="w-full border border-dashed border-ink-300 rounded py-3 text-[14px] text-ink-500 hover:border-ink-500 hover:text-ink-900 inline-flex items-center justify-center gap-2"><i data-lucide="camera" class="ico-sm"></i>Take a photo</button>
         <div id="photo-preview" class="hidden mt-2"></div>
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Notes for Greg <span class="text-ink-500 font-normal">(optional)</span></label>
+        <label class="block text-[14px] font-medium mb-1">Notes for Greg <span class="text-ink-500 font-normal">(optional)</span></label>
         <textarea id="prob-notes" rows="3" placeholder="Any details that'll help Greg sort this out…" class="input w-full leading-relaxed"></textarea>
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-2">What happens next?</label>
+        <label class="block text-[14px] font-medium mb-2">What happens next?</label>
         <div class="space-y-1.5">
           <label class="flex items-center gap-3 p-2.5 border border-ink-900 bg-ink-50 rounded cursor-pointer">
             <input type="radio" name="next" value="skip" checked />
-            <div><div class="font-medium text-[13px]">Skip this stop</div><div class="text-[11.5px] text-ink-500">Mark unserviced and move on. Greg gets notified.</div></div>
+            <div><div class="font-medium text-[15px]">Skip this stop</div><div class="text-[13px] text-ink-500">Mark unserviced and move on. Greg gets notified.</div></div>
           </label>
           <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
             <input type="radio" name="next" value="retry" />
-            <div><div class="font-medium text-[13px]">Try again later today</div><div class="text-[11.5px] text-ink-500">Push to end of route — circle back after Greg responds.</div></div>
+            <div><div class="font-medium text-[15px]">Try again later today</div><div class="text-[13px] text-ink-500">Push to end of route — circle back after Greg responds.</div></div>
           </label>
           <label class="flex items-center gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
             <input type="radio" name="next" value="continue" />
-            <div><div class="font-medium text-[13px]">Continue cleaning anyway</div><div class="text-[11.5px] text-ink-500">Just logging the issue — service will still be marked complete.</div></div>
+            <div><div class="font-medium text-[15px]">Continue cleaning anyway</div><div class="text-[13px] text-ink-500">Just logging the issue — service will still be marked complete.</div></div>
           </label>
         </div>
       </div>
@@ -2777,8 +2777,8 @@ function simulatePhoto(){
   preview.innerHTML = `
     <div class="border border-ink-200 rounded p-2 bg-ink-50 flex items-center gap-3">
       <div class="w-16 h-16 bg-ink-200 rounded grid place-items-center text-ink-500"><i data-lucide="image"></i></div>
-      <div class="flex-1 text-[12px]"><div class="font-medium">Photo attached</div><div class="text-ink-500">Will be uploaded with the report.</div></div>
-      <button onclick="removePhoto()" class="text-ink-500 hover:text-red-700 text-[11.5px]">Remove</button>
+      <div class="flex-1 text-[13.5px]"><div class="font-medium">Photo attached</div><div class="text-ink-500">Will be uploaded with the report.</div></div>
+      <button onclick="removePhoto()" class="text-ink-500 hover:text-red-700 text-[13px]">Remove</button>
     </div>`;
   refreshIcons();
 }
@@ -2881,45 +2881,45 @@ function portalOverview(c, d){
   const nextService = '2026-05-11 (Mon)'; // pretend
   return `
     <h1 class="text-xl font-semibold tracking-tight mb-1">Welcome back, ${c.name}</h1>
-    <p class="text-ink-500 text-[13px] mb-5">Customer since ${d.sinceDate} · ${d.locations.filter(l=>l.active).length} active location${d.locations.filter(l=>l.active).length===1?'':'s'}</p>
+    <p class="text-ink-500 text-[15px] mb-5">Customer since ${d.sinceDate} · ${d.locations.filter(l=>l.active).length} active location${d.locations.filter(l=>l.active).length===1?'':'s'}</p>
 
     <div class="grid grid-cols-3 gap-3 mb-5">
       <div class="card p-4">
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Next service</div>
-        <div class="text-[15px] font-semibold">${nextService}</div>
-        <div class="text-[12px] text-ink-500 mt-0.5">Monrovia Manor · Bradley</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Next service</div>
+        <div class="text-[17px] font-semibold">${nextService}</div>
+        <div class="text-[13.5px] text-ink-500 mt-0.5">Monrovia Manor · Bradley</div>
       </div>
       <div class="card p-4">
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Active sites</div>
-        <div class="text-[15px] font-semibold">${d.locations.filter(l=>l.active).length}</div>
-        <div class="text-[12px] text-ink-500 mt-0.5">${d.locations.filter(l=>l.active).map(l=>l.units).filter(Boolean).join(' · ')}</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Active sites</div>
+        <div class="text-[17px] font-semibold">${d.locations.filter(l=>l.active).length}</div>
+        <div class="text-[13.5px] text-ink-500 mt-0.5">${d.locations.filter(l=>l.active).map(l=>l.units).filter(Boolean).join(' · ')}</div>
       </div>
       <div class="card p-4">
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Balance due</div>
-        <div class="text-[15px] font-semibold ${totalDue>0?'text-brand-600':''}">${totalDue>0?'$'+totalDue.toFixed(2):'$0.00'}</div>
-        <div class="text-[12px] text-ink-500 mt-0.5">${open?'Due '+open.due:'Up to date'}</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1">Balance due</div>
+        <div class="text-[17px] font-semibold ${totalDue>0?'text-brand-600':''}">${totalDue>0?'$'+totalDue.toFixed(2):'$0.00'}</div>
+        <div class="text-[13.5px] text-ink-500 mt-0.5">${open?'Due '+open.due:'Up to date'}</div>
       </div>
     </div>
 
     <div class="grid grid-cols-2 gap-4">
       <div>
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Recent service</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Recent service</div>
         <div class="card overflow-hidden">
           ${recent.map((h,i) => `
-            <div class="px-3 py-2.5 ${i>0?'border-t border-ink-200':''} flex items-center gap-3 text-[12.5px]">
-              <div class="font-mono text-[11.5px] text-ink-500 w-20">${h.date}</div>
-              <div class="flex-1"><div class="font-medium">${h.loc}</div><div class="text-[11px] text-ink-500">${h.units} · ${h.driver}</div></div>
+            <div class="px-3 py-2.5 ${i>0?'border-t border-ink-200':''} flex items-center gap-3 text-[14px]">
+              <div class="font-mono text-[13px] text-ink-500 w-20">${h.date}</div>
+              <div class="flex-1"><div class="font-medium">${h.loc}</div><div class="text-[12.5px] text-ink-500">${h.units} · ${h.driver}</div></div>
               ${tagFor(h.type)}
             </div>`).join('')}
         </div>
       </div>
       <div>
-        <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Quick actions</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Quick actions</div>
         <div class="space-y-2">
-          <button onclick="openOrderUnits()" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="plus" class="text-ink-700"></i><div><div class="font-semibold text-[13px]">Order more toilets</div><div class="text-[11.5px] text-ink-500">Add to existing site or a new site</div></div></button>
-          <button onclick="openExtraCleaning()" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="droplet" class="text-ink-700"></i><div><div class="font-semibold text-[13px]">Request a cleaning</div><div class="text-[11.5px] text-ink-500">Extra, or come sooner than scheduled</div></div></button>
-          <button onclick="customerNav('billing')" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="credit-card" class="text-ink-700"></i><div><div class="font-semibold text-[13px]">View invoices &amp; pay</div><div class="text-[11.5px] text-ink-500">Synced from QuickBooks</div></div></button>
-          <button onclick="openSchedulePickup()" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="calendar" class="text-ink-700"></i><div><div class="font-semibold text-[13px]">Schedule a pickup</div><div class="text-[11.5px] text-ink-500">When the project wraps up</div></div></button>
+          <button onclick="openOrderUnits()" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="plus" class="text-ink-700"></i><div><div class="font-semibold text-[15px]">Order more toilets</div><div class="text-[13px] text-ink-500">Add to existing site or a new site</div></div></button>
+          <button onclick="openExtraCleaning()" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="droplet" class="text-ink-700"></i><div><div class="font-semibold text-[15px]">Request a cleaning</div><div class="text-[13px] text-ink-500">Extra, or come sooner than scheduled</div></div></button>
+          <button onclick="customerNav('billing')" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="credit-card" class="text-ink-700"></i><div><div class="font-semibold text-[15px]">View invoices &amp; pay</div><div class="text-[13px] text-ink-500">Synced from QuickBooks</div></div></button>
+          <button onclick="openSchedulePickup()" class="card card-hover p-3 w-full text-left flex items-center gap-3"><i data-lucide="calendar" class="text-ink-700"></i><div><div class="font-semibold text-[15px]">Schedule a pickup</div><div class="text-[13px] text-ink-500">When the project wraps up</div></div></button>
         </div>
       </div>
     </div>`;
@@ -2937,21 +2937,21 @@ function portalLocations(c, d){
       <h1 class="text-xl font-semibold tracking-tight">Locations &amp; units</h1>
       <button onclick="customerNav('request')" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="plus" class="ico-sm"></i>Add location or units</button>
     </div>
-    <p class="text-ink-500 text-[13px] mb-4">Sites where Valley currently maintains your toilets.</p>
+    <p class="text-ink-500 text-[15px] mb-4">Sites where Valley currently maintains your toilets.</p>
     <div class="space-y-3">
       ${d.locations.map(loc => `
         <div class="card p-4 ${!loc.active?'opacity-60':''}">
           <div class="flex items-start justify-between mb-2">
             <div>
-              <div class="font-semibold text-[14px]">${loc.label}${!loc.active?` <span class="text-[10px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1.5 py-0.5 rounded ml-1 font-semibold">Closed ${loc.endedAt||''}</span>`:''}</div>
-              <div class="text-[12.5px] text-ink-500">${loc.address}</div>
-              <div class="text-[11.5px] text-ink-500 mt-0.5">Active since ${loc.started}</div>
+              <div class="font-semibold text-[16px]">${loc.label}${!loc.active?` <span class="text-[11px] uppercase tracking-wider bg-ink-100 text-ink-700 px-1.5 py-0.5 rounded ml-1 font-semibold">Closed ${loc.endedAt||''}</span>`:''}</div>
+              <div class="text-[14px] text-ink-500">${loc.address}</div>
+              <div class="text-[13px] text-ink-500 mt-0.5">Active since ${loc.started}</div>
             </div>
-            ${loc.active ? '<button class="btn-secondary text-[12px]">Edit</button>' : ''}
+            ${loc.active ? '<button class="btn-secondary text-[13.5px]">Edit</button>' : ''}
           </div>
           ${loc.units ? `
-            <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mt-2 mb-1">Units deployed</div>
-            <div class="text-[12.5px] text-ink-700">${loc.units}</div>` : '<div class="text-[12px] text-ink-500 italic mt-2">No units currently deployed</div>'}
+            <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mt-2 mb-1">Units deployed</div>
+            <div class="text-[14px] text-ink-700">${loc.units}</div>` : '<div class="text-[13.5px] text-ink-500 italic mt-2">No units currently deployed</div>'}
         </div>`).join('')}
     </div>`;
 }
@@ -2962,10 +2962,10 @@ function portalHistory(c, d){
       <h1 class="text-xl font-semibold tracking-tight">Service history</h1>
       <button onclick="openCustomerReport(${c.id})" class="btn-primary inline-flex items-center gap-1.5"><i data-lucide="file-text" class="ico-sm"></i>Download branded report</button>
     </div>
-    <p class="text-ink-500 text-[13px] mb-4">Every drop-off, cleaning, and pickup across your locations.</p>
+    <p class="text-ink-500 text-[15px] mb-4">Every drop-off, cleaning, and pickup across your locations.</p>
     <div class="card overflow-hidden">
-      <table class="w-full text-[12.5px]">
-        <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+      <table class="w-full text-[14px]">
+        <thead class="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider">
           <tr>
             <th class="text-left px-3 py-2 font-semibold w-28">Date</th>
             <th class="text-left px-3 py-2 font-semibold">Service</th>
@@ -2977,10 +2977,10 @@ function portalHistory(c, d){
         <tbody>
           ${d.history.map(h => `
             <tr class="border-t border-ink-200 hover:bg-ink-50">
-              <td class="px-3 py-2 font-mono text-[11.5px]">${h.date}</td>
+              <td class="px-3 py-2 font-mono text-[13px]">${h.date}</td>
               <td class="px-3 py-2">${tagFor(h.type)}</td>
               <td class="px-3 py-2">${h.loc}</td>
-              <td class="px-3 py-2 text-[12px]">${h.units}</td>
+              <td class="px-3 py-2 text-[13.5px]">${h.units}</td>
               <td class="px-3 py-2">${h.driver}</td>
             </tr>`).join('')}
         </tbody>
@@ -2991,35 +2991,35 @@ function portalHistory(c, d){
 function portalRequest(c, d){
   return `
     <h1 class="text-xl font-semibold tracking-tight mb-1">Request service</h1>
-    <p class="text-ink-500 text-[13px] mb-5">Submit a request and Kim will follow up by phone or text within a few business hours.</p>
+    <p class="text-ink-500 text-[15px] mb-5">Submit a request and Kim will follow up by phone or text within a few business hours.</p>
 
     <div class="grid grid-cols-2 gap-3 mb-6">
       <button onclick="openOrderUnits()" class="card card-hover p-4 text-left">
-        <div class="flex items-center gap-2 mb-1"><i data-lucide="plus" class="text-ink-700"></i><span class="font-semibold text-[13.5px]">Order more toilets</span></div>
-        <div class="text-[12.5px] text-ink-500 leading-snug">Add units to an existing location, or set up a new location.</div>
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="plus" class="text-ink-700"></i><span class="font-semibold text-[15px]">Order more toilets</span></div>
+        <div class="text-[14px] text-ink-500 leading-snug">Add units to an existing location, or set up a new location.</div>
       </button>
       <button onclick="openExtraCleaning()" class="card card-hover p-4 text-left">
-        <div class="flex items-center gap-2 mb-1"><i data-lucide="droplet" class="text-ink-700"></i><span class="font-semibold text-[13.5px]">Request a cleaning</span></div>
-        <div class="text-[12.5px] text-ink-500 leading-snug">Extra cleaning, or come sooner than your next scheduled one (event, big crew, inspection).</div>
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="droplet" class="text-ink-700"></i><span class="font-semibold text-[15px]">Request a cleaning</span></div>
+        <div class="text-[14px] text-ink-500 leading-snug">Extra cleaning, or come sooner than your next scheduled one (event, big crew, inspection).</div>
       </button>
       <button onclick="openSchedulePickup()" class="card card-hover p-4 text-left">
-        <div class="flex items-center gap-2 mb-1"><i data-lucide="calendar" class="text-ink-700"></i><span class="font-semibold text-[13.5px]">Schedule a pickup</span></div>
-        <div class="text-[12.5px] text-ink-500 leading-snug">Project wrapping up? Pick a date for Greg to come grab the units.</div>
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="calendar" class="text-ink-700"></i><span class="font-semibold text-[15px]">Schedule a pickup</span></div>
+        <div class="text-[14px] text-ink-500 leading-snug">Project wrapping up? Pick a date for Greg to come grab the units.</div>
       </button>
       <button onclick="openContact()" class="card card-hover p-4 text-left">
-        <div class="flex items-center gap-2 mb-1"><i data-lucide="message-square" class="text-ink-700"></i><span class="font-semibold text-[13.5px]">Ask a question</span></div>
-        <div class="text-[12.5px] text-ink-500 leading-snug">Need to change something or have a concern? We'll respond same-day.</div>
+        <div class="flex items-center gap-2 mb-1"><i data-lucide="message-square" class="text-ink-700"></i><span class="font-semibold text-[15px]">Ask a question</span></div>
+        <div class="text-[14px] text-ink-500 leading-snug">Need to change something or have a concern? We'll respond same-day.</div>
       </button>
     </div>
 
-    <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Recent requests</div>
+    <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Recent requests</div>
     <div class="card overflow-hidden">
       ${portalRequests.map((r,i) => `
-        <div class="px-3 py-2.5 ${i>0?'border-t border-ink-200':''} flex items-start gap-3 text-[12.5px]">
-          <div class="font-mono text-[11.5px] text-ink-500 w-20 mt-0.5">${r.when}</div>
+        <div class="px-3 py-2.5 ${i>0?'border-t border-ink-200':''} flex items-start gap-3 text-[14px]">
+          <div class="font-mono text-[13px] text-ink-500 w-20 mt-0.5">${r.when}</div>
           <div class="flex-1">
             <div class="font-medium">${r.summary}</div>
-            <div class="text-[11.5px] text-ink-500 mt-0.5">${r.resolution}</div>
+            <div class="text-[13px] text-ink-500 mt-0.5">${r.resolution}</div>
           </div>
           <span class="tag tag-clean">Done</span>
         </div>`).join('')}
@@ -3032,40 +3032,40 @@ function openOrderUnits(){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">Order more toilets</div>
-        <div class="text-[12.5px] text-ink-500">${c.name}</div>
+        <div class="font-semibold text-[17px]">Order more toilets</div>
+        <div class="text-[14px] text-ink-500">${c.name}</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <form onsubmit="event.preventDefault(); closeModal(); toast('Request sent. Kim will text you to confirm pricing &amp; drop-off date.');" class="px-5 py-4 space-y-4">
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Where?</label>
+        <label class="block text-[14px] font-medium mb-1">Where?</label>
         <select class="input w-full">
           ${d.locations.filter(l=>l.active).map(l => `<option>${l.label} — ${l.address}</option>`).join('')}
           <option>+ New location (I'll provide the address)</option>
         </select>
       </div>
       <div id="new-loc-fields" class="hidden">
-        <label class="block text-[12.5px] font-medium mb-1">New location address</label>
+        <label class="block text-[14px] font-medium mb-1">New location address</label>
         <input class="input w-full" placeholder="Address, city, AL" />
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">How many?</label><input type="number" min="1" value="2" class="input w-full" /></div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Type</label>
+        <div><label class="block text-[14px] font-medium mb-1">How many?</label><input type="number" min="1" value="2" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Type</label>
           <select class="input w-full"><option>Standard</option><option>Handicap</option><option>VIP</option><option>+ Hand-wash sink</option></select>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">When do you need them?</label><input type="date" class="input w-full" /></div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Service frequency</label>
+        <div><label class="block text-[14px] font-medium mb-1">When do you need them?</label><input type="date" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Service frequency</label>
           <select class="input w-full"><option>Add to existing weekly schedule</option><option>One-time / event</option><option>Custom — Kim will set up</option></select>
         </div>
       </div>
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Notes <span class="text-ink-500 font-normal">(optional)</span></label>
+        <label class="block text-[14px] font-medium mb-1">Notes <span class="text-ink-500 font-normal">(optional)</span></label>
         <textarea rows="3" placeholder="Anything Kim should know? Gate codes, drop-off spot, billing info changes…" class="input w-full leading-relaxed"></textarea>
       </div>
-      <div class="border border-ink-200 rounded p-3 bg-ink-50/40 text-[12px] text-ink-700">
+      <div class="border border-ink-200 rounded p-3 bg-ink-50/40 text-[13.5px] text-ink-700">
         Pricing will be confirmed by Kim before delivery. Standard units $90/service, handicap $115/service.
       </div>
       <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
@@ -3081,39 +3081,39 @@ function openExtraCleaning(){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">Request a cleaning</div>
-        <div class="text-[12.5px] text-ink-500">Need a cleaning outside your usual schedule, or sooner than the next one?</div>
+        <div class="font-semibold text-[17px]">Request a cleaning</div>
+        <div class="text-[14px] text-ink-500">Need a cleaning outside your usual schedule, or sooner than the next one?</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <form onsubmit="event.preventDefault(); closeModal(); toast('Request sent. Kim will confirm timing &amp; pricing within a few hours.');" class="px-5 py-4 space-y-4">
       <div>
-        <label class="block text-[12.5px] font-medium mb-2">What do you need?</label>
+        <label class="block text-[14px] font-medium mb-2">What do you need?</label>
         <div class="space-y-1.5">
           <label class="flex items-start gap-3 p-2.5 border border-ink-900 bg-ink-50 rounded cursor-pointer">
             <input type="radio" name="clean-type" value="extra" checked class="mt-0.5" />
             <div>
-              <div class="font-medium text-[13px]">Extra cleaning</div>
-              <div class="text-[11.5px] text-ink-500">In addition to your regular schedule. Big crew week, event, inspection, etc.</div>
+              <div class="font-medium text-[15px]">Extra cleaning</div>
+              <div class="text-[13px] text-ink-500">In addition to your regular schedule. Big crew week, event, inspection, etc.</div>
             </div>
           </label>
           <label class="flex items-start gap-3 p-2.5 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
             <input type="radio" name="clean-type" value="bump" class="mt-0.5" />
             <div>
-              <div class="font-medium text-[13px]">Come sooner than scheduled</div>
-              <div class="text-[11.5px] text-ink-500">Bump up my next cleaning. We have something tomorrow / this week.</div>
+              <div class="font-medium text-[15px]">Come sooner than scheduled</div>
+              <div class="text-[13px] text-ink-500">Bump up my next cleaning. We have something tomorrow / this week.</div>
             </div>
           </label>
         </div>
       </div>
 
-      <div><label class="block text-[12.5px] font-medium mb-1">Which location?</label>
+      <div><label class="block text-[14px] font-medium mb-1">Which location?</label>
         <select class="input w-full">${d.locations.filter(l=>l.active).map(l=>`<option>${l.label} — ${l.address}</option>`).join('')}<option>All my active sites</option></select>
       </div>
 
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">Preferred date</label><input type="date" required class="input w-full" /></div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Flexibility</label>
+        <div><label class="block text-[14px] font-medium mb-1">Preferred date</label><input type="date" required class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Flexibility</label>
           <select class="input w-full">
             <option>That date specifically</option>
             <option>Earlier in the day is best</option>
@@ -3124,7 +3124,7 @@ function openExtraCleaning(){
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Why? <span class="text-ink-500 font-normal">(helps Greg prioritize)</span></label>
+        <label class="block text-[14px] font-medium mb-1">Why? <span class="text-ink-500 font-normal">(helps Greg prioritize)</span></label>
         <select class="input w-full">
           <option>Event / big gathering</option>
           <option>Big crew on site this week</option>
@@ -3135,11 +3135,11 @@ function openExtraCleaning(){
       </div>
 
       <div>
-        <label class="block text-[12.5px] font-medium mb-1">Notes for Greg <span class="text-ink-500 font-normal">(optional)</span></label>
+        <label class="block text-[14px] font-medium mb-1">Notes for Greg <span class="text-ink-500 font-normal">(optional)</span></label>
         <textarea rows="3" placeholder="Anything Greg should know — gate codes, time windows, what's going on…" class="input w-full leading-relaxed"></textarea>
       </div>
 
-      <div class="border border-ink-200 rounded p-3 bg-ink-50/40 text-[12px] text-ink-700">
+      <div class="border border-ink-200 rounded p-3 bg-ink-50/40 text-[13.5px] text-ink-700">
         <strong>Pricing:</strong> An extra cleaning is billed at your normal per-service rate. Bumping up a scheduled cleaning is no extra charge — your next regular one just shifts. Kim will confirm before sending Greg out.
       </div>
 
@@ -3157,23 +3157,23 @@ function openSchedulePickup(){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">Schedule a pickup</div>
-        <div class="text-[12.5px] text-ink-500">Project finishing up? Tell us when to come grab the units.</div>
+        <div class="font-semibold text-[17px]">Schedule a pickup</div>
+        <div class="text-[14px] text-ink-500">Project finishing up? Tell us when to come grab the units.</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <form onsubmit="event.preventDefault(); closeModal(); toast('Pickup request sent. Kim will confirm a date with Greg within 1–2 business days.');" class="px-5 py-4 space-y-4">
-      <div><label class="block text-[12.5px] font-medium mb-1">Which location?</label>
+      <div><label class="block text-[14px] font-medium mb-1">Which location?</label>
         <select class="input w-full">${d.locations.filter(l=>l.active).map(l=>`<option>${l.label}</option>`).join('')}</select>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">Preferred pickup date</label><input type="date" class="input w-full" /></div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Flexibility</label>
+        <div><label class="block text-[14px] font-medium mb-1">Preferred pickup date</label><input type="date" class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Flexibility</label>
           <select class="input w-full"><option>That date specifically</option><option>That week is fine</option><option>Whenever Greg can fit it in</option></select>
         </div>
       </div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Notes for Greg</label><textarea rows="3" placeholder="e.g. Project closing, gate unlocked between 7a-5p, no one on site after Friday" class="input w-full leading-relaxed"></textarea></div>
-      <div class="border border-ink-200 rounded p-3 bg-ink-50/40 text-[12px] text-ink-700">
+      <div><label class="block text-[14px] font-medium mb-1">Notes for Greg</label><textarea rows="3" placeholder="e.g. Project closing, gate unlocked between 7a-5p, no one on site after Friday" class="input w-full leading-relaxed"></textarea></div>
+      <div class="border border-ink-200 rounded p-3 bg-ink-50/40 text-[13.5px] text-ink-700">
         Pricing: any remaining cleanings before pickup are billed normally. Pickup itself has no extra charge.
       </div>
       <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
@@ -3187,12 +3187,12 @@ function openSchedulePickup(){
 function openContact(){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
-      <div><div class="font-semibold text-[15px]">Send Kim a question</div></div>
+      <div><div class="font-semibold text-[17px]">Send Kim a question</div></div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <form onsubmit="event.preventDefault(); closeModal(); toast('Message sent. Kim or Greg will respond same-day.');" class="px-5 py-4 space-y-4">
-      <div><label class="block text-[12.5px] font-medium mb-1">Subject</label><input class="input w-full" /></div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Message</label><textarea rows="5" class="input w-full leading-relaxed"></textarea></div>
+      <div><label class="block text-[14px] font-medium mb-1">Subject</label><input class="input w-full" /></div>
+      <div><label class="block text-[14px] font-medium mb-1">Message</label><textarea rows="5" class="input w-full leading-relaxed"></textarea></div>
       <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
         <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
         <button type="submit" class="btn-primary">Send</button>
@@ -3207,24 +3207,24 @@ function portalBilling(c, d){
   const totalDue = open.reduce((sum, i) => sum + i.amount, 0);
   return `
     <h1 class="text-xl font-semibold tracking-tight mb-1">Billing &amp; invoices</h1>
-    <p class="text-ink-500 text-[13px] mb-5">Invoices are managed in QuickBooks Online and synced here in real time.</p>
+    <p class="text-ink-500 text-[15px] mb-5">Invoices are managed in QuickBooks Online and synced here in real time.</p>
 
     <div class="card p-5 mb-5 bg-ink-900 text-white">
       <div class="flex items-center justify-between mb-3">
         <div>
-          <div class="text-[10.5px] uppercase tracking-wider opacity-70 font-semibold mb-1">Current balance</div>
+          <div class="text-[11.5px] uppercase tracking-wider opacity-70 font-semibold mb-1">Current balance</div>
           <div class="text-3xl font-semibold tracking-tight">${totalDue>0?'$'+totalDue.toFixed(2):'$0.00'}</div>
-          <div class="text-[12px] opacity-70 mt-1">${open.length>0?'Due '+open[0].due:'All paid up — thanks!'}</div>
+          <div class="text-[13.5px] opacity-70 mt-1">${open.length>0?'Due '+open[0].due:'All paid up — thanks!'}</div>
         </div>
-        ${totalDue>0?`<button onclick="payInQuickBooks()" class="bg-white text-ink-900 px-4 py-2.5 rounded text-[13px] font-semibold inline-flex items-center gap-2 hover:bg-ink-100"><i data-lucide="external-link" class="ico-sm"></i>Pay in QuickBooks</button>`:''}
+        ${totalDue>0?`<button onclick="payInQuickBooks()" class="bg-white text-ink-900 px-4 py-2.5 rounded text-[15px] font-semibold inline-flex items-center gap-2 hover:bg-ink-100"><i data-lucide="external-link" class="ico-sm"></i>Pay in QuickBooks</button>`:''}
       </div>
-      <div class="text-[11.5px] opacity-70 inline-flex items-center gap-1.5"><i data-lucide="link-2" class="ico-sm"></i>Synced from QuickBooks Online · 2 min ago</div>
+      <div class="text-[13px] opacity-70 inline-flex items-center gap-1.5"><i data-lucide="link-2" class="ico-sm"></i>Synced from QuickBooks Online · 2 min ago</div>
     </div>
 
-    <div class="text-[10.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Invoice history</div>
+    <div class="text-[11.5px] uppercase tracking-wider text-ink-500 mb-2 font-semibold">Invoice history</div>
     <div class="card overflow-hidden">
-      <table class="w-full text-[12.5px]">
-        <thead class="bg-ink-50 text-ink-500 text-[10.5px] uppercase tracking-wider">
+      <table class="w-full text-[14px]">
+        <thead class="bg-ink-50 text-ink-500 text-[11.5px] uppercase tracking-wider">
           <tr>
             <th class="text-left px-3 py-2 font-semibold">Invoice</th>
             <th class="text-left px-3 py-2 font-semibold">Period</th>
@@ -3237,17 +3237,17 @@ function portalBilling(c, d){
         <tbody>
           ${portalInvoices.map(i => `
             <tr class="border-t border-ink-200 hover:bg-ink-50">
-              <td class="px-3 py-2.5 font-mono text-[11.5px]">${i.num}</td>
+              <td class="px-3 py-2.5 font-mono text-[13px]">${i.num}</td>
               <td class="px-3 py-2.5">${i.period}</td>
               <td class="px-3 py-2.5 font-semibold">$${i.amount.toFixed(2)}</td>
-              <td class="px-3 py-2.5 text-ink-500 text-[12px]">${i.due}</td>
+              <td class="px-3 py-2.5 text-ink-500 text-[13.5px]">${i.due}</td>
               <td class="px-3 py-2.5">
                 ${i.status==='paid'
-                  ? `<span class="text-[11px] uppercase tracking-wider font-semibold text-emerald-700">Paid · ${i.paidOn}</span>`
-                  : `<span class="text-[11px] uppercase tracking-wider font-semibold text-brand-600">Open · due in 15d</span>`}
+                  ? `<span class="text-[12.5px] uppercase tracking-wider font-semibold text-emerald-700">Paid · ${i.paidOn}</span>`
+                  : `<span class="text-[12.5px] uppercase tracking-wider font-semibold text-brand-600">Open · due in 15d</span>`}
               </td>
               <td class="px-3 py-2.5 text-right">
-                <button onclick="payInQuickBooks()" class="text-[12px] text-ink-900 font-medium hover:underline inline-flex items-center gap-1">View<i data-lucide="external-link" class="ico-sm"></i></button>
+                <button onclick="payInQuickBooks()" class="text-[13.5px] text-ink-900 font-medium hover:underline inline-flex items-center gap-1">View<i data-lucide="external-link" class="ico-sm"></i></button>
               </td>
             </tr>`).join('')}
         </tbody>
@@ -3256,7 +3256,7 @@ function portalBilling(c, d){
 
     <div class="mt-5 card p-4 flex items-start gap-3 bg-ink-50/40">
       <i data-lucide="info" class="text-ink-500 mt-0.5"></i>
-      <div class="text-[12.5px] text-ink-700">
+      <div class="text-[14px] text-ink-700">
         <div class="font-semibold mb-0.5">How invoicing works</div>
         Invoices are still managed by Kim in QuickBooks Online — nothing about that workflow changes. This portal pulls your open balance and invoice list from QuickBooks so you always see the latest. Clicking <strong>Pay in QuickBooks</strong> takes you to the QuickBooks-hosted invoice and payment page (ACH, credit card, or mail a check).
       </div>
@@ -3269,20 +3269,20 @@ function payInQuickBooks(){
 function portalSettings(c, d){
   return `
     <h1 class="text-xl font-semibold tracking-tight mb-1">Settings</h1>
-    <p class="text-ink-500 text-[13px] mb-5">Update your contact info and notification preferences.</p>
+    <p class="text-ink-500 text-[15px] mb-5">Update your contact info and notification preferences.</p>
 
     <div class="card p-5 mb-4">
-      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-3">Contact</div>
-      <div class="grid grid-cols-2 gap-3 text-[13px]">
-        <div><label class="block text-[12px] font-medium mb-1">Phone (for SMS)</label><input value="${c.phone}" class="input w-full" /></div>
-        <div><label class="block text-[12px] font-medium mb-1">Email</label><input value="${d.email}" class="input w-full" /></div>
-        <div class="col-span-2"><label class="block text-[12px] font-medium mb-1">Billing address</label><input value="${d.billingAddr}" class="input w-full" /></div>
+      <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-3">Contact</div>
+      <div class="grid grid-cols-2 gap-3 text-[15px]">
+        <div><label class="block text-[13.5px] font-medium mb-1">Phone (for SMS)</label><input value="${c.phone}" class="input w-full" /></div>
+        <div><label class="block text-[13.5px] font-medium mb-1">Email</label><input value="${d.email}" class="input w-full" /></div>
+        <div class="col-span-2"><label class="block text-[13.5px] font-medium mb-1">Billing address</label><input value="${d.billingAddr}" class="input w-full" /></div>
       </div>
     </div>
 
     <div class="card p-5 mb-4">
-      <div class="text-[10.5px] uppercase tracking-wider text-ink-500 font-semibold mb-3">Notifications</div>
-      <div class="space-y-2 text-[13px]">
+      <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-3">Notifications</div>
+      <div class="space-y-2 text-[15px]">
         <label class="flex items-center gap-2"><input type="checkbox" checked /> Text after every cleaning</label>
         <label class="flex items-center gap-2"><input type="checkbox" checked /> Text on delivery and pickup</label>
         <label class="flex items-center gap-2"><input type="checkbox" checked /> Email monthly service report</label>
@@ -3340,27 +3340,27 @@ function toggleNotifPanel(ev){
   panel.style.top  = (rect.bottom + 6) + 'px';
   panel.innerHTML = `
     <div class="px-3 py-2 border-b border-ink-200 flex items-center justify-between">
-      <div class="text-[12.5px] font-semibold">Notifications</div>
-      <button onclick="markAllRead()" class="text-[11.5px] text-ink-500 hover:text-ink-900">Mark all read</button>
+      <div class="text-[14px] font-semibold">Notifications</div>
+      <button onclick="markAllRead()" class="text-[13px] text-ink-500 hover:text-ink-900">Mark all read</button>
     </div>
     <div class="flex-1 overflow-y-auto">
-      ${list.length === 0 ? '<div class="p-6 text-center text-[12px] text-ink-500 italic">No notifications</div>' :
+      ${list.length === 0 ? '<div class="p-6 text-center text-[13.5px] text-ink-500 italic">No notifications</div>' :
         list.map(n => `
           <div onclick="openNotification('${n.id}')" class="px-3 py-2.5 border-b border-ink-200 hover:bg-ink-50 cursor-pointer flex items-start gap-2.5 ${n.unread?'bg-brand-50/40':''}">
             <div class="${colorForType(n.type)} mt-0.5"><i data-lucide="${iconForType(n.type)}" class="ico-sm"></i></div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between gap-2">
-                <div class="text-[12.5px] font-semibold truncate">${n.title}</div>
-                <div class="text-[10.5px] text-ink-500 shrink-0">${n.when}</div>
+                <div class="text-[14px] font-semibold truncate">${n.title}</div>
+                <div class="text-[11.5px] text-ink-500 shrink-0">${n.when}</div>
               </div>
-              <div class="text-[11.5px] text-ink-500 leading-snug">${n.body}</div>
-              ${n.photo ? '<div class="text-[10.5px] text-ink-700 mt-1 inline-flex items-center gap-1"><i data-lucide="image" class="ico-sm"></i>Photo attached</div>' : ''}
+              <div class="text-[13px] text-ink-500 leading-snug">${n.body}</div>
+              ${n.photo ? '<div class="text-[11.5px] text-ink-700 mt-1 inline-flex items-center gap-1"><i data-lucide="image" class="ico-sm"></i>Photo attached</div>' : ''}
             </div>
             ${n.unread ? '<div class="w-2 h-2 rounded-full bg-brand-500 mt-1.5 shrink-0"></div>' : ''}
           </div>`).join('')}
     </div>
     <div class="px-3 py-2 border-t border-ink-200 bg-ink-50">
-      <div class="text-[11px] text-ink-500">In production: push to ${getCurrentRole()==='greg'?'Greg':'Kim'}'s phone &amp; email.</div>
+      <div class="text-[12.5px] text-ink-500">In production: push to ${getCurrentRole()==='greg'?'Greg':'Kim'}'s phone &amp; email.</div>
     </div>`;
   document.body.appendChild(panel);
   notifPanel = panel;
@@ -3395,16 +3395,16 @@ function renderDriversTable(){
   if (!tbody) return;
   tbody.innerHTML = driverRoster.map(d => `
     <tr class="border-t border-ink-200 hover:bg-ink-50 ${d.status==='former'?'opacity-60':''}">
-      <td class="px-3 py-2.5 font-medium">${d.name}${d.status==='vacation'?' <span class="text-[10px] uppercase tracking-wider bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold ml-1">On vacation</span>':''}</td>
+      <td class="px-3 py-2.5 font-medium">${d.name}${d.status==='vacation'?' <span class="text-[11px] uppercase tracking-wider bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold ml-1">On vacation</span>':''}</td>
       <td class="px-3 py-2.5 text-ink-700">${d.phone}</td>
       <td class="px-3 py-2.5">${d.route}</td>
       <td class="px-3 py-2.5">
-        <span class="text-[11px] uppercase tracking-wider font-semibold ${d.status==='active'?'text-emerald-700':d.status==='vacation'?'text-amber-700':'text-ink-500'}">${d.status==='active'?'Active':d.status==='vacation'?'Vacation':'Former'}</span>
+        <span class="text-[12.5px] uppercase tracking-wider font-semibold ${d.status==='active'?'text-emerald-700':d.status==='vacation'?'text-amber-700':'text-ink-500'}">${d.status==='active'?'Active':d.status==='vacation'?'Vacation':'Former'}</span>
       </td>
-      <td class="px-3 py-2.5 text-[12px] text-ink-500">${d.started}</td>
+      <td class="px-3 py-2.5 text-[13.5px] text-ink-500">${d.started}</td>
       <td class="px-3 py-2.5 text-right">
-        ${d.status==='former' ? '<button onclick="rehire(\''+d.name+'\')" class="text-[12px] text-ink-900 font-medium hover:underline">Rehire</button>'
-          : '<button class="text-[12px] text-ink-900 font-medium hover:underline">Edit</button>'}
+        ${d.status==='former' ? '<button onclick="rehire(\''+d.name+'\')" class="text-[13.5px] text-ink-900 font-medium hover:underline">Rehire</button>'
+          : '<button class="text-[13.5px] text-ink-900 font-medium hover:underline">Edit</button>'}
       </td>
     </tr>`).join('');
 }
@@ -3416,21 +3416,21 @@ function openAddPermanentDriver(){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">Add a new driver</div>
-        <div class="text-[12.5px] text-ink-500">Permanent roster — adds to Greg's dispatch lineup</div>
+        <div class="font-semibold text-[17px]">Add a new driver</div>
+        <div class="text-[14px] text-ink-500">Permanent roster — adds to Greg's dispatch lineup</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <form onsubmit="event.preventDefault(); closeModal(); toast('New driver added to roster.');" class="px-5 py-4 space-y-3">
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-[12.5px] font-medium mb-1">First name</label><input required class="input w-full" /></div>
-        <div><label class="block text-[12.5px] font-medium mb-1">Last name</label><input required class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">First name</label><input required class="input w-full" /></div>
+        <div><label class="block text-[14px] font-medium mb-1">Last name</label><input required class="input w-full" /></div>
       </div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Phone (for SMS login)</label><input required placeholder="256-555-0000" class="input w-full" /></div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Default route</label>
+      <div><label class="block text-[14px] font-medium mb-1">Phone (for SMS login)</label><input required placeholder="256-555-0000" class="input w-full" /></div>
+      <div><label class="block text-[14px] font-medium mb-1">Default route</label>
         <select class="input w-full"><option>G — Athens / Tanner</option><option>B — Decatur / Hartselle</option><option>H — Huntsville / Madison</option><option>(none — assign later)</option></select>
       </div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Start date</label><input type="date" required class="input w-full" /></div>
+      <div><label class="block text-[14px] font-medium mb-1">Start date</label><input type="date" required class="input w-full" /></div>
       <div class="flex justify-end gap-2 pt-2 border-t border-ink-200">
         <button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button>
         <button type="submit" class="btn-primary">Add driver</button>
@@ -3449,11 +3449,11 @@ function renderDriverPills(){
     const dot = isOut ? 'bg-red-500' : 'bg-emerald-500';
     const ring = isOut ? 'border-ink-300 text-ink-500' : 'border-ink-300';
     return `
-      <button onclick="toggleDriverMenu('${driver}', event)" class="relative inline-flex items-center gap-1.5 ${ring} border bg-white rounded-full pl-1.5 pr-2.5 py-0.5 text-[12px] font-medium hover:border-ink-500">
-        <span class="w-5 h-5 rounded-full ${m.colorClass} text-white text-[10px] grid place-items-center font-semibold ${isOut?'opacity-40':''}">${driver[0]}</span>
+      <button onclick="toggleDriverMenu('${driver}', event)" class="relative inline-flex items-center gap-1.5 ${ring} border bg-white rounded-full pl-1.5 pr-2.5 py-0.5 text-[13.5px] font-medium hover:border-ink-500">
+        <span class="w-5 h-5 rounded-full ${m.colorClass} text-white text-[11px] grid place-items-center font-semibold ${isOut?'opacity-40':''}">${driver[0]}</span>
         <span class="${isOut?'line-through':''}">${driver}</span>
         <span class="w-1.5 h-1.5 rounded-full ${dot}"></span>
-        ${isOut ? `<span class="text-[10px] uppercase tracking-wider text-red-600 font-semibold">${m.status==='out_today'?'Out today':'Out wk'}</span>` : ''}
+        ${isOut ? `<span class="text-[11px] uppercase tracking-wider text-red-600 font-semibold">${m.status==='out_today'?'Out today':'Out wk'}</span>` : ''}
       </button>`;
   }).join('');
   refreshIcons();
@@ -3466,7 +3466,7 @@ function toggleDriverMenu(driver, ev){
   const m = driverMeta[driver];
   const isOut = m.status !== 'active';
   const menu = document.createElement('div');
-  menu.className = 'absolute z-50 mt-1 bg-white border border-ink-200 rounded shadow-lg py-1 min-w-[180px] text-[13px]';
+  menu.className = 'absolute z-50 mt-1 bg-white border border-ink-200 rounded shadow-lg py-1 min-w-[180px] text-[15px]';
   const rect = ev.currentTarget.getBoundingClientRect();
   menu.style.left = rect.left + 'px';
   menu.style.top  = (rect.bottom + window.scrollY) + 'px';
@@ -3514,13 +3514,13 @@ function openRedistribute(driver, fromCallout){
   }
   const status = driverMeta[driver].status;
   const banner = fromCallout
-    ? `<div class="bg-amber-50 border border-amber-300 rounded p-3 text-[12px] text-amber-900 mb-1"><strong>${driver} is out ${status==='out_week'?'this week':'today'}.</strong> What about their ${pending.length} remaining stop${pending.length===1?'':'s'}?</div>`
+    ? `<div class="bg-amber-50 border border-amber-300 rounded p-3 text-[13.5px] text-amber-900 mb-1"><strong>${driver} is out ${status==='out_week'?'this week':'today'}.</strong> What about their ${pending.length} remaining stop${pending.length===1?'':'s'}?</div>`
     : '';
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">Reassign ${driver}'s stops</div>
-        <div class="text-[12.5px] text-ink-500">${pending.length} pending stop${pending.length===1?'':'s'} on today's route</div>
+        <div class="font-semibold text-[17px]">Reassign ${driver}'s stops</div>
+        <div class="text-[14px] text-ink-500">${pending.length} pending stop${pending.length===1?'':'s'} on today's route</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
@@ -3530,34 +3530,34 @@ function openRedistribute(driver, fromCallout){
         <label class="flex items-start gap-3 p-3 border border-ink-900 bg-ink-50 rounded cursor-pointer">
           <input type="radio" name="redistribute" value="auto" checked class="mt-0.5" />
           <div>
-            <div class="font-semibold text-[13px]">Auto-redistribute by proximity <span class="text-[11px] text-ink-500 font-normal ml-1">(recommended)</span></div>
-            <div class="text-[11.5px] text-ink-500 mt-0.5">Splits the ${pending.length} stops among ${otherDrivers.join(' & ')} based on closest current location.</div>
+            <div class="font-semibold text-[15px]">Auto-redistribute by proximity <span class="text-[12.5px] text-ink-500 font-normal ml-1">(recommended)</span></div>
+            <div class="text-[13px] text-ink-500 mt-0.5">Splits the ${pending.length} stops among ${otherDrivers.join(' & ')} based on closest current location.</div>
           </div>
         </label>
         <label class="flex items-start gap-3 p-3 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
           <input type="radio" name="redistribute" value="manual" class="mt-0.5" />
           <div>
-            <div class="font-semibold text-[13px]">Manually assign each</div>
-            <div class="text-[11.5px] text-ink-500 mt-0.5">You pick a driver for each remaining stop.</div>
+            <div class="font-semibold text-[15px]">Manually assign each</div>
+            <div class="text-[13px] text-ink-500 mt-0.5">You pick a driver for each remaining stop.</div>
           </div>
         </label>
         <label class="flex items-start gap-3 p-3 border border-ink-200 rounded hover:bg-ink-50 cursor-pointer">
           <input type="radio" name="redistribute" value="keep" class="mt-0.5" />
           <div>
-            <div class="font-semibold text-[13px]">Keep on ${driver}'s list</div>
-            <div class="text-[11.5px] text-ink-500 mt-0.5">In case ${driver} comes in late or you'll handle it tomorrow.</div>
+            <div class="font-semibold text-[15px]">Keep on ${driver}'s list</div>
+            <div class="text-[13px] text-ink-500 mt-0.5">In case ${driver} comes in late or you'll handle it tomorrow.</div>
           </div>
         </label>
       </div>
 
       <div class="border border-ink-200 rounded overflow-hidden">
-        <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[10.5px] font-semibold uppercase tracking-wider text-ink-500">${driver}'s remaining stops</div>
+        <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[11.5px] font-semibold uppercase tracking-wider text-ink-500">${driver}'s remaining stops</div>
         <div class="divide-y divide-ink-200 max-h-56 overflow-y-auto">
           ${pending.map(s => `
-            <div class="px-3 py-2 flex items-center gap-3 text-[12.5px]">
+            <div class="px-3 py-2 flex items-center gap-3 text-[14px]">
               <div class="flex-1">
                 <div class="font-medium">${s.cust}</div>
-                <div class="text-[11px] text-ink-500">${s.addr} · ${s.toilet}</div>
+                <div class="text-[12.5px] text-ink-500">${s.addr} · ${s.toilet}</div>
               </div>
               ${tagFor(s.type)}
             </div>`).join('')}
@@ -3616,15 +3616,15 @@ function openAddTempDriver(){
   document.getElementById('modal-content').innerHTML = `
     <div class="border-b border-ink-200 px-5 py-3.5 flex items-center justify-between sticky top-0 bg-white">
       <div>
-        <div class="font-semibold text-[15px]">Add a temporary driver for today</div>
-        <div class="text-[12.5px] text-ink-500">Use when Greg pulls in a helper or runs a route himself</div>
+        <div class="font-semibold text-[17px]">Add a temporary driver for today</div>
+        <div class="text-[14px] text-ink-500">Use when Greg pulls in a helper or runs a route himself</div>
       </div>
       <button onclick="closeModal()" class="text-ink-500 hover:text-ink-900"><i data-lucide="x"></i></button>
     </div>
     <form onsubmit="event.preventDefault(); closeModal(); toast('Temp driver added — Kim can promote them to permanent later.');" class="px-5 py-4 space-y-3">
-      <div><label class="block text-[12.5px] font-medium mb-1">Name</label><input required placeholder="e.g. Greg, Carlos, Tyler" class="input w-full" /></div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Phone</label><input placeholder="256-555-0000" class="input w-full" /></div>
-      <div><label class="block text-[12.5px] font-medium mb-1">Pull stops from</label>
+      <div><label class="block text-[14px] font-medium mb-1">Name</label><input required placeholder="e.g. Greg, Carlos, Tyler" class="input w-full" /></div>
+      <div><label class="block text-[14px] font-medium mb-1">Phone</label><input placeholder="256-555-0000" class="input w-full" /></div>
+      <div><label class="block text-[14px] font-medium mb-1">Pull stops from</label>
         <select class="input w-full">
           <option>Auto-balance from busiest drivers</option>
           <option>Mike's queue</option>

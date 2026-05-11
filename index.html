@@ -366,26 +366,14 @@
         <p class="text-ink-500 text-[12.5px]" id="dispatch-subtitle">Friday, May 8 · drag rows to reorder</p>
       </div>
       <div class="flex items-center gap-1 bg-ink-100 rounded-md p-1">
-        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="2026-05-11" onclick="setDispatchDate('2026-05-11')">
-          <div class="font-semibold">Mon</div><div class="text-[10px] opacity-70">5/11</div>
-        </button>
-        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="2026-05-12" onclick="setDispatchDate('2026-05-12')">
-          <div class="font-semibold">Tue</div><div class="text-[10px] opacity-70">5/12</div>
-        </button>
-        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="2026-05-13" onclick="setDispatchDate('2026-05-13')">
-          <div class="font-semibold">Wed</div><div class="text-[10px] opacity-70">5/13</div>
-        </button>
-        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="2026-05-14" onclick="setDispatchDate('2026-05-14')">
-          <div class="font-semibold">Thu</div><div class="text-[10px] opacity-70">5/14</div>
-        </button>
-        <button class="day-btn px-2.5 py-1 text-[12px] font-medium bg-white shadow-sm rounded text-center min-w-[44px]" data-day="today" onclick="setDispatchDay('today')">
-          <div class="font-semibold">Fri</div><div class="text-[10px] text-emerald-600 font-semibold">TODAY</div>
-        </button>
-        <button class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded text-center min-w-[44px]" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">
-          <div class="font-semibold">Sat</div><div class="text-[10px] opacity-70">5/9</div>
-        </button>
-        <div class="w-px h-7 bg-ink-300 mx-1"></div>
-        <button id="day-date-btn" class="day-btn px-2.5 py-1 text-[12px] font-medium text-ink-500 rounded inline-flex items-center gap-1.5" onclick="openDatePicker()">
+        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="2026-05-11" onclick="setDispatchDate('2026-05-11')">Mon</button>
+        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="2026-05-12" onclick="setDispatchDate('2026-05-12')">Tue</button>
+        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="2026-05-13" onclick="setDispatchDate('2026-05-13')">Wed</button>
+        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="2026-05-14" onclick="setDispatchDate('2026-05-14')">Thu</button>
+        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-day="today" onclick="setDispatchDay('today')">Fri<span class="text-[9.5px] text-emerald-600 font-bold tracking-wide">TODAY</span></button>
+        <button class="day-btn px-3.5 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-day="tomorrow" onclick="setDispatchDay('tomorrow')">Sat</button>
+        <div class="w-px h-6 bg-ink-300 mx-1"></div>
+        <button id="day-date-btn" class="day-btn px-3 py-1.5 text-[12px] font-medium text-ink-500 rounded inline-flex items-center gap-1.5" onclick="openDatePicker()">
           <i data-lucide="calendar" class="ico-sm"></i><span id="day-date-label">Pick a date</span>
         </button>
         <input id="dispatch-date-picker" type="date" class="sr-only absolute" onchange="setDispatchDate(this.value)" />

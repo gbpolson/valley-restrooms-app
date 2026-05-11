@@ -79,6 +79,8 @@
 
   /* Stop card statuses on dispatch board */
   .stop-completed { background:#f8fafc; opacity:.6; }
+  [contenteditable=true]:hover { background:#fef9c3; cursor:text; }
+  [contenteditable=true]:focus { background:#fef3c7; outline:1px solid #f59e0b; }
   .stop-completed .stop-name { text-decoration: line-through; }
   .stop-active { border-color:#dc2626 !important; background:#fef2f2; box-shadow: 0 0 0 1px #dc2626 inset; }
   .progress-bar { height:4px; background:#e2e8f0; border-radius:999px; overflow:hidden; }
@@ -486,14 +488,33 @@
 
 <!-- ============================================ DRIVER VIEW =============================================== -->
 <section data-view="driver" class="role-view hidden">
-  <!-- Device preview toggle (demo only) -->
-  <div class="bg-white border-b border-ink-200 px-5 py-2.5 flex items-center justify-center gap-3">
-    <span class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold">Preview as</span>
-    <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
-      <button class="device-tab-btn px-3 py-1.5 text-[14px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-device="phone" onclick="setDriverDevice('phone')"><i data-lucide="smartphone" class="ico-sm"></i>Phone</button>
-      <button class="device-tab-btn px-3 py-1.5 text-[14px] font-medium text-ink-500 inline-flex items-center gap-1.5" data-device="ipad" onclick="setDriverDevice('ipad')"><i data-lucide="tablet" class="ico-sm"></i>iPad</button>
+  <!-- Driver view controls: device preview + driver + day -->
+  <div class="bg-white border-b border-ink-200 px-5 py-2.5 flex items-center flex-wrap gap-3">
+    <div class="flex items-center gap-2">
+      <span class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold">Driver</span>
+      <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
+        <button class="prev-driver-btn px-3 py-1.5 text-[14px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-pdriver="Greg" onclick="setPreviewDriver('Greg')"><span class="w-2 h-2 inline-block rounded-full bg-orange-600"></span>Greg</button>
+        <button class="prev-driver-btn px-3 py-1.5 text-[14px] font-medium text-ink-500 inline-flex items-center gap-1.5" data-pdriver="Bradley" onclick="setPreviewDriver('Bradley')"><span class="w-2 h-2 inline-block rounded-full bg-blue-500"></span>Bradley</button>
+      </div>
     </div>
-    <span class="text-[12.5px] text-ink-500 hidden md:inline">On a real device, this auto-detects from screen size</span>
+    <div class="flex items-center gap-2">
+      <span class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold">Day</span>
+      <div class="flex items-center gap-1 bg-ink-100 rounded-md p-1">
+        <button class="prev-day-btn px-3 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-pday="M" onclick="setPreviewDay('M')">Mon</button>
+        <button class="prev-day-btn px-3 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-pday="T" onclick="setPreviewDay('T')">Tue</button>
+        <button class="prev-day-btn px-3 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-pday="W" onclick="setPreviewDay('W')">Wed</button>
+        <button class="prev-day-btn px-3 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-pday="Th" onclick="setPreviewDay('Th')">Thu</button>
+        <button class="prev-day-btn px-3 py-1.5 text-[13px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-pday="F" onclick="setPreviewDay('F')">Fri<span class="text-[10px] text-emerald-600 font-bold tracking-wide">TODAY</span></button>
+        <button class="prev-day-btn px-3 py-1.5 text-[13px] font-semibold text-ink-500 rounded" data-pday="Sa" onclick="setPreviewDay('Sa')">Sat</button>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 ml-auto">
+      <span class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold">Preview as</span>
+      <div class="flex bg-ink-100 rounded-md overflow-hidden p-0.5">
+        <button class="device-tab-btn px-3 py-1.5 text-[14px] font-semibold bg-white shadow-sm rounded inline-flex items-center gap-1.5" data-device="phone" onclick="setDriverDevice('phone')"><i data-lucide="smartphone" class="ico-sm"></i>Phone</button>
+        <button class="device-tab-btn px-3 py-1.5 text-[14px] font-medium text-ink-500 inline-flex items-center gap-1.5" data-device="ipad" onclick="setDriverDevice('ipad')"><i data-lucide="tablet" class="ico-sm"></i>iPad</button>
+      </div>
+    </div>
   </div>
 
   <!-- Phone view -->
@@ -2120,6 +2141,14 @@ function setFocusedDriver(d){
   }
   renderBoard();
 }
+function saveNoteEdit(driver, stopId, newText){
+  const letter = dayLetterFromDispatch();
+  const stops = (weeklyData[driver] && weeklyData[driver][letter]) || [];
+  const stop = stops.find(s => s.id === stopId);
+  if (stop) stop.notes = newText;
+  const s2 = driverData[driver].find(x => x.id === stopId);
+  if (s2) s2.notes = newText;
+}
 function reassignStop(fromDriver, stopId){
   if (!isViewingToday()){ toast('View only — switch to Today to reassign.'); return; }
   const other = Object.keys(driverMeta).find(d => d !== fromDriver);
@@ -2231,7 +2260,7 @@ function renderBoard(){
             </tr>
           </thead>
           <tbody data-driver="${focusedDriver}" ondragover="columnDragOver(event,'${focusedDriver}')" ondragleave="this.classList.remove('col-hover');" ondrop="dropStop(event,'${focusedDriver}')">
-            ${stops.length === 0 ? '<tr><td colspan="8" class="px-3 py-6 text-center text-ink-500 italic">No stops on this route.</td></tr>' :
+            ${stops.length === 0 ? '<tr><td colspan="9" class="px-3 py-6 text-center text-ink-500 italic">No stops on this route.</td></tr>' :
               stops.map((s,i)=>{
                 const isCompleted = s.status==='completed';
                 const isActive = s.status==='active';
@@ -2239,6 +2268,7 @@ function renderBoard(){
                 const seq = s.seq || (stops.filter(x => statusOrder(x) <= statusOrder(s)).length);
                 return `
                 <tr data-stop-id="${s.id}" ${isCompleted?'':'draggable="true"'} ${isCompleted?'':`ondragstart="dragStart(event,'${focusedDriver}','${s.id}')" ondragend="dragEnd(event)"`} class="stop-card border-t border-ink-200 hover:bg-ink-50 ${isCompleted?'':'cursor-grab'} ${rowCls} ${s.isNew?'ring-2 ring-yellow-400 ring-inset':''}">
+                  <td class="px-3 py-2"><button onclick="event.stopPropagation(); openJobDetail('${focusedDriver}', dayLetterFromDispatch(), '${s.id}')" class="w-7 h-7 grid place-items-center rounded hover:bg-ink-900 hover:text-white text-ink-900 transition" title="Open stop detail"><i data-lucide="truck" class="ico-sm"></i></button></td>
                   <td class="px-3 py-2 font-mono text-[13px] text-ink-500">${seq}</td>
                   <td class="px-3 py-2 font-medium ${isCompleted?'line-through':''}">${s.cust}${s.isNew?' <span class="bg-yellow-400 text-ink-900 text-[10px] font-bold px-1 rounded ml-1">NEW</span>':''}</td>
                   <td class="px-3 py-2 text-ink-700">${s.addr}</td>
@@ -2249,7 +2279,7 @@ function renderBoard(){
                       isActive ? '<span class="text-brand-500 font-semibold inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-500 pulse"></span>NOW</span>' :
                       '<span class="text-ink-400">—</span>'}
                   </td>
-                  <td class="px-3 py-2 text-ink-500 italic text-[13px]">${s.notes || ''}</td>
+                  <td class="px-3 py-2 text-ink-500 italic text-[13px]" contenteditable="true" oninput="saveNoteEdit('${focusedDriver}','${s.id}', this.textContent)" title="Click to edit">${s.notes || ''}</td>
                   <td class="px-3 py-2 text-right whitespace-nowrap">
                     ${isCompleted ? '' : `
                       <button onclick="event.stopPropagation(); pinNext('${focusedDriver}','${s.id}')" class="text-[13px] text-ink-900 font-medium hover:underline">Do next</button>
@@ -2940,48 +2970,99 @@ const done = [
 ];
 
 function renderDriver(){
-  document.getElementById('active-stop').innerHTML = `
-    <div class="border border-ink-200 rounded-lg p-4">
-      <div class="flex items-center justify-between mb-1.5">
-        <div class="text-[11.5px] font-semibold text-ink-500 uppercase tracking-wider">Now serving · stop 4 of 8</div>
-        ${tagFor(driverActive.type)}
-      </div>
-      <div class="text-[17px] font-semibold leading-tight">${driverActive.cust}</div>
-      <div class="text-[14px] text-ink-700 mt-0.5">${driverActive.addr}</div>
-      <div class="text-[13px] text-ink-500 mt-0.5">${driverActive.units} · ETA ${driverActive.etaMin} min</div>
-      ${driverActive.notes ? `<div class="text-[13.5px] bg-amber-50 border border-amber-200 rounded p-2 mt-2.5"><i data-lucide="alert-triangle" class="ico-sm inline-block align-text-bottom mr-1 text-amber-700"></i>${driverActive.notes}</div>` : ''}
-      <button onclick="navigateNow()" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded mt-3 text-[16px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate</button>
-      <div class="grid grid-cols-3 gap-1.5 mt-1.5">
-        <button onclick="markDone('cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded font-semibold text-[14px]">Cleaned</button>
-        <button onclick="markDone('delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-2.5 rounded font-semibold text-[14px]">Delivered</button>
-        <button onclick="markDone('picked up')" class="bg-amber-700 hover:bg-amber-800 text-white py-2.5 rounded font-semibold text-[14px]">Picked up</button>
-      </div>
-      <button onclick="openReportProblem()" class="w-full text-ink-500 text-[13.5px] py-2 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
-    </div>`;
-  document.getElementById('driver-list').innerHTML = upNext.map((s,i)=>`
-    <div class="border border-ink-200 rounded px-2.5 py-2 flex items-center gap-2.5">
-      <div class="text-[11.5px] font-mono text-ink-500 w-5">${i+5}</div>
+  const stops = (weeklyData[previewDriver] && weeklyData[previewDriver][previewDay]) || [];
+  const completed = stops.filter(s => s.status === 'completed');
+  const active = stops.find(s => s.status === 'active');
+  const pending = stops.filter(s => s.status === 'pending' || (!s.status && s !== active));
+
+  // Update header text
+  const progressEl = document.getElementById('driver-progress');
+  const dayName = {M:'Monday',T:'Tuesday',W:'Wednesday',Th:'Thursday',F:'Friday',Sa:'Saturday'}[previewDay] || previewDay;
+  if (progressEl) progressEl.textContent = `${completed.length} of ${stops.length} stops complete · ${previewDriver}'s ${dayName} route`;
+
+  // Active stop card
+  const activeEl = document.getElementById('active-stop');
+  if (active){
+    const seqLabel = (active.seq != null) ? active.seq : (completed.length + 1);
+    activeEl.innerHTML = `
+      <div class="border border-ink-200 rounded-lg p-4 cursor-pointer hover:border-ink-400 transition" onclick="openJobDetail('${previewDriver}','${previewDay}','${active.id}')" title="Tap to update">
+        <div class="flex items-center justify-between mb-1.5">
+          <div class="text-[11.5px] font-semibold text-ink-500 uppercase tracking-wider">Now serving · stop ${seqLabel}</div>
+          ${tagFor(active.type || 'clean')}
+        </div>
+        <div class="text-[17px] font-semibold leading-tight">${active.cust}</div>
+        <div class="text-[14px] text-ink-700 mt-0.5">${active.addr}</div>
+        <div class="text-[13px] text-ink-500 mt-0.5">${active.units || '1 unit'}</div>
+        ${active.notes ? `<div class="text-[13.5px] bg-amber-50 border border-amber-200 rounded p-2 mt-2.5"><i data-lucide="alert-triangle" class="ico-sm inline-block align-text-bottom mr-1 text-amber-700"></i>${active.notes}</div>` : ''}
+        <button onclick="event.stopPropagation(); jobAction('${previewDriver}','${previewDay}','${active.id}','navigate')" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-2.5 rounded mt-3 text-[16px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate</button>
+        <div class="grid grid-cols-3 gap-1.5 mt-1.5">
+          <button onclick="event.stopPropagation(); jobAction('${previewDriver}','${previewDay}','${active.id}','cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded font-semibold text-[14px]">Cleaned</button>
+          <button onclick="event.stopPropagation(); jobAction('${previewDriver}','${previewDay}','${active.id}','delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-2.5 rounded font-semibold text-[14px]">Delivered</button>
+          <button onclick="event.stopPropagation(); jobAction('${previewDriver}','${previewDay}','${active.id}','pickedup')" class="bg-amber-700 hover:bg-amber-800 text-white py-2.5 rounded font-semibold text-[14px]">Picked up</button>
+        </div>
+        <button onclick="event.stopPropagation(); openReportProblem()" class="w-full text-ink-500 text-[13.5px] py-2 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
+      </div>`;
+  } else if (pending.length){
+    // No active stop but there are pending — show the first pending as a tap-to-start
+    const next = pending[0];
+    activeEl.innerHTML = `
+      <div class="border border-ink-200 rounded-lg p-4 cursor-pointer hover:border-ink-400" onclick="openJobDetail('${previewDriver}','${previewDay}','${next.id}')">
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-1.5">Up next — tap to start</div>
+        <div class="text-[17px] font-semibold">${next.cust}</div>
+        <div class="text-[14px] text-ink-700 mt-0.5">${next.addr}</div>
+        <div class="text-[13px] text-ink-500 mt-0.5">${next.units || '1 unit'}</div>
+      </div>`;
+  } else {
+    activeEl.innerHTML = `<div class="text-[13.5px] text-ink-500 italic p-4 text-center">No stops on this route. Tap a different day above.</div>`;
+  }
+
+  // Up next list
+  const listEl = document.getElementById('driver-list');
+  const upNextStops = pending.filter(s => s !== active);
+  listEl.innerHTML = upNextStops.map(s => `
+    <div onclick="openJobDetail('${previewDriver}','${previewDay}','${s.id}')" class="border border-ink-200 rounded px-2.5 py-2 flex items-center gap-2.5 cursor-pointer hover:bg-ink-50 hover:border-ink-400">
+      <div class="text-[11.5px] font-mono text-ink-500 w-7">#${s.seq || ''}</div>
       <div class="flex-1">
         <div class="text-[15px] font-semibold leading-tight">${s.cust}</div>
         <div class="text-[12.5px] text-ink-500">${s.addr}</div>
       </div>
-      <div class="text-right">${tagFor(s.type)}<div class="text-[11.5px] text-ink-500 mt-0.5">${s.tag}</div></div>
-    </div>`).join('');
-  document.getElementById('driver-done').innerHTML = done.map(s=>`
-    <div class="border border-ink-200 rounded px-2.5 py-2 flex items-start gap-2.5">
+      <div class="text-right">${tagFor(s.type || 'clean')}</div>
+    </div>`).join('') || '<div class="text-[12.5px] text-ink-500 italic p-2">Nothing pending.</div>';
+
+  // Completed list
+  const doneEl = document.getElementById('driver-done');
+  doneEl.innerHTML = completed.map(s => `
+    <div onclick="openJobDetail('${previewDriver}','${previewDay}','${s.id}')" class="border border-ink-200 rounded px-2.5 py-2 flex items-start gap-2.5 cursor-pointer hover:bg-ink-50">
       <div class="text-emerald-700 mt-0.5"><i data-lucide="check" class="ico-sm"></i></div>
       <div class="flex-1">
         <div class="text-[15px] font-semibold line-through leading-tight">${s.cust}</div>
-        <div class="text-[12.5px] text-ink-500">${s.addr}</div>
-        ${s.retired ? '<div class="text-[12.5px] text-amber-700 font-semibold mt-0.5">Retired from route</div>' : ''}
+        <div class="text-[12.5px] text-ink-500">${s.addr}${s.completedAt?' · '+s.completedAt:''}</div>
       </div>
-      ${tagFor(s.type)}
-    </div>`).join('');
+      ${tagFor(s.type || 'clean')}
+    </div>`).join('') || '<div class="text-[12.5px] text-ink-500 italic p-2">Nothing done yet today.</div>';
+
   renderDriverIpad();
   refreshIcons();
 }
 
 let driverDevice = 'phone';
+let previewDay = 'F';  // Friday = today in demo
+function setPreviewDriver(d){
+  previewDriver = d;
+  document.querySelectorAll('.prev-driver-btn').forEach(b => {
+    if (b.dataset.pdriver === d) { b.classList.add('bg-white','shadow-sm'); b.classList.remove('text-ink-500'); b.classList.add('font-semibold'); }
+    else { b.classList.remove('bg-white','shadow-sm','font-semibold'); b.classList.add('text-ink-500'); b.classList.add('font-medium'); }
+  });
+  renderDriver();
+}
+function setPreviewDay(d){
+  previewDay = d;
+  document.querySelectorAll('.prev-day-btn').forEach(b => {
+    if (b.dataset.pday === d) { b.classList.add('bg-white','shadow-sm'); b.classList.remove('text-ink-500'); }
+    else { b.classList.remove('bg-white','shadow-sm'); b.classList.add('text-ink-500'); }
+  });
+  renderDriver();
+}
 function setDriverDevice(d){
   driverDevice = d;
   document.querySelectorAll('.device-tab-btn').forEach(b => {
@@ -3001,63 +3082,69 @@ function setDriverDevice(d){
 function renderDriverIpad(){
   const el = document.getElementById('driver-ipad-content');
   if (!el) return;
+  const stops = (weeklyData[previewDriver] && weeklyData[previewDriver][previewDay]) || [];
+  const completed = stops.filter(s => s.status === 'completed');
+  const active = stops.find(s => s.status === 'active');
+  const pending = stops.filter(s => s.status === 'pending' || (!s.status && s !== active));
+  const dayName = {M:'Monday',T:'Tuesday',W:'Wednesday',Th:'Thursday',F:'Friday',Sa:'Saturday'}[previewDay] || previewDay;
+  const routeName = previewDriver === 'Greg' ? 'East route' : 'West route';
+  const focusStop = active || pending[0];
+
   el.innerHTML = `
     <div class="flex items-center justify-between mb-5">
       <div>
-        <div class="text-[14px] text-ink-500">Friday, May 8 · East route</div>
-        <div class="text-2xl font-semibold tracking-tight">Greg's route</div>
+        <div class="text-[14px] text-ink-500">${dayName} · ${routeName}</div>
+        <div class="text-2xl font-semibold tracking-tight">${previewDriver}'s route</div>
       </div>
       <div class="text-right">
-        <div class="text-[18px] font-semibold">3 of 7 done</div>
-        <div class="text-[14px] text-ink-500">est. 1h 45m left</div>
+        <div class="text-[18px] font-semibold">${completed.length} of ${stops.length} done</div>
+        <div class="text-[14px] text-ink-500">${pending.length} remaining</div>
       </div>
     </div>
     <div class="grid grid-cols-5 gap-4">
       <div class="col-span-3">
-        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Now serving · stop 4 of 7</div>
-        <div class="bg-white border border-ink-200 rounded-lg p-5">
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">${active?'Now serving':'Up next'} · stop ${focusStop?focusStop.seq||'':''}</div>
+        ${focusStop ? `
+        <div class="bg-white border border-ink-200 rounded-lg p-5 cursor-pointer hover:border-ink-400" onclick="openJobDetail('${previewDriver}','${previewDay}','${focusStop.id}')">
           <div class="flex items-center justify-between mb-1.5">
-            ${tagFor(driverActive.type)}
-            <div class="text-[12.5px] text-ink-500">ETA ${driverActive.etaMin} min</div>
+            ${tagFor(focusStop.type || 'clean')}
+            <div class="text-[12.5px] text-ink-500">Tap to update</div>
           </div>
-          <div class="text-[22px] font-semibold leading-tight">${driverActive.cust}</div>
-          <div class="text-[15px] text-ink-700 mt-1">${driverActive.addr}</div>
-          <div class="text-[14px] text-ink-500 mt-0.5">${driverActive.units}</div>
-          ${driverActive.notes ? `<div class="text-[14px] bg-amber-50 border border-amber-200 rounded p-3 mt-3 inline-flex items-start gap-2"><i data-lucide="alert-triangle" class="ico-sm text-amber-700 mt-0.5"></i><span>${driverActive.notes}</span></div>` : ''}
-          <button onclick="navigateNow()" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-4 rounded-lg mt-4 text-[18px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate to stop</button>
+          <div class="text-[22px] font-semibold leading-tight">${focusStop.cust}</div>
+          <div class="text-[15px] text-ink-700 mt-1">${focusStop.addr}</div>
+          <div class="text-[14px] text-ink-500 mt-0.5">${focusStop.units||'1 unit'}</div>
+          ${focusStop.notes ? `<div class="text-[14px] bg-amber-50 border border-amber-200 rounded p-3 mt-3 inline-flex items-start gap-2"><i data-lucide="alert-triangle" class="ico-sm text-amber-700 mt-0.5"></i><span>${focusStop.notes}</span></div>` : ''}
+          <button onclick="event.stopPropagation(); jobAction('${previewDriver}','${previewDay}','${focusStop.id}','navigate')" class="w-full bg-ink-900 hover:bg-ink-800 text-white font-semibold py-4 rounded-lg mt-4 text-[18px] inline-flex items-center justify-center gap-2"><i data-lucide="navigation"></i>Navigate to stop</button>
           <div class="grid grid-cols-3 gap-2 mt-2">
-            <button onclick="markDone('cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-3.5 rounded font-semibold text-[16px]">Cleaned</button>
-            <button onclick="markDone('delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-3.5 rounded font-semibold text-[16px]">Delivered</button>
-            <button onclick="markDone('picked up')" class="bg-amber-700 hover:bg-amber-800 text-white py-3.5 rounded font-semibold text-[16px]">Picked up</button>
+            <button onclick="event.stopPropagation(); jobAction('${previewDriver}','${previewDay}','${focusStop.id}','cleaned')"   class="bg-emerald-700 hover:bg-emerald-800 text-white py-3.5 rounded font-semibold text-[16px]">Cleaned</button>
+            <button onclick="event.stopPropagation(); jobAction('${previewDriver}','${previewDay}','${focusStop.id}','delivered')" class="bg-blue-700 hover:bg-blue-800 text-white py-3.5 rounded font-semibold text-[16px]">Delivered</button>
+            <button onclick="event.stopPropagation(); jobAction('${previewDriver}','${previewDay}','${focusStop.id}','pickedup')" class="bg-amber-700 hover:bg-amber-800 text-white py-3.5 rounded font-semibold text-[16px]">Picked up</button>
           </div>
-          <button onclick="openReportProblem()" class="w-full text-ink-500 text-[15px] py-2.5 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
-        </div>
+          <button onclick="event.stopPropagation(); openReportProblem()" class="w-full text-ink-500 text-[15px] py-2.5 mt-1 hover:text-ink-900 inline-flex items-center justify-center gap-1.5"><i data-lucide="alert-triangle" class="ico-sm"></i>Report a problem</button>
+        </div>` : '<div class="text-[14px] text-ink-500 italic p-6 text-center">No stops on this route.</div>'}
       </div>
       <div class="col-span-2">
-        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">Today's route</div>
+        <div class="text-[11.5px] uppercase tracking-wider text-ink-500 font-semibold mb-2">${dayName} route</div>
         <div class="bg-white border border-ink-200 rounded-lg overflow-hidden">
-          <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[12.5px] text-ink-700 font-semibold uppercase tracking-wider">Up next</div>
-          ${upNext.map((s,i) => `
-            <div class="px-3 py-2 border-b border-ink-200 last:border-0 flex items-center gap-2.5">
-              <div class="text-[12.5px] font-mono text-ink-500 w-6">${i+5}</div>
+          <div class="px-3 py-2 bg-ink-50 border-b border-ink-200 text-[12.5px] text-ink-700 font-semibold uppercase tracking-wider">Up next (${pending.length})</div>
+          ${pending.filter(s=>s!==active).slice(0, 20).map(s => `
+            <div onclick="openJobDetail('${previewDriver}','${previewDay}','${s.id}')" class="px-3 py-2 border-b border-ink-200 last:border-0 flex items-center gap-2.5 cursor-pointer hover:bg-ink-50">
+              <div class="text-[12.5px] font-mono text-ink-500 w-7">#${s.seq||''}</div>
               <div class="flex-1 min-w-0">
                 <div class="text-[15px] font-semibold leading-tight truncate">${s.cust}</div>
                 <div class="text-[13px] text-ink-500 truncate">${s.addr}</div>
               </div>
-              <div class="text-right shrink-0">
-                ${tagFor(s.type)}
-                <div class="text-[11.5px] text-ink-500 mt-0.5">${s.tag||''}</div>
-              </div>
+              <div class="text-right shrink-0">${tagFor(s.type||'clean')}</div>
             </div>`).join('')}
-          <div class="px-3 py-2 bg-ink-50 border-t border-ink-200 text-[12.5px] text-ink-700 font-semibold uppercase tracking-wider">Completed</div>
-          ${done.map(s => `
-            <div class="px-3 py-2 border-b border-ink-200 last:border-0 flex items-center gap-2.5 opacity-60">
+          <div class="px-3 py-2 bg-ink-50 border-t border-ink-200 text-[12.5px] text-ink-700 font-semibold uppercase tracking-wider">Completed (${completed.length})</div>
+          ${completed.slice(0, 10).map(s => `
+            <div onclick="openJobDetail('${previewDriver}','${previewDay}','${s.id}')" class="px-3 py-2 border-b border-ink-200 last:border-0 flex items-center gap-2.5 opacity-60 cursor-pointer hover:opacity-80">
               <div class="text-emerald-700"><i data-lucide="check" class="ico-sm"></i></div>
               <div class="flex-1 min-w-0">
                 <div class="text-[14px] font-semibold line-through truncate">${s.cust}</div>
-                <div class="text-[12.5px] text-ink-500 truncate">${s.addr}</div>
+                <div class="text-[12.5px] text-ink-500 truncate">${s.addr}${s.completedAt?' · '+s.completedAt:''}</div>
               </div>
-              ${tagFor(s.type)}
+              ${tagFor(s.type||'clean')}
             </div>`).join('')}
         </div>
       </div>
